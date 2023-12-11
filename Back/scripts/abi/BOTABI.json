@@ -1,0 +1,18 @@
+[
+  "constructor(address)",
+  "event BaseTokenAdded(address indexed)",
+  "event BaseTokenRemoved(address indexed)",
+  "event OwnershipTransferred(address indexed,address indexed)",
+  "event Withdrawn(address indexed,uint256 indexed)",
+  "function addBaseToken(address)",
+  "function baseTokensContains(address) view returns (bool)",
+  "function flashArbitrage(address,address)",
+  "function getBaseTokens() view returns (address[])",
+  "function getProfit(address,address) view returns (uint256, address)",
+  "function owner() view returns (address)",
+  "function removeBaseToken(address)",
+  "function renounceOwnership()",
+  "function transferOwnership(address)",
+  "function uniswapV2Call(address,uint256,uint256,bytes)",
+  "function withdraw()"
+]

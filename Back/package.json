@@ -1,0 +1,43 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "@nomiclabs/hardhat-ethers": "^2.2.1",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts-upgradeable": "^4.8.0",
+    "@openzeppelin/hardhat-upgrades": "^1.21.0",
+    "@typechain/ethers-v5": "^10.2.1",
+    "@typechain/hardhat": "^6.1.6",
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.4.0",
+    "@uniswap/v2-core": "^1.0.1",
+    "@uniswap/v2-periphery": "^1.1.0-beta.0",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.2",
+    "chai": "^4.3.7",
+    "cli-progress": "^3.11.2",
+    "dotenv": "^16.0.3",
+    "erc721a-upgradeable": "^4.2.2",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.11.2",
+    "hardhat-abi-exporter": "^2.10.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-shorthand": "^1.0.0",
+    "solidity-coverage": "^0.8.4",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.2.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "async-lock": "^1.4.0",
+    "axios": "^1.5.0",
+    "keccak256": "^1.0.6",
+    "lodash": "^4.17.21",
+    "secp256k1": "^5.0.0",
+    "winston": "^3.10.0"
+  }
+}
