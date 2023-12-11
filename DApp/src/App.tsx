@@ -390,6 +390,7 @@ const App: React.FC = () => {
                 classes={{
                   paper: classes.drawerPaperDesktop,
                 }}
+                style={{zIndex: 9999}}
               >
                 <div style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 20, marginTop: 20, flexDirection: 'column' }}>
                   {LinkItems.map((link, key) => (

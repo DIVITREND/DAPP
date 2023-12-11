@@ -244,8 +244,8 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     rewardsVesting: {
-        position: "relative",
-        top: "50%",
+        position: "absolute",
+        top: "10%",
         left: "50%",
         transform: "translateX(-50%)",
         fontWeight: "bold",
@@ -335,7 +335,7 @@ const useStyles = makeStyles((theme) => ({
     },
     icon: {
         position: "absolute",
-        top: "10px",
+        top: "40px",
         left: "50%",
         transform: "translateX(-50%)",
         color: "#8B3EFF",
@@ -567,10 +567,9 @@ const Staking = () => {
     const claimTRND = rewards - compound
 
     return (
-        <div className={classes.root} style={{ height: isMobile ? '100%' : '96vh' }}>
+        <div className={classes.root} style={{ height: isMobile ? '100%' : '100%'  }}>
             <div className={classes.overlay}></div>
-            <Container maxWidth="xl">
-                <Grid container spacing={2} style={{ marginTop: isMobile ? 20 : 0 }} className={classes.mobile}>
+                <Grid container spacing={2} style={{ marginTop: isMobile ? 20 : 50, marginBottom: isMobile ? 0 : 50 }} className={classes.mobile}>
                     <Grid item xs={12} md={6}>
 
                         <Paper className={classes.paperA} >
@@ -916,7 +915,6 @@ const Staking = () => {
                     </Grid>
                     {/* MAIN */}
                 </Grid>
-            </Container>
         </div>
     );
 };

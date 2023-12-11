@@ -849,7 +849,7 @@ const Launchpad = () => {
                     </Alert>
                 </Paper>
             )}
-            <Container maxWidth="xl" style={{ marginTop: isMobile ? 100 : -100 }}>
+            <Container maxWidth="xl" style={{ marginTop: isMobile ? 100 : -50 }}>
                 <Grid container spacing={2} style={{ marginTop: isMobile ? 200 : 0 }} className={classes.mobile}>
                     <Grid item xs={12} md={6}>
 
