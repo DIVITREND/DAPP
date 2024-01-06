@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@mui/material/Container";
@@ -19,10 +20,7 @@ import EtherHelper from "../../ethers/EtherHelper";
 import { ethers } from "ethers";
 import LogoSpinnerAnimation from "../LogoSpinnerAnimation";
 import InfoIcon from '@mui/icons-material/Info';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import FaceIcon from '@mui/icons-material/Face';
-import PriceChangeIcon from '@mui/icons-material/PriceChange';
+import CardDetailsComponent from "./Staking/comp_modal/NftCard";
 
 const drawerWidth = 240;
 
@@ -108,9 +106,9 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 0,
     },
     greenBar: {
-        backgroundColor: 'transparent', // Imposta lo sfondo della barra a trasparente
+        backgroundColor: 'green',
         '& .MuiLinearProgress-bar': {
-            backgroundColor: 'green', // Imposta il colore della barra a verde
+            backgroundColor: '#A4FE66',
         },
     },
     paper: {
@@ -237,7 +235,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "white",
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "24px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
@@ -251,7 +249,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "white",
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "24px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
@@ -265,7 +263,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "white",
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "20px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
@@ -278,7 +276,7 @@ const useStyles = makeStyles((theme) => ({
         transform: "translateX(-50%)",
         color: "white",
         textShadow: "0px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "18px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
@@ -290,7 +288,6 @@ const useStyles = makeStyles((theme) => ({
         left: "50%",
         transform: "translateX(-50%)",
         color: "white",
-        background: "url('54.png') no-repeat center",
         backgroundOrigin: 'border-box',
         backgroundSize: '100% 146%',
         backgroundPosition: 'center',
@@ -346,7 +343,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        height: '640px',
+        height: '800px',
         overflowY: 'auto',
         scrollbarWidth: 'thin',
         gap: 20,
@@ -370,7 +367,7 @@ const useStyles = makeStyles((theme) => ({
         transform: "translateX(-50%)",
         color: "white",
         textShadow: "0px 3px 2px rgba(255, 105, 135, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "22px",
         display: 'flex',
         flexDirection: 'row',
@@ -383,27 +380,27 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         fontSize: "18px",
         textShadow: "0px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
     },
     subtitleLil: {
         color: "white",
         fontSize: "16px",
-        fontFamily: "Lilita One",
+
     },
     subtitleLeft: {
         color: "white",
         fontSize: "26px",
-        fontFamily: "Lilita One",
+
     },
     subtitleLil2: {
         color: "white",
         fontSize: "14px",
-        fontFamily: "Lilita One",
+
     },
     subtitleLil3: {
         color: "white",
         fontSize: "12px",
-        fontFamily: "Lilita One",
+
     },
     icon: {
         position: "absolute",
@@ -574,7 +571,7 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'hidden',
         color: "white",
         fontSize: "16px",
-        fontFamily: "Lilita One",
+
         whiteSpace: 'nowrap',
         animation: '$scroll 20s linear infinite',
         textAlign: 'center',
@@ -607,7 +604,7 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: 245,
         minWidth: 245,
         minHeight: 300,
-        maxHeight: 300,
+        maxHeight: 600,
         border: "2px solit white",
         borderRadius: 20,
         backgroundSize: '100% 100%',
@@ -626,7 +623,7 @@ const useStyles = makeStyles((theme) => ({
     image_card: {
         position: 'relative',
         height: 0,
-        paddingTop: '80%', // 16:9
+        paddingTop: '100%', // 16:9
     },
     paperAlert: {
         padding: theme.spacing(2),
@@ -652,14 +649,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const images = [
-    'factory.png',
-    'factory.png',
-    'factory.png',
-    'factory.png',
-    '',
-];
-
 const CustomizedHeader = styled(CardHeader)`
   background: 'bg.jpg';
 `;
@@ -676,6 +665,7 @@ const Launchpad = () => {
     const [tokenCards, setTokenCards] = useState<JSX.Element[]>();
     const r_topay = weiToPay
     const toShow_toPay = comp * 100
+    const [factoryIds, setTokenFactIds] = useState(context.FactoriesTokenIds)
 
     const handleCloseAlert = () => {
         setAlertInfo(null);
@@ -723,69 +713,21 @@ const Launchpad = () => {
         getDataPayable()
     }, [comp])
 
+    function handleNull() {
+        return
+    }
+
     useEffect(() => {
 
-        const fetchTokenCards = async () => {
-            if (!context.FactoriesTokenIds) return;
-            const newTokenCards: JSX.Element[] = [];
-            const tokenIdsArray = context.FactoriesTokenIds ?? []
-            for (const nft of tokenIdsArray) {
-                try {
-                    const token = await EtherHelper.getTokenURI(context, nft);
-                    console.log(token)
-                    newTokenCards.push(
-                        <Card className={classes.themeDark} style={{ marginBottom: 30 }}>
-                            <CustomizedHeader
-                                title={
-                                    <Typography variant="h4" className={classes.subtitle} color="textSecondary" component="p">
-                                        Factory #{token.edition}
-                                    </Typography>
-                                }
-                            />
-                            <CardMedia
-                                className={classes.image_card}
-                                image="NFT2.jpeg"
-                                title="NFT Image"
-                            >
-                                {/* 
-                                    {showAttributes && (
-                                        <div className={classes.overlay}>
-                                            <Grid style={{ marginTop: 3 }} container spacing={1} direction="row">
-                                                {/* 
-                                                {tokenData.attributes.map((attribute: any, index: number) => (
-                                                    <Grid item xs={6} key={index}>
-                                                        <Tooltip title={`${index}`} arrow className={classes.tooltip}>
-                                                            <Typography variant="body1">
-                                                                {attribute.trait_type}
-                                                                <div>{attribute.value}</div>
-                                                            </Typography>
-                                                        </Tooltip>
-                                                    </Grid>
-                                                ))}
-                                            </Grid>
-                                        </div>
-                                    )}
-                                    */}
-                            </CardMedia>
-                            <CardContent>
-                                {/* Card content */}
-                            </CardContent>
-                            <CardActions disableSpacing
-                                className={classes.themeDarkFooter}>
-                            </CardActions>
-                        </Card >
-                    )
-                } catch (e) {
-                    console.log(e)
-                }
-            }
-
-            setTokenCards(newTokenCards);
+        async function getSignerInfo() {
+            await EtherHelper.querySignerInfo(context)
         }
 
-        fetchTokenCards();
-    }, [context.FactoriesTokenIds, context]);
+        getSignerInfo().then(() => {
+            setTokenFactIds(context.FactoriesTokenIds)
+        })
 
+    }, [context, context.FactoriesTokenIds, context.toastStatus]);
 
     async function claimNFTs() {
         try {
@@ -838,17 +780,6 @@ const Launchpad = () => {
                     <LogoSpinnerAnimation loading={loading} />
                 </Paper>
             </Collapse>
-            {isConnected === false && (
-                <Paper elevation={3} className={classes.paperAlert}>
-                    <Alert
-                        variant="outlined"
-                        severity={"info"}
-                        onClose={handleCloseAlert}
-                    >
-                        <AlertTitle>{"Connect Your Wallet! — Please connect your wallet to use this DApp "}</AlertTitle>
-                    </Alert>
-                </Paper>
-            )}
             <Container maxWidth="xl" style={{ marginTop: isMobile ? 100 : -50 }}>
                 <Grid container spacing={2} style={{ marginTop: isMobile ? 200 : 0 }} className={classes.mobile}>
                     <Grid item xs={12} md={6}>
@@ -860,13 +791,13 @@ const Launchpad = () => {
                                 <div className={classes.title}>LIVE </div>
                                 <TimerIcon fontSize="large" className={classes.iconTimer} />
                             </div>
-                            <Paper className={classes.claimable} style={{height: isMobile ? 300 : '450px', marginTop: isMobile ? 100 : 'auto'}}>
+                            <div className={classes.claimable} style={{ height: isMobile ? 300 : '450px', marginTop: isMobile ? 100 : 'auto' }}>
                                 <img
                                     src="NFT1.jpeg"
                                     alt=""
                                     className={classes.imageFactory}
                                 />
-                            </Paper>
+                            </div>
                             <Grid container style={{ marginTop: 550, padding: 0, justifyContent: 'center' }} spacing={1}>
                                 <div>
                                     <Box style={{ minWidth: 270, height: '100%', display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
@@ -876,25 +807,12 @@ const Launchpad = () => {
                                         </Typography>
                                     </Box>
                                 </div>
-                                <Grid item xs={12} md={12} style={{ marginBottom: 20, marginTop: 20 }}>
+                                <Grid item xs={12} md={12} style={{ marginBottom: 10, marginTop: 20 }}>
                                     <div style={{ display: "flex", flexDirection: 'row' }}>
                                         <LinearProgress style={{ marginTop: 10, display: "flex", width: '100%', flexDirection: 'row' }} className={classes.greenBar} color="secondary" variant="determinate" value={(alreadyMinted / 299) * 100} /> <Typography style={{ marginLeft: 10 }} className={classes.subtitleLil}>{((alreadyMinted / 299) * 100).toFixed(2)}%</Typography>
                                     </div>
                                 </Grid>
-                                <Grid item xs={12} md={12} style={{ marginBottom: 20, marginTop: 20, justifyContent: 'center', display: 'flex' }}>
-                                    <Stack direction="row" spacing={1}>
-                                        <Chip icon={<FaceIcon />} label={<div style={{ color: '#8B3EFF', fontFamily: "Lilita One" }}>{context.addressSigner}</div>} />
-                                    </Stack>
-                                </Grid>
-                            </Grid>
-
-                            {/* QUI */}
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Paper className={classes.paperA}>
-                            <Grid container spacing={2} style={{ marginTop: 0, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
-                                <Grid item md={12} xs={12} style={{ marginTop: 20, justifyContent: 'center', display: 'flex' }} >
+                                <Grid item md={12} xs={12} style={{ marginTop: 10, justifyContent: 'center', display: 'flex', marginBottom: 20 }} >
                                     <PrettoSlider
                                         aria-label="pretto slider"
                                         defaultValue={1}
@@ -915,7 +833,7 @@ const Launchpad = () => {
                                                 <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {toShow_toPay} WEI
                                                 </Typography>
                                             </Box>
-                                            <Button onClick={() => payNFTs(comp)} size="small" variant='outlined' className={classes.pulsButton} style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
+                                            <Button onClick={() => payNFTs(comp)} size="small" variant='outlined' className={classes.pulsButton} style={{ color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
                                                 MINT
                                             </Button>
                                         </Box>
@@ -934,7 +852,7 @@ const Launchpad = () => {
                                                     </IconButton>
                                                 </Tooltip>
                                             </Box>
-                                            <Button onClick={() => claimNFTs()} size="small" variant='outlined' className={classes.pulsButton} style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 0, width: '100%' }}>
+                                            <Button onClick={() => claimNFTs()} size="small" variant='outlined' className={classes.pulsButton} style={{ color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 0, width: '100%' }}>
                                                 CLAIM
                                             </Button>
                                         </Box>
@@ -942,20 +860,41 @@ const Launchpad = () => {
 
                                     </Paper>
                                 </Grid>
+                            </Grid>
 
+                            {/* QUI */}
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Paper className={classes.paperA}>
+                            <Grid container spacing={2} style={{ marginTop: 0, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
                                 <Grid item xs={12} md={12}>
                                     <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 0 }}>MY TDF: ({context.FactoriesTokenIds?.length})</Typography>
                                     <Paper className={classes.myTDF}>
-                                        <Divider style={{ border: '1px solid #f57c00', borderLeft: 'none', borderRight: 'none', borderBottom: 'none' }} light={true}>
-                                        </Divider>
+                                        <Divider style={{ border: '1px solid #f57c00', borderLeft: 'none', borderRight: 'none', borderBottom: 'none' }} light={true}></Divider>
                                         <Box style={{ marginTop: 30, marginBottom: 30 }}>
-                                            <div style={{ borderRadius: '10%', margin: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, flexDirection: 'column' }}>
-                                                {tokenCards}
-                                            </div>
+                                            <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                {
+                                                    factoryIds &&
+                                                    factoryIds.map((tokenId, index) => (
+                                                        <Grid key={tokenId} item xs={12} sm={6} md={4}>
+                                                            <CardDetailsComponent
+                                                                context={context}
+                                                                tokenId={tokenId}
+                                                                index={index}
+                                                                selectedTokenCards={[]}
+                                                                handleCardClick={handleNull}
+                                                                isSelected={false}
+                                                            />
+                                                        </Grid>
+                                                    ))
+                                                }
+                                            </Grid>
                                         </Box>
                                     </Paper>
                                 </Grid>
                             </Grid>
+
                         </Paper>
                     </Grid>
                 </Grid>

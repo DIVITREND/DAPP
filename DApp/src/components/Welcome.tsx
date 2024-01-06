@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@mui/material/Container";
@@ -12,7 +13,7 @@ import Chip from "@mui/material/Chip";
 import { useMediaQuery } from "@material-ui/core";
 import { EtherContext } from "../ethers/EtherContext";
 import { EtherContextRepository } from "../ethers/EtherContextRepository";
-import { Skeleton } from "@mui/material";
+import { Alert, AlertTitle, Skeleton } from "@mui/material";
 import EtherHelper from "../ethers/EtherHelper";
 import { ethers } from "ethers";
 import { Pair } from "../entities/stats/Pair";
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     width: "100%",
     height: "100vh",
-    background: "url(bg.jpg)",
+    background: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(11,2,48,1) 35%)',
     backgroundSize: "cover",
     backgroundPosition: "center",
     marginLeft: 0,
@@ -62,11 +63,11 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     minHeight: 170,
-    backgroundColor: 'rgba(255, 255, 255, 0)', // Sfondo semi-trasparente
+    background: 'linear-gradient(305deg, rgba(0,0,0,1) 56%, rgba(35,34,36,1) 96%);',
     padding: theme.spacing(2),
     border: "2px solid #8A00F6",
     borderRadius: 30,
-    boxShadow: "0 3px 15px 2px rgba(255, 105, 135, 0.3)",
+    boxShadow: "0 3px 15px 2px linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(35,22,88,1) 35%)",
     textAlign: "center",
     position: "relative", // Aggiunto per posizionare l'icona all'interno
     "@media screen and (max-width: 768px)": {
@@ -84,10 +85,10 @@ const useStyles = makeStyles((theme) => ({
     top: "10%",
     left: "50%",
     transform: "translateX(-50%)",
-    fontWeight: "bold",
-    color: "#8A00F6",
+    fontWeight: 900,
+    color: "#52af77",
     textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
-    fontFamily: "Lilita One",
+    fontFamily: "Open Sans",
     fontSize: '24px'
   },
   desc: {
@@ -97,7 +98,8 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateX(-50%)",
     color: "#8A00F6",
     textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
-    fontFamily: "Lilita One",
+    fontFamily: "Open Sans",
+    fontWeight: 400,
     fontSize: '18px'
   },
   subtitle: {
@@ -107,7 +109,8 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateX(-50%)",
     color: 'white',
     fontSize: '32px',
-    fontFamily: "Lilita One",
+    fontFamily: "Open Sans",
+    fontWeight: 700,
     "@media screen and (max-width: 768px)": {
       top: '40%',
       width: '100%',
@@ -120,20 +123,21 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateX(-50%)",
     color: 'white',
     fontSize: '32px',
-    fontFamily: "Lilita One",
+    fontFamily: "Open Sans",
+    fontWeight: 700,
     "@media screen and (max-width: 768px)": {
       width: '100%',
     },
   },
   icon: {
     position: "absolute",
-    top: "20px", // Posizione leggermente fuori dal box
-    left: "15%", // Posiziona l'icona al centro orizzontalmente
-    transform: "translateX(-50%)", // Per centrare orizzontalmente l'icona
-    fontSize: "208px", // Personalizza la dimensione dell'icona
-    color: "rgba(216, 178, 167, 1)", // Colore dell'icona
-    width: 100,
-    height: 100,
+    top: "70%",
+    left: "4%",
+    transform: "translateX(-50%)",
+    fontSize: "20px",
+    color: "#52af77",
+    width: 40,
+    height: 40,
   },
   chip: {
     position: "absolute",
@@ -196,6 +200,28 @@ const useStyles = makeStyles((theme) => ({
       transform: "translate(100vw, 100vh)", /* La direzione in cui si muovono */
     },
   },
+  paperAlert: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    background: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(10px)',
+    border: '2px solid transparent',
+    borderTop: 'none',
+    borderRight: 'none',
+    borderLeft: 'none',
+    borderBottom: 'none',
+    borderImage: 'linear-gradient(45deg, #FE6B8B 30%, #8500FF 90%) 1',
+    borderRadiusTopRight: 100,
+    borderRadiusTopLeft: 100,
+    position: 'fixed',
+    zIndex: 9999,
+    width: '100%',
+    minHeight: 10,
+    height: '100%',
+    maxHeight: 'auto',
+    top: 55,
+},
 }));
 
 const Welcome = () => {
@@ -231,6 +257,8 @@ const Welcome = () => {
     getInitDataPool()
   }, [])
 
+  const isConnected = context.connected ?? false;
+
   return (
     <div className={classes.root}>
       <div className={classes.overlay}></div>
@@ -254,8 +282,8 @@ const Welcome = () => {
                         const res_1 = Number(parseFloat(context.reserve1));
                         const price = res_0 / res_1;
                         return (
-                          <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <div style={{fontSize: '14px', color: 'lightgray', fontStyle: 'italic'}}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
                             {price.toFixed(7)} ♦
                           </div>
                         );
@@ -365,9 +393,7 @@ const Welcome = () => {
                 {isMobile && (
                   <img src={"11.png"} alt="" className={classes.icon} />
                 )}
-                {!isMobile && (
-                  <img src={"11.png"} alt="" style={{ width: 140, height: 140, marginBottom: 20 }} className={classes.icon} />
-                )}
+
                 <div className={classes.title}>
                   STAKED CAPITAL:
                 </div>
@@ -379,7 +405,7 @@ const Welcome = () => {
           </Grid>
         )}
         {isMobile && (
-          <Grid spacing={5} className={classes.mobile} style={{height: '100%' }}>
+          <Grid spacing={5} className={classes.mobile} style={{ height: '100%' }}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
                 {isMobile && (
@@ -392,15 +418,15 @@ const Welcome = () => {
                   $TRND:
                 </div>
                 <div className={classes.subtitlePrice}>
-                {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 && (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
                         const res_1 = Number(parseFloat(context.reserve1));
                         const price = res_0 / res_1;
                         return (
-                          <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <div style={{fontSize: '14px', color: 'lightgray', fontStyle: 'italic'}}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
                             {price.toFixed(7)} ♦
                           </div>
                         );
@@ -440,7 +466,7 @@ const Welcome = () => {
                   LP $TRND:
                 </div>
                 <div className={classes.subtitle}>
-                {wethPrice && (
+                  {wethPrice && (
                     <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
                   )}
                 </div>
@@ -466,7 +492,7 @@ const Welcome = () => {
                   MARKET CAP:
                 </div>
                 <div className={classes.subtitle}>
-                {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 && (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
@@ -504,9 +530,6 @@ const Welcome = () => {
                 {isMobile && (
                   <img src={"11.png"} alt="" className={classes.icon} />
                 )}
-                {!isMobile && (
-                  <img src={"11.png"} alt="" className={classes.icon} />
-                )}
                 <div className={classes.title}>
                   CAPITAL:
                 </div>
@@ -515,7 +538,7 @@ const Welcome = () => {
                 </div>
               </Paper>
             </Grid>
-            <div style={{height: '50px'}}></div>
+            <div style={{ height: '50px' }}></div>
           </Grid>
         )}
 

@@ -24,7 +24,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import { Grid } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
@@ -35,6 +35,8 @@ import Staking from './components/dapp/Staking';
 import Launchpad from './components/dapp/Launchpad';
 import SwapSection from './components/dapp/SwapSection';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import { Alert, AlertTitle } from '@mui/material';
+import EtherHelper from './ethers/EtherHelper';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -90,11 +92,11 @@ const useStyles = makeStyles((theme) =>
     },
     hyStyle: {
       background: 'rgba(216,178,167, 1)', /* Imposta il gradient bianco-azzurrino */
-      animation: '$rainbow 5s infinite', fontFamily: 'Rubik Glitch', // Sostituisci con il nome del tuo font "pazzachi" per HY
+      animation: '$rainbow 5s infinite',  // Sostituisci con il nome del tuo font "pazzachi" per HY
     },
     enaStyle: {
       background: `rgba(216,178,167, 1)`,
-      animation: '$rainbow 5s infinite', fontFamily: 'Rubik Glitch', // Sostituisci con il nome del tuo font "pazzachi" per ENA
+      animation: '$rainbow 5s infinite', // Sostituisci con il nome del tuo font "pazzachi" per ENA
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -148,12 +150,10 @@ const useStyles = makeStyles((theme) =>
       borderRadius: theme.spacing(2),
       cursor: 'pointer',
       textDecoration: 'none',
-      fontFamily: "Lilita One",
       transition: 'background-color 0.3s, color 0.3s',
       '&:hover': {
         background: '#8A00F6',
         color: 'white',
-        fontFamily: "Lilita One",
       },
     },
     navIcon: {
@@ -167,7 +167,6 @@ const useStyles = makeStyles((theme) =>
       marginRight: 10,
       color: 'white',
       fontSize: 16,
-      fontFamily: "Lilita One",
 
     },
     rootLoader: {
@@ -230,7 +229,6 @@ const useStyles = makeStyles((theme) =>
       '-webkit-text-fill-color': 'transparent',
       animation: '$rainbow 5s infinite',
       fontWeight: 'bold', // Aggiunto il grassetto
-      fontFamily: 'Roboto',
     },
     rainbowText2: {
       background: `linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)`,
@@ -238,7 +236,6 @@ const useStyles = makeStyles((theme) =>
       '-webkit-text-fill-color': 'transparent',
       animation: '$rainbow 5s infinite',
       fontWeight: 'bold', // Aggiunto il grassetto
-      fontFamily: 'Rubik Wet Paint',
     },
     '@keyframes rainbow': {
       '0%': { color: theme.palette.secondary.main },
@@ -254,6 +251,28 @@ const useStyles = makeStyles((theme) =>
       borderTop: 'none',
       borderBottom: 'none',
       borderRight: 'none',
+    },
+    paperAlert: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+      background: 'rgba(0, 0, 0, 0.8)',
+      backdropFilter: 'blur(10px)',
+      border: '2px solid transparent',
+      borderTop: 'none',
+      borderRight: 'none',
+      borderLeft: 'none',
+      borderBottom: 'none',
+      borderImage: 'linear-gradient(45deg, #FE6B8B 30%, #8500FF 90%) 1',
+      borderRadiusTopRight: 100,
+      borderRadiusTopLeft: 100,
+      position: 'fixed',
+      zIndex: 9999,
+      width: '100%',
+      minHeight: 10,
+      height: '100%',
+      maxHeight: 'auto',
+      top: 55,
     },
   })
 );
@@ -342,8 +361,6 @@ const App: React.FC = () => {
   // Conditionally render the logo based on the current pathname
   const shouldRenderLogo = ![''].includes(currentPathname);
 
-  console.log(mobileOpen)
-
   if (isLoading) {
     return (
       <div className={classes.rootLoader}>
@@ -354,6 +371,21 @@ const App: React.FC = () => {
     )
   }
 
+  const isConnected = context.connected ?? false;
+
+  const verifyChain = () => {
+    if (context.chainId !== 1 && context.chainId !== 11155111) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  const isChainId = verifyChain()
+
+  const chainId = context.chainId ?? undefined;
+
+
   return (
     <Router>
       <div className={classes.root}>
@@ -361,7 +393,7 @@ const App: React.FC = () => {
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
             <IconButton
-              style={{color: '#8500FF'}}
+              style={{ color: '#8500FF' }}
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
@@ -390,7 +422,7 @@ const App: React.FC = () => {
                 classes={{
                   paper: classes.drawerPaperDesktop,
                 }}
-                style={{zIndex: 9999}}
+                style={{ zIndex: 9999 }}
               >
                 <div style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 20, marginTop: 20, flexDirection: 'column' }}>
                   {LinkItems.map((link, key) => (
@@ -409,12 +441,12 @@ const App: React.FC = () => {
             {!isMobile && (
               <>
                 <IconButton
-                  style={{color: '#8500FF'}}
+                  style={{ color: '#8500FF' }}
                   aria-label="open drawer"
                   edge="start"
                   onClick={handleDrawerToggle}
                 >
-                  <MenuOpenIcon fontSize="large"/>
+                  <MenuOpenIcon fontSize="large" />
                 </IconButton>
               </>
             )}
@@ -599,6 +631,26 @@ const App: React.FC = () => {
             </Box>
           </Modal>
         )}
+        {isConnected === false && (
+          <Paper elevation={3} className={classes.paperAlert}>
+            <Alert
+              variant="outlined"
+              severity={"info"}
+            >
+              <AlertTitle>{"Connect Your Wallet — Please connect your wallet! "}</AlertTitle>
+            </Alert>
+          </Paper>
+        )}
+        {isConnected === true && isChainId === false && (
+          <Paper elevation={3} className={classes.paperAlert}>
+            <Alert
+              variant="outlined"
+              severity={"info"}
+            >
+              <AlertTitle>{"WRONG NETWORK — Please switch to ETH network!"}</AlertTitle>
+            </Alert>
+          </Paper>
+        )}
         <div className={classes.content}>
           {isLoading && (
             <div className={classes.rootLoader}>
@@ -631,7 +683,6 @@ const App: React.FC = () => {
             height: '40px',
             color: 'white',
             fontWeight: 'bold',
-            fontFamily: 'Roboto',
             fontSize: 16,
           }}
         >

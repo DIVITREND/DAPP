@@ -1,66 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@mui/material/Container";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@mui/material/Grid";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
-import Chip from "@mui/material/Chip";
 import { Box, Button, Divider, Icon, Typography, useMediaQuery } from "@material-ui/core";
 import { EtherContext } from "../../ethers/EtherContext";
 import { EtherContextRepository } from "../../ethers/EtherContextRepository";
-import Snackbar from "@mui/material/Snackbar";
-import IconButton from "@mui/material/IconButton";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import TimerIcon from '@mui/icons-material/Timer';
-import AddIcon from '@mui/icons-material/Add';
-import { Badge, Slider } from "@mui/material";
-import { styled } from '@mui/material/styles';
-
-const drawerWidth = 240;
-
-const PrettoSlider = styled(Slider)({
-    color: '#52af77',
-    height: 8,
-    width: '70%',
-    '& .MuiSlider-track': {
-        border: 'none',
-    },
-    '& .MuiSlider-thumb': {
-        height: 30,
-        width: 30,
-        backgroundImage: "url('Android.png')",
-        backgroundOrigin: 'border-box',
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-        '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
-            boxShadow: 'inherit',
-        },
-        '&:before': {
-            display: 'none',
-        },
-    },
-    '& .MuiSlider-valueLabel': {
-        lineHeight: 1.2,
-        fontSize: 8,
-        background: 'unset',
-        padding: 0,
-        width: 22,
-        height: 22,
-        borderRadius: '50% 50% 50% 0',
-        backgroundColor: '#52af77',
-        transformOrigin: 'bottom left',
-        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
-        '&:before': { display: 'none' },
-        '&.MuiSlider-valueLabelOpen': {
-            transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
-        },
-        '& > *': {
-            transform: 'rotate(45deg)',
-        },
-    },
-});
-
+import { StakingLeft } from "./Staking/StakingLeft";
+import { StakingDash } from "./Staking/StakingDash";
+import { IconButton } from "@material-ui/core";
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { Alert, AlertTitle, Collapse } from "@mui/material";
+import LogoSpinnerAnimation from "../LogoSpinnerAnimation";
+import { useStyleStaking } from "./Staking/useStyleStaking";
+import StakingModal from "./Staking/StakingModal";
+import EtherHelper from "../../ethers/EtherHelper";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -215,6 +168,28 @@ const useStyles = makeStyles((theme) => ({
         "@media screen and (max-width: 768px)": {
         },
     },
+    paperAlert: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+        background: 'rgba(17, 17, 17, 0.9)',
+        backdropFilter: 'blur(10px)',
+        border: '2px solid transparent',
+        borderTop: 'none',
+        borderRight: 'none',
+        borderLeft: 'none',
+        borderBottom: 'none',
+        borderImage: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%) 1',
+        borderRadiusTopRight: 100,
+        borderRadiusTopLeft: 100,
+        position: 'fixed',
+        zIndex: 9999,
+        width: '100%',
+        minHeight: 10,
+        height: 'auto',
+        maxHeight: 'auto',
+        top: 55,
+    },
     title: {
         position: "absolute",
         top: "3%",
@@ -222,9 +197,8 @@ const useStyles = makeStyles((theme) => ({
         transform: "translateX(-50%)",
         fontWeight: "bold",
         color: "white",
-        textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
-        fontSize: "24px",
+        fontFamily: "Open Sans",
+        fontSize: "18px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
         },
@@ -237,8 +211,8 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "white",
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
-        fontSize: "24px",
+        fontFamily: "Open Sans",
+        fontSize: "22px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
         },
@@ -251,7 +225,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "white",
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+        fontFamily: "Open Sans",
         fontSize: "20px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
@@ -265,9 +239,8 @@ const useStyles = makeStyles((theme) => ({
         left: "50%",
         transform: "translateX(-50%)",
         color: "white",
-        textShadow: "0px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
-        fontSize: "18px",
+        fontFamily: "Open Sans",
+        fontSize: "16px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
         },
@@ -303,7 +276,7 @@ const useStyles = makeStyles((theme) => ({
         transform: "translateX(-50%)",
         color: "white",
         textShadow: "0px 3px 2px rgba(255, 105, 135, 0.5)",
-        fontFamily: "Lilita One",
+        fontFamily: "Open Sans",
         fontSize: "22px",
         display: 'flex',
         flexDirection: 'row',
@@ -316,22 +289,22 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         fontSize: "18px",
         textShadow: "0px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+        fontFamily: "Open Sans",
     },
     subtitleLil: {
         color: "white",
         fontSize: "16px",
-        fontFamily: "Lilita One",
+        fontFamily: "Open Sans",
     },
     subtitleLil2: {
         color: "white",
         fontSize: "14px",
-        fontFamily: "Lilita One",
+        fontFamily: "Open Sans",
     },
     subtitleLil3: {
         color: "white",
         fontSize: "12px",
-        fontFamily: "Lilita One",
+        fontFamily: "Open Sans",
     },
     icon: {
         position: "absolute",
@@ -365,28 +338,6 @@ const useStyles = makeStyles((theme) => ({
             left: "50%",
         },
     },
-    chip: {
-        position: "absolute",
-        top: "70%",
-        left: "18%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-        fontFamily: "Josefin Sans",
-    },
-    chip2: {
-        position: "absolute",
-        top: "70%",
-        left: "48%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-    },
-    chip3: {
-        position: "absolute",
-        top: "70%",
-        left: "78%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-    },
     chipContainer: {
         display: "flex",
         flexDirection: "column",
@@ -396,41 +347,6 @@ const useStyles = makeStyles((theme) => ({
         "@media screen and (max-width: 768px)": {
             marginTop: 100,
         },
-    },
-    menuButton: {
-        position: "absolute",
-        top: "20px",
-        right: `-${drawerWidth}px`, // Slide out from the right
-        transform: "translateX(50%)", // Center the icon horizontally
-        fontSize: "52px",
-        color: 'white',
-    },
-
-    drawerHeader: {
-        marginTop: 100,
-        background: 'black',
-        color: 'white',
-        display: "flex",
-        alignItems: "center",
-        padding: theme.spacing(0, 1),
-        // Add other styles as needed
-    },
-    drawer: {
-        width: drawerWidth,
-        flexShrink: 0,
-        background: 'black',
-    },
-    drawerPaper: {
-        width: drawerWidth,
-        backgroundColor: 'black',
-    },
-
-    drawerContent: {
-        background: 'black',
-    },
-    row: {
-        display: 'flex',
-        flexDirection: 'row'
     },
     gradientBox: {
         width: '80px',
@@ -494,427 +410,273 @@ const useStyles = makeStyles((theme) => ({
         '100%': {
             backgroundColor: 'rgba(0,0,0, 0)',
         },
-    },
-    scrollingText: {
-        width: '100%',
-        height: '50px',
-        overflow: 'hidden',
-        color: "white",
-        fontSize: "16px",
-        fontFamily: "Lilita One",
-        whiteSpace: 'nowrap',
-        animation: '$scroll 20s linear infinite',
-        textAlign: 'center',
-        lineHeight: '50px',
-    },
-    '@keyframes scroll': {
-        '0%': {
-            transform: 'translateX(100%)',
-        },
-        '100%': {
-            transform: 'translateX(-100%)',
-        },
-    },
+    }
 }));
-
-const images = [
-    'factory.png',
-    'factory.png',
-    'factory.png',
-    'factory.png',
-    '',
-];
 
 
 const Staking = () => {
     const classes = useStyles();
     const isMobile = useMediaQuery("(max-width:960px)");
-    const [openDrawer, setOpenDrawer] = useState(false);
+    //const [openDrawer, setOpenDrawer] = useState(false);
     const { context, saveContext } = React.useContext(EtherContext) as EtherContextRepository;
-    const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-    const [selectedButton, setSelectedButton] = useState(null);
-    const [rewards, setRewards] = useState(680); // Numero totale di rewards
-    const [comp, setComp] = useState(1); // Percentuale iniziale sulla slider
-    const [compound, setCompound] = useState((rewards * comp) / 100);
-    const [claim, setClaim] = useState(rewards - compound);
-
-    useEffect(() => {
-        setCompound((rewards * comp) / 100);
-        setClaim(rewards - ((rewards * comp) / 100));
-    }, [comp, rewards]);
+    //const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+    const [selectedButton, setSelectedButton] = useState(0);
+    //const [rewards, setRewards] = useState(680); // Numero totale di rewards
+    const [loading, setIsLoading] = useState(false);
+    const [alertInfo, setAlertInfo] = useState<{ severity: "success" | "error", message: string } | null>(null);
+    const [isStakingModalOpen, setIsStakingModalOpen] = useState(false);
+    const [vesting, setVesting] = useState<number>(0)
 
     const handleClick = (buttonNumber: any) => {
         setSelectedButton(buttonNumber);
     };
 
-    const handleCopyClick = () => {
-        navigator.clipboard.writeText(context.addressSigner ?? '');
-        setIsSnackbarOpen(true);
+    const handleCloseAlert = () => {
+        setAlertInfo(null);
     };
 
-    const handleCloseSnackbar = () => {
-        setIsSnackbarOpen(false);
-    };
 
-    const handleDrawerOpen = () => {
-        setOpenDrawer(true);
-    };
+    async function enter_staking(amount: number) {
+        setIsLoading(true)
+        console.log("trnd to enter:", amount)
+        if (amount) {
+            try {
+                const ctx = await EtherHelper.STAKING_ENTER(amount, vesting, context)
+                saveContext(ctx)
+                if (ctx.toastStatus === 'success') {
+                    setAlertInfo({ severity: 'success', message: ctx.toastDescription ?? '' });
+                    setIsStakingModalOpen(false)
+                } else {
+                    setAlertInfo({ severity: 'error', message: ctx.toastDescription ?? '' });
+                }
+                setIsLoading(false)
+            } catch (e: any) {
+                console.log("Error on enter_staking: ", e)
+                setIsLoading(false)
+            }
+        }
+    }
 
-    const handleDrawerClose = () => {
-        setOpenDrawer(false);
-    };
+    const approveTRND = async (amount: number) => {
+        try {
+            const tx = await EtherHelper.APPROVE_TRND(amount, context)
+                .then((ctx) => {
+                    saveContext({ ...ctx, reload: true })
+                    if (ctx.toastStatus === 'success') {
+                        setAlertInfo({ severity: 'success', message: ctx.toastDescription ?? '' })
+                    }
+                    if (ctx.toastStatus === 'error') {
+                        setAlertInfo({ severity: 'error', message: ctx.toastDescription ?? '' })
+                    }
+                    return { ...ctx }
+                })
+            return tx
+        } catch (e) {
+            console.log("error in approveTRND: ", e)
+            return context
+        }
+    }
 
-    const claimTRND = rewards - compound
+    const handleEnterStaking = async (amount: number) => {
+        setIsStakingModalOpen(false)
+        setIsLoading(true)
+        const approved = await approveTRND(amount)
+        if (approved.toastStatus === 'success') {
+            enter_staking(amount)
+        }
+    }
+
+    const handleStakingModal = (vesting: number) => {
+        setIsStakingModalOpen(true)
+        setVesting(vesting)
+    }
 
     return (
-        <div className={classes.root} style={{ height: isMobile ? '100%' : '100%'  }}>
+        <div className={classes.root} style={{ height: isMobile ? '100%' : '100%' }}>
             <div className={classes.overlay}></div>
-                <Grid container spacing={2} style={{ marginTop: isMobile ? 20 : 50, marginBottom: isMobile ? 0 : 50 }} className={classes.mobile}>
-                    <Grid item xs={12} md={6}>
+            <Collapse in={alertInfo !== null}>
 
-                        <Paper className={classes.paperA} >
-                            <div className={classes.vestingOverlay}>
-                                {!isMobile && (
+                <Paper elevation={3} className={classes.paperAlert}>
+                    <Collapse in={alertInfo !== null}>
+                        <Alert
+                            variant="outlined"
+                            severity={alertInfo?.severity || "info"}
+                            onClose={handleCloseAlert}
+                        >
+                            <AlertTitle>{alertInfo?.severity === "error" ? "Error" : "Success"}</AlertTitle>
+                            {alertInfo?.message}
+                        </Alert>
+                    </Collapse>
+                </Paper>
+            </Collapse>
+            <Collapse in={loading !== false}>
+                <Paper>
+                    <LogoSpinnerAnimation loading={loading} />
+                </Paper>
+            </Collapse>
+
+            <StakingModal
+                open={isStakingModalOpen}
+                onClose={() => setIsStakingModalOpen(false)}
+                balance={context.trndBalance ?? 0}
+                stakeFunction={handleEnterStaking}
+                vesting={vesting}
+            />
+
+            <Grid container spacing={2} style={{ marginTop: isMobile ? 20 : 30, marginBottom: isMobile ? 0 : 50, padding: 15 }} className={classes.mobile}>
+                <Grid item xs={12} md={6}>
+                    {selectedButton === 0 ? (
+                        <StakingDash />
+                    ) : (
+                        <StakingLeft vesting={selectedButton} /> // TODO - ADD CALLBACK
+                    )}
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Paper className={classes.paperA}>
+                        <div className={classes.rewards}>Wallet Balance</div>
+                        <Box style={{ minWidth: 270, height: '100px', display: 'flex', flexDirection: 'row', marginTop: 90, justifyContent: 'center', alignItems: 'center' }}>
+                            <IconButton onClick={() => setSelectedButton(0)}><TrendingUpIcon style={{ color: 'green' }} /></IconButton>
+                            <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>{context.trndBalance?.toLocaleString('en-US')}</Typography>
+                            <img src="Android.png" style={{ height: 16, width: 16, marginTop: 0, marginRight: 5 }} alt="" />
+                            <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 1400 $
+                            </Typography>
+                        </Box>
+                        <Typography variant="body1" className={classes.desc}>
+                            Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
+                        </Typography>
+                        <Grid container style={{ marginTop: 80 }} spacing={3}>
+                            <Grid item xs={6} md={6}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
                                     <div>
-                                        <CurrencyExchangeIcon fontSize="large" className={classes.icon} />
-                                        <div className={classes.rewardsVesting}>24M</div>
-                                    </div>
-                                )}
-                                {isMobile && (
-                                    <div className={classes.rewardsVesting} style={{fontSize: "16px"}}>24M</div>
-                                )}
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                <div className={classes.title}>730D : 23H : 45M Left </div>
-                                {!isMobile && (
-                                <TimerIcon fontSize="large" className={classes.iconTimer} />
-                                )}
-                            </div>
-                            {!isMobile && (
-                                <Paper className={classes.claimable} style={{ top: isMobile ? '10%' : "15%" }}>
-                                    {!isMobile && (
-                                        <Box style={{ height: '100%', display: 'flex', flexDirection: 'column', margin: 0, padding: 1 }}>
-                                            <Typography variant="body1" className={classes.subtitle}>
-                                                {isMobile ? 'Claimable rewards' : 'Rewards to claim'}
-                                            </Typography>
-                                            <Box style={{ minWidth: 270, height: '100%', display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
-                                                <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>{rewards}
-                                                </Typography>
-                                                <img src="Android.png" style={{ height: 16, width: 16, marginTop: 5, marginRight: 5 }} alt="" />
-                                                <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 900 $
-                                                </Typography>
-                                            </Box>
-                                            <Button size="small" variant='outlined' className={classes.pulsButton} style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
-                                                Compound & Collect
-                                            </Button>
-                                        </Box>
-                                    )}
-                                    {/*Progressive bar*/}
-                                    <div>
-                                        <Box style={{ minWidth: 270, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>Compound {comp}%
-                                            </Typography>
-                                            <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| Collect {100 - comp}%
-                                            </Typography>
-                                        </Box>
-                                        <Box style={{ minWidth: 270, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}> {compound} TRND
-                                            </Typography>
-                                            <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {claimTRND.toFixed(1)}  TRND
-                                            </Typography>
-                                        </Box>
-                                        <Typography className={classes.subtitleLil3} style={{ color: 'grey', marginBottom: 10 }} variant="body2">675$ | 225$
-                                        </Typography>
-                                        <PrettoSlider
-                                            aria-label="pretto slider"
-                                            defaultValue={1}
-                                            value={comp}
-                                            min={1}
-                                            step={1}
-                                            max={100}
-                                            onChange={(_, value) => setComp(value as number)}
-                                        />
-                                    </div>
-                                </Paper>
-                            )}
-                            {isMobile && (
-                                <div style={{ display: 'flex', flexDirection: 'column', top: '6%', position: 'absolute' }}>
-                                    <Box style={{ height: '100%', display: 'flex', flexDirection: 'column', margin: 0, padding: 1 }}>
-                                        <Typography variant="body1" className={classes.subtitle}>
-                                            {isMobile ? 'Claimable rewards' : 'Rewards to claim'}
-                                        </Typography>
-                                        <Box style={{ minWidth: 270, height: '100%', display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>{rewards}
-                                            </Typography>
-                                            <img src="Android.png" style={{ height: 16, width: 16, marginTop: 5, marginRight: 5 }} alt="" />
-                                            <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 900 $
-                                            </Typography>
-                                        </Box>
-                                        <Button size="small" variant='outlined' className={classes.pulsButton} style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
-                                            Compound & Collect
+                                        <Button
+                                            className={classes.button}
+                                            style={{
+                                                backgroundImage: selectedButton === 1 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 1 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                            }}
+                                            onClick={() => handleClick(1)}
+                                        >
+                                            3M
                                         </Button>
-                                    </Box>
-                                    <div>
-                                        <Box style={{ minWidth: 270, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>Compound {comp}%
-                                            </Typography>
-                                            <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| Collect {100 - comp}%
-                                            </Typography>
-                                        </Box>
-                                        <Box style={{ minWidth: 270, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}> {compound} TRND
-                                            </Typography>
-                                            <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {claimTRND.toFixed(1)}  TRND
-                                            </Typography>
-                                        </Box>
-                                        <Typography className={classes.subtitleLil3} style={{ color: 'grey', marginBottom: 10 }} variant="body2">675$ | 225$
-                                        </Typography>
-                                        <PrettoSlider
-                                            aria-label="pretto slider"
-                                            defaultValue={1}
-                                            value={comp}
-                                            min={1}
-                                            step={1}
-                                            max={100}
-                                            onChange={(_, value) => setComp(value as number)}
-                                        />
                                     </div>
-                                </div>
-                            )}
-                            <Grid container style={{ marginTop: 270, padding: 20 }} spacing={1}>
-                                <Grid item xs={12} md={6}>
-                                    <Box className={classes.boxGrid} style={{ width: '100%', height: '200px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center' }}>
+                                    <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>%APY </span>
+                                        <span style={{ color: 'lightgrey' }}>2</span>
+                                    </Typography>
+                                    <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>NFT Slots</span>
+                                        <span style={{ color: '#A4FE66' }}>1</span>
+                                    </Typography>
+                                    <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
+                                        <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 1 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 1 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(0)}>
+                                            Deposit
+                                        </Button>
+                                        <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(1)}>
+                                            View
+                                        </Button>
+                                    </div>
+                                </Box>
 
+                            </Grid>
+                            <Grid item xs={6} md={6}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
+                                    <div>
+                                        <Button
+                                            className={classes.button}
+                                            style={{
+                                                backgroundImage: selectedButton === 2 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 2 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                            }}
+                                            onClick={() => handleClick(2)}
+                                        >
+                                            6M
+                                        </Button>
                                         <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>Factories Staked</span>
+                                            <span>%APY </span>
                                             <span style={{ color: 'lightgrey' }}>4</span>
                                         </Typography>
                                         <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>%APY Factories</span>
-                                            <span style={{ color: '#A4FE66' }}>12</span>
-                                        </Typography>
-                                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>%APY Pool</span>
-                                            <span style={{ color: 'lightgrey' }}>10</span>
-                                        </Typography>
-                                        <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>%APY Total</span>
-                                            <span style={{ color: 'lightgrey' }}>22</span>
-                                        </Typography>
-                                    </Box>
-
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <Box className={classes.boxGrid} style={{ width: '100%', height: '200px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center' }}>
-                                        <Typography className={classes.subtitle} variant="body1" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20, marginTop: 0 }}>
-                                            Staked
-                                        </Typography>
-                                        <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>$TRND</span>
-                                            <span style={{ color: 'lightgrey' }}>25000</span>
-                                        </Typography>
-                                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>Worth</span>
-                                            <span style={{ color: '#A4FE66' }}>50,000$</span>
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <Box className={classes.boxGrid} style={{ width: '100%', height: '200px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center' }}>
-                                        <Typography className={classes.subtitle} variant="body1" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20, marginTop: 0 }}>
-                                            Penalty Rewards
-                                        </Typography>
-                                        <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>$TRND</span>
-                                            <span style={{ color: 'lightgrey' }}>12</span>
-                                        </Typography>
-                                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>Worth</span>
-                                            <span style={{ color: '#A4FE66' }}>24$</span>
-                                        </Typography>
-                                        <Button size="small" variant='outlined' style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
-                                            Collect
-                                        </Button>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <Box className={classes.boxGrid} style={{ height: '200px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center' }}>
-                                        <Typography className={classes.subtitle} variant="body1" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20, marginTop: 0 }}>
-                                            Rewards
-                                        </Typography>
-                                        <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>ETH</span>
-                                            <span style={{ color: 'lightgrey' }}>0.2</span>
-                                        </Typography>
-                                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>Worth</span>
-                                            <span style={{ color: '#A4FE66' }}>300$</span>
-                                        </Typography>
-                                        <Button size="small" variant='outlined' style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
-                                            Collect
-                                        </Button>
-                                    </Box>
-                                </Grid>
-                            </Grid>
-                            {/* QUI */}
-                            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center', gap: 20, marginTop: 60 }}>
-                                {images.map((image, index) => (
-                                    <Box key={index} className={classes.gradientBox}>
-                                        <div className={classes.border}></div>
-                                        <img src={image} alt={``} className={classes.image} />
-                                        {image === '' && (
-                                            <AddIcon className={classes.image} fontSize="large" style={{ color: 'white', marginRight: 3 }} />
-                                        )}
-                                    </Box>
-                                ))}
-                            </div>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Paper className={classes.paperA}>
-                            <div className={classes.rewards}>Wallet Balance</div>
-                            <Box style={{ minWidth: 270, height: '100px', display: 'flex', flexDirection: 'row', marginTop: 90, justifyContent: 'center' }}>
-                                <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>700
-                                </Typography>
-                                <img src="Android.png" style={{ height: 16, width: 16, marginTop: 5, marginRight: 5 }} alt="" />
-                                <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 1400 $
-                                </Typography>
-                            </Box>
-                            <Typography variant="body1" className={classes.desc}>
-                                Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
-                            </Typography>
-                            <Grid container style={{ marginTop: 70 }} spacing={3}>
-                                <Grid item xs={6} md={6}>
-                                    <Box className={classes.boxGridInactive} style={{ width: '100%', height: '270px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")' }}>
-                                        <div>
-                                            <Button
-                                                className={classes.button}
-                                                style={{
-                                                    backgroundImage: selectedButton === 1 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Lilita One", border: selectedButton === 1 ? '1px solid rgba(6, 1, 26, 1)' : '', borderRight: 'none', borderTop: 'none'
-                                                }}
-                                                onClick={() => handleClick(1)}
-                                            >
-                                                1M
-                                            </Button>
-                                        </div>
-                                        <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>%APY </span>
-                                            <span style={{ color: 'lightgrey' }}>2</span>
-                                        </Typography>
-                                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <span>NFT Slots</span>
-                                            <span style={{ color: '#A4FE66' }}>1</span>
+                                            <span style={{ color: '#A4FE66' }}>2</span>
                                         </Typography>
-                                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 10 }}>
-                                            <Button size="medium" variant="contained" style={{ fontFamily: "Lilita One", color: selectedButton === 1 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 1 ? '#8B3EFF' : 'transparent' }}>
+                                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
+                                            <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 2 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 2 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(1)}>
                                                 Deposit
                                             </Button>
-                                            <Button size="medium" variant='text' style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF' }}>
+                                            <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(2)}>
                                                 View
                                             </Button>
                                         </div>
-                                    </Box>
-
-                                </Grid>
-                                <Grid item xs={6} md={6}>
-                                    <Box className={classes.boxGridInactive} style={{ width: '100%', height: '270px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")' }}>
-                                        <div>
-                                            <Button
-                                                className={classes.button}
-                                                style={{
-                                                    backgroundImage: selectedButton === 2 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Lilita One", border: selectedButton === 2 ? '1px solid rgba(6, 1, 26, 1)' : '', borderRight: 'none', borderTop: 'none'
-                                                }}
-                                                onClick={() => handleClick(2)}
-                                            >
-                                                6M
-                                            </Button>
-                                            <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>%APY </span>
-                                                <span style={{ color: 'lightgrey' }}>4</span>
-                                            </Typography>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>NFT Slots</span>
-                                                <span style={{ color: '#A4FE66' }}>2</span>
-                                            </Typography>
-                                            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 10 }}>
-                                                <Button size="medium" variant="contained" style={{ fontFamily: "Lilita One", color: selectedButton === 2 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 2 ? '#8B3EFF' : 'transparent' }}>
-                                                    Deposit
-                                                </Button>
-                                                <Button size="medium" variant='text' style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF' }}>
-                                                    View
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={6} md={6}>
-                                    <Box className={classes.boxGridInactive} style={{ width: '100%', height: '270px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")' }}>
-                                        <div>
-                                            <Button
-                                                className={classes.button}
-                                                style={{
-                                                    backgroundImage: selectedButton === 3 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Lilita One", border: selectedButton === 3 ? '1px solid rgba(6, 1, 26, 1)' : '', borderRight: 'none', borderTop: 'none'
-                                                }}
-                                                onClick={() => handleClick(3)}
-                                            >
-                                                12M
-                                            </Button>
-                                            <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>%APY </span>
-                                                <span style={{ color: 'lightgrey' }}>8</span>
-                                            </Typography>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>NFT Slots</span>
-                                                <span style={{ color: '#A4FE66' }}>5</span>
-                                            </Typography>
-                                            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 10 }}>
-                                                <Button size="medium" variant="contained" style={{ fontFamily: "Lilita One", color: selectedButton === 3 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 3 ? '#8B3EFF' : 'transparent' }}>
-                                                    Deposit
-                                                </Button>
-                                                <Button size="medium" variant='text' style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF' }}>
-                                                    View
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={6} md={6}>
-                                    <Box className={classes.boxGridInactive} style={{ width: '100%', height: '270px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")' }}>
-                                        <div>
-                                            <Button
-                                                className={classes.button}
-                                                style={{
-                                                    backgroundImage: selectedButton === 4 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Lilita One", border: selectedButton === 4 ? '1px solid rgba(6, 1, 26, 1)' : '', borderRight: 'none', borderTop: 'none'
-                                                }}
-                                                onClick={() => handleClick(4)}
-                                            >
-                                                24M
-                                            </Button>
-                                            <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>%APY </span>
-                                                <span style={{ color: 'lightgrey' }}>20</span>
-                                            </Typography>
-                                            <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span>NFT Slots</span>
-                                                <span style={{ color: '#A4FE66' }}>10</span>
-                                            </Typography>
-                                            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 10 }}>
-                                                <Button size="medium" variant="contained" style={{ fontFamily: "Lilita One", color: selectedButton === 4 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 4 ? '#8B3EFF' : 'transparent' }}>
-                                                    Deposit
-                                                </Button>
-                                                <Button size="medium" variant='text' style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF' }}>
-                                                    View
-                                                </Button>
-                                            </div>
-                                        </div>
-
-                                    </Box>
-                                </Grid>
+                                    </div>
+                                </Box>
                             </Grid>
-                        </Paper>
-                    </Grid>
-                    {/* MAIN */}
+                            <Grid item xs={6} md={6}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
+                                    <div>
+                                        <Button
+                                            className={classes.button}
+                                            style={{
+                                                backgroundImage: selectedButton === 3 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 3 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                            }}
+                                            onClick={() => handleClick(3)}
+                                        >
+                                            12M
+                                        </Button>
+                                        <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span>%APY </span>
+                                            <span style={{ color: 'lightgrey' }}>8</span>
+                                        </Typography>
+                                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span>NFT Slots</span>
+                                            <span style={{ color: '#A4FE66' }}>5</span>
+                                        </Typography>
+                                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
+                                            <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 3 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 3 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(2)}>
+                                                Deposit
+                                            </Button>
+                                            <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(3)}>
+                                                View
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={6} md={6}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
+                                    <div>
+                                        <Button
+                                            className={classes.button}
+                                            style={{
+                                                backgroundImage: selectedButton === 4 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 4 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                            }}
+                                            onClick={() => handleClick(4)}
+                                        >
+                                            24M
+                                        </Button>
+                                        <Typography className={classes.subtitleLil} variant="body1" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span>%APY </span>
+                                            <span style={{ color: 'lightgrey' }}>20</span>
+                                        </Typography>
+                                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span>NFT Slots</span>
+                                            <span style={{ color: '#A4FE66' }}>10</span>
+                                        </Typography>
+                                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
+                                            <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 4 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 4 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(3)} >
+                                                Deposit
+                                            </Button>
+                                            <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(4)}>
+                                                View
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <div style={{ height: selectedButton > 0 ? 200 : 105 }} ></div>
+                    </Paper>
                 </Grid>
+
+            </Grid>
         </div>
     );
 };
