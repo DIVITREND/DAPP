@@ -3,3 +3,5 @@
 /* eslint-disable */
 export * as diviTrendSol from "./DiviTrend.sol";
 export * as trndFactoriesSol from "./TrndFactories.sol";
+export * as trndRewardsSol from "./TrndRewards.sol";
+export * as interfaces from "./interfaces";

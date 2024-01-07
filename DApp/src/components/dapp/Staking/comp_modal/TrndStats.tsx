@@ -44,7 +44,7 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
         if (!context) return
 
         async function getAlreadyStaked() {
-            const alreadyStaked = await EtherHelper.STAKING_NFT_DATA_NOCTX(selectedVesting , context) as NftStake
+            const alreadyStaked = await EtherHelper.STAKING_NFT_DATA_NOCTX(selectedVesting, context) as NftStake
             return alreadyStaked
         }
 
@@ -100,7 +100,7 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
         { vesting: 2, months: 12 },
         { vesting: 3, months: 24 }
     ]
-    
+
     //{Number(context.trnd_to_claim?.toFixed(2)).toLocaleString('en-US')} <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
 
     useEffect(() => {
@@ -178,109 +178,118 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
                         marginTop: -10,
                         gap: 10
                     }}>
-                        
-                                <div style={{ display: 'flex', justifyContent: 'space-around', gap: 20, padding: 10 }}>
-                                    <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
-                                        <Button
-                                            style={{
-                                                backgroundImage: "url('52.png')",
-                                                color: 'white',
-                                                fontFamily: 'Open Sans',
-                                                border: '2px solid #A4FE66',
-                                                borderRadius: '50%',
-                                                height: isMobile ? 90 : 150,
-                                                width: isMobile ? 90 : 150,
-                                                justifyContent: 'center',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                            }}
-                                        >
-                                            {userDeposit ? Number(Number(userDeposit).toFixed(0)).toLocaleString('en-US') : 0}  <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
-                                        </Button>
-                                        <p />
-                                        $TRND STAKED
-                                    </div>
-                                    <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
-                                        <Button
-                                            style={{
-                                                backgroundImage: "url('52.png')",
-                                                color: 'white',
-                                                fontFamily: 'Open Sans',
-                                                border: '2px solid #A4FE66',
-                                                borderRadius: '50%',
-                                                height: isMobile ? 90 : 150,
-                                                width: isMobile ? 90 : 150,
-                                                justifyContent: 'center',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                            }}
-                                        >
-                                        {Number(claimable.toFixed(2)).toLocaleString('en-US')} <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
-                                        </Button>
-                                        <p />
-                                        $TRND CLAIMABLE
-                                    </div>
-                                    <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
-                                        <Button
-                                            style={{
-                                                backgroundImage: "url('52.png')",
-                                                color: 'white',
-                                                fontFamily: 'Open Sans',
-                                                border: '2px solid #A4FE66',
-                                                borderRadius: '50%',
-                                                height: isMobile ? 90 : 150,
-                                                width: isMobile ? 90 : 150,
-                                                justifyContent: 'center',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                            }}
-                                        >
-                                            {alreadyStakedToFetch.length}
-                                        </Button>
-                                        <p />
-                                        FACT STAKED
-                                    </div>
-                                    <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
-                                        <Button
-                                            style={{
-                                                backgroundImage: "url('52.png')",
-                                                color: 'white',
-                                                fontFamily: 'Open Sans',
-                                                border: '2px solid #A4FE66',
-                                                borderRadius: '50%',
-                                                height: isMobile ? 90 : 150,
-                                                width: isMobile ? 90 : 150,
-                                                justifyContent: 'center',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                            }}
-                                        >
-                                            {totalApyBoost.toFixed(1)}%
-                                        </Button>
-                                        <p />
-                                        APY BOOST
-                                    </div>
-                                    <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
-                                        <Button
-                                            style={{
-                                                backgroundImage: "url('52.png')",
-                                                color: 'white',
-                                                fontFamily: 'Open Sans',
-                                                border: alreadyStakedToFetch.length > 0 || Number(userDeposit) > 0 ? '2px solid #A4FE66' : '2px solid red',
-                                                borderRadius: '50%',
-                                                height: isMobile ? 90 : 150,
-                                                width: isMobile ? 90 : 150,
-                                                justifyContent: 'center',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                            }}
-                                        >
-                                            {alreadyStakedToFetch.length > 0 || Number(userDeposit) > 0 ? 'ON' : 'OFF'}
-                                        </Button>
-                                        <p />
-                                        ETH REV
-                                    </div>
-                                </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-around', gap: 20, padding: 10 }}>
+                            <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
+                                <Button
+                                    style={{
+                                        backgroundImage: "url('52.png')",
+                                        color: 'white',
+                                        fontFamily: 'Open Sans',
+                                        border: '2px solid #A4FE66',
+                                        borderRadius: '50%',
+                                        height: isMobile ? 90 : 150,
+                                        width: isMobile ? 90 : 150,
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    {userDeposit ? Number(Number(userDeposit).toFixed(0)).toLocaleString('en-US') : 0}  <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
+                                </Button>
+                                <p />
+                                $TRND STAKED
+                            </div>
+                            <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
+                                <Button
+                                    style={{
+                                        backgroundImage: "url('52.png')",
+                                        color: 'white',
+                                        fontFamily: 'Open Sans',
+                                        border: '2px solid #A4FE66',
+                                        borderRadius: '50%',
+                                        height: isMobile ? 90 : 150,
+                                        width: isMobile ? 90 : 150,
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    {
+                                        Number(userDeposit) > 0 || alreadyStakedToFetch.length > 0 ? (
+                                            <div>
+                                                {Number(claimable.toFixed(2)).toLocaleString('en-US')}
+                                                <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
+                                            </div>
+                                        ) : (
+                                            0
+                                        )
+                                    }
+                                </Button>
+                                <p />
+                                $TRND CLAIMABLE
+                            </div>
+                            <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
+                                <Button
+                                    style={{
+                                        backgroundImage: "url('52.png')",
+                                        color: 'white',
+                                        fontFamily: 'Open Sans',
+                                        border: '2px solid #A4FE66',
+                                        borderRadius: '50%',
+                                        height: isMobile ? 90 : 150,
+                                        width: isMobile ? 90 : 150,
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    {alreadyStakedToFetch.length}
+                                </Button>
+                                <p />
+                                FACT STAKED
+                            </div>
+                            <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
+                                <Button
+                                    style={{
+                                        backgroundImage: "url('52.png')",
+                                        color: 'white',
+                                        fontFamily: 'Open Sans',
+                                        border: '2px solid #A4FE66',
+                                        borderRadius: '50%',
+                                        height: isMobile ? 90 : 150,
+                                        width: isMobile ? 90 : 150,
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    {totalApyBoost.toFixed(1)}%
+                                </Button>
+                                <p />
+                                APY BOOST
+                            </div>
+                            <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
+                                <Button
+                                    style={{
+                                        backgroundImage: "url('52.png')",
+                                        color: 'white',
+                                        fontFamily: 'Open Sans',
+                                        border: alreadyStakedToFetch.length > 0 || Number(userDeposit) > 0 ? '2px solid #A4FE66' : '2px solid red',
+                                        borderRadius: '50%',
+                                        height: isMobile ? 90 : 150,
+                                        width: isMobile ? 90 : 150,
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    {alreadyStakedToFetch.length > 0 || Number(userDeposit) > 0 ? 'ON' : 'OFF'}
+                                </Button>
+                                <p />
+                                ETH REV
+                            </div>
+                        </div>
                     </div>
                 </Grid>
                 <Grid item xs={12} sm={6} md={12}>

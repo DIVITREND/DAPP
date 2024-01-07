@@ -1,13 +1,5 @@
 import { ethers, upgrades } from "hardhat";
 import { BaseContract, BigNumber, ContractTransaction } from "ethers";
-/*
-import {
-  DiviTrend,
-  DiviTrendRewards,
-  DiviTrendReferral,
-  DiviTrendExchange,
-} from "../../typechain-types";
-*/
 import { Signer } from "ethers";
 
 export default class DeployHelper {
@@ -24,7 +16,7 @@ export default class DeployHelper {
   static getDeployerAddress(chainId: Number): string {
     switch (chainId) {
       case 1:
-        return ""; // Mainnet
+        return ""; // ETH Mainnet
       case 5:
       case 11155111:
         return "0x91fFA8d015C7EF56820383699781526D8D5b4AD3"; //Testnet
@@ -38,10 +30,21 @@ export default class DeployHelper {
       case 1:
         return "0x8Ffe184421FB9855C20c6be9CaF63508FaedF631";
       case 5:
-      case 11155111: // CRO TEST
+      case 11155111: // SEPOLIA
         return "0x8Ffe184421FB9855C20c6be9CaF63508FaedF631";
       default:
-        // Account #0 Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+        return "";
+    }
+  }
+
+  static getStaking(chainId: Number): string {
+    switch (chainId) {
+      case 1:
+        return "";
+      case 5:
+      case 11155111: // SEPOLIA
+        return "0x7a4Feb59993bf601bE00d3de8C510FfA8bd71300";
+      default:
         return "";
     }
   }

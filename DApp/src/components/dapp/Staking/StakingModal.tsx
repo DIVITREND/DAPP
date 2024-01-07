@@ -86,12 +86,13 @@ const useStyles = makeStyles((theme) => ({
 interface StakingModalProps {
     open: boolean;
     onClose: () => void;
+    maxRate: number;
     balance: number;
     vesting: number;
     stakeFunction: (amount: number) => void;
 }
 
-const StakingModal: React.FC<StakingModalProps> = ({ open, onClose, balance, vesting, stakeFunction }) => {
+const StakingModal: React.FC<StakingModalProps> = ({ open, onClose, balance, vesting, stakeFunction, maxRate }) => {
     const classes = useStyles();
     const [selectedAmount, setSelectedAmount] = useState(0);
 
@@ -116,13 +117,16 @@ const StakingModal: React.FC<StakingModalProps> = ({ open, onClose, balance, ves
                 <Typography variant="subtitle1" style={{ marginBottom: '8px', color: 'white' }}>
                     Balance: {balance.toLocaleString("en-US")} $TRND
                 </Typography>
+                <Typography variant="subtitle1" style={{ marginBottom: '8px', color: 'white' }}>
+                    Max Stakable: {maxRate.toLocaleString("en-US")} $TRND
+                </Typography>
                 <PrettoSlider
                     aria-label="pretto slider"
                     defaultValue={1}
                     value={selectedAmount}
                     min={1}
                     step={1}
-                    max={balance}
+                    max={maxRate}
                     onChange={(_: ChangeEvent<{}>, value: number | number[]) => setSelectedAmount(value as number)}
                 />
                 <Button

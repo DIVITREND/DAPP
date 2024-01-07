@@ -684,6 +684,7 @@ const App: React.FC = () => {
             color: 'white',
             fontWeight: 'bold',
             fontSize: 16,
+            zIndex: 3
           }}
         >
           © DIVITREND - 2023 | <a> Powered by Ethercode</a>

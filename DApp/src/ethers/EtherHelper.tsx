@@ -30,6 +30,12 @@ interface IAsset {
     disabled: boolean;
 }
 
+interface IFullData {
+    amount: number;
+    timestamp: number;
+    nDeposit: number
+}
+
 interface INFTBoost {
     fact_boost: number;
     fact_rev: number;
@@ -246,7 +252,7 @@ export default class EtherHelper {
                 .approve(AddressFactory.getStaking(context.chainId ?? 11155111), ethers.utils.parseEther(trnd.toString()));
             console.log(tx_approve)
             context = {
-                ...context, toastId: `APPROVED TRND`, toastStatus: 'success', toastTitle: 'SUCCESSFULLY APPROVED TRND', toastDescription: `Successfully approved ${ethers.utils.formatEther(trnd)} $TRND`,
+                ...context, toastId: `APPROVED TRND`, toastStatus: 'success', toastTitle: 'SUCCESSFULLY APPROVED TRND', toastDescription: `Successfully approved - ${trnd} $TRND`,
             }
         } catch (e) {
             console.log("Error in APPROVE_TRND: ", JSON.stringify(e))
@@ -267,7 +273,7 @@ export default class EtherHelper {
             const amountToWei = ethers.utils.parseEther(tokenAmount.toString())
 
             console.log(amountToWei + " " + stakingOption);
-            const tx = await staking.connect(signer).enterStaking(amountToWei, stakingOption, { gasLimit: 1000000 });
+            const tx = await staking.connect(signer).enterStaking(amountToWei, stakingOption);
             let transactionResult = await tx.wait();
             context = {
                 ...context,
@@ -344,8 +350,8 @@ export default class EtherHelper {
                             return staking.queryFilter(query);
                         })
                 })
-                const query = await staking.filters.EthClaimed(context.addressSigner ?? '')
-                const queryFilter = await staking.queryFilter(query);
+            const query = await staking.filters.EthClaimed(context.addressSigner ?? '')
+            const queryFilter = await staking.queryFilter(query);
 
             return queryFilter
         } catch (e) {
@@ -436,6 +442,47 @@ export default class EtherHelper {
     }
 
     //CALL STAKING
+
+    public static async STAKING_GET_FULL_DATA(context: IEtherContext): Promise<any> {
+        const provider = EtherHelper.initProvider()
+        const signer = provider.getSigner(context.addressSigner)
+        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+
+        const user_full_data = await staking
+            .connect(context.addressSigner ?? '')
+            .getLastStakingCount(context.addressSigner ?? '')
+            .then((data: any[]) => {
+                    return {
+                        amount: Number(ethers.utils.formatEther(data[0])),
+                        timestamp: data[1].toNumber(),
+                        nDeposit: data[2].toNumber()
+                    } 
+            });
+
+        return user_full_data as IFullData
+    }
+
+    public static async STAKING_CALC_RATE_LIMIT(context: IEtherContext): Promise<number> {
+        const fullData = await this.STAKING_GET_FULL_DATA(context) as IFullData
+        const rate_limit = await this.STAKING_MAX_STAKABLE(context)
+
+        const rate = rate_limit - fullData.amount
+
+        return rate
+    }
+
+    public static async STAKING_MAX_STAKABLE(context: IEtherContext): Promise<number> {
+        const provider = EtherHelper.initProvider()
+        const signer = provider.getSigner(context.addressSigner)
+        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+
+        const max_stakable = await staking
+            .connect(context.addressSigner ?? '')
+            .getStakingLimit()
+            .then((n) => Number(ethers.utils.formatEther(n)));
+
+        return max_stakable
+    }
 
     public static async STAKING_REV_SHARE(context: IEtherContext): Promise<IClaimETH[]> {
         const provider = EtherHelper.initProvider()

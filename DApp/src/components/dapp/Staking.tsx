@@ -426,6 +426,7 @@ const Staking = () => {
     const [alertInfo, setAlertInfo] = useState<{ severity: "success" | "error", message: string } | null>(null);
     const [isStakingModalOpen, setIsStakingModalOpen] = useState(false);
     const [vesting, setVesting] = useState<number>(0)
+    const [rate_limit, setRateLimit] = useState(0)
 
     const handleClick = (buttonNumber: any) => {
         setSelectedButton(buttonNumber);
@@ -434,7 +435,6 @@ const Staking = () => {
     const handleCloseAlert = () => {
         setAlertInfo(null);
     };
-
 
     async function enter_staking(amount: number) {
         setIsLoading(true)
@@ -480,16 +480,32 @@ const Staking = () => {
     const handleEnterStaking = async (amount: number) => {
         setIsStakingModalOpen(false)
         setIsLoading(true)
-        const approved = await approveTRND(amount)
-        if (approved.toastStatus === 'success') {
-            enter_staking(amount)
-        }
+        await approveTRND(amount).then((ctx) => {
+            if (ctx.toastStatus === 'success') {
+                setTimeout(() => {
+                    enter_staking(amount)
+                }, 5000)
+            }
+        })
     }
 
     const handleStakingModal = (vesting: number) => {
         setIsStakingModalOpen(true)
         setVesting(vesting)
     }
+
+    useEffect(() => {
+        if (!context) return
+
+        async function getRateLimitStakable() {
+            await EtherHelper.STAKING_CALC_RATE_LIMIT(context)
+            .then((data) => {
+                console.log("getRateLimitStakable.data: ", data)
+                setRateLimit(data);})
+        }
+
+        getRateLimitStakable()
+    }, [context])
 
     return (
         <div className={classes.root} style={{ height: isMobile ? '100%' : '100%' }}>
@@ -519,6 +535,7 @@ const Staking = () => {
                 open={isStakingModalOpen}
                 onClose={() => setIsStakingModalOpen(false)}
                 balance={context.trndBalance ?? 0}
+                maxRate={rate_limit}
                 stakeFunction={handleEnterStaking}
                 vesting={vesting}
             />

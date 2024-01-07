@@ -587,8 +587,8 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
                             <span style={{ color: '#A4FE66' }}>{`${(APY / 100)}%` ?? <Skeleton />}</span>
                         </Typography>
                         {userDeposit && Number(userDeposit) > 0 ? (
-                            <div style={{ width: '100%', display: 'flex', flexDirection: 'row', padding: 5, gap: 10, marginTop: 10, justifyContent: 'center', alignItems: 'center' }}>
-                            <Button onClick={() => handleExitStaking()} size="small" variant='contained' style={{ fontFamily: "Open Sans", color: 'black', border: '1px solid black', minWidth: 100, background: '#A4FE66', textShadow: '1px 1px 2px white' , marginBottom: 10}}>
+                        <div style={{ width: '100%', alignItems: 'center', position: 'absolute', bottom: 50, left: '0%' }}>
+                        <Button onClick={() => handleExitStaking()} size="small" variant='contained' style={{ fontFamily: "Open Sans", color: 'black', border: '1px solid black', minWidth: 100, background: '#A4FE66', textShadow: '1px 1px 2px white' , marginBottom: 0}}>
                                 EXIT
                             </Button>
                         </div>
