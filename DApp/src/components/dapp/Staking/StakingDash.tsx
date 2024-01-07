@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
         backgroundPosition: 'center',
         backgroundClip: 'padding-box',
         zIndex: 1,
-        border: '10px solid black',
-        borderRadius: 20
+        border: '5px solid black',
+        borderRadius: 25
     },
     bottomRectangle: {
         position: 'absolute',
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'black',
         zIndex: 0,
         border: '10px solid black',
-        borderRadius: 20
+        borderRadius: 25
     },
     text: {
         color: '#8500FF',

@@ -34,15 +34,17 @@ import { Alert, AlertTitle } from "@mui/material";
 import LogoSpinnerAnimation from '../LogoSpinnerAnimation';
 
 const PrettoSlider = styled(Slider)({
-    color: '#00A3FF',
+    color: '#52af77',
     height: 8,
-    width: '70%',
+    width: '80%',
+    position: 'relative',
     '& .MuiSlider-track': {
         border: 'none',
     },
     '& .MuiSlider-thumb': {
         height: 30,
         width: 30,
+        marginTop: -12,
         backgroundImage: "url('Android.png')",
         backgroundOrigin: 'border-box',
         backgroundSize: '100% 100%',
@@ -56,12 +58,20 @@ const PrettoSlider = styled(Slider)({
     },
     '& .MuiSlider-valueLabel': {
         lineHeight: 1.2,
-        fontSize: 12,
+        fontSize: 8,
         background: 'unset',
         padding: 0,
         width: 22,
         height: 22,
         borderRadius: '50% 50% 50% 0',
+        backgroundColor: '#52af77',
+        transformOrigin: 'bottom left',
+        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+        '&:before': { display: 'none' },
+        '&.MuiSlider-valueLabelOpen': {
+        },
+        '& > *': {
+        },
     },
 });
 
@@ -98,13 +108,14 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     paperA: {
+        position: "relative",
+        top: '13%',
         minHeight: 400,
         maxWidth: 'auto',
         background: "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(18, 17, 17, 0.7))",
         padding: theme.spacing(2),
         border: '2px solid #8A00F6',
         textAlign: "center",
-        position: "relative",
         justifyContent: 'center',
         display: 'flex',
         backgroundClip: 'padding-box',
@@ -152,34 +163,31 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(0),
         marginTop: theme.spacing(10),
         color: 'white',
-        background: '#00A3FF',
-        border: '2px solid #00A3FF',
+        background: '#8B3EFF',
+        border: '2px solid #8B3EFF',
         '&:hover': {
-            background: '#0074ad',
-            color: '#00A3FF'
+            background: '#8B3EFF',
+            color: 'black'
         },
     },
     balanceIn: {
         color: "lightgray",
         textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
-        fontFamily: "Lilita One",
         fontSize: '16px',
         fontStyle: 'italic'
     },
     balanceOut: {
         color: "white",
         textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
-        fontFamily: "Lilita One",
         fontSize: '16px'
 
     },
     customTextField: {
         minWidth: 200,
         borderRadius: 8,
-        color: '#8A00F6',
+        color: '#8B3EFF',
         '& input': {
             color: 'white', // Testo bianco
-            fontFamily: "Lilita One",
         },
     },
     paperAlert: {
@@ -232,10 +240,10 @@ const SwapSection = () => {
     const { context, saveContext } = React.useContext(EtherContext) as EtherContextRepository;
 
     const natives: IAsset[] = [
-        { name: "Ethereum", symbol: "ETH", logo: 'eth.png', disabled: false },
+        { name: "Ethereum", symbol: "ETH", logo: '74.png', disabled: false },
     ];
     const tokens: IAsset[] = [
-        { name: "DiviTrend", symbol: "TRND", address: AddressFactory.getTokenAddress(context.chainId ?? 11155111), logo: 'Android.png', disabled: false },
+        { name: "DiviTrend", symbol: "TRND", address: AddressFactory.getTokenAddress(context.chainId ?? 11155111), logo: '78.png', disabled: false },
     ];
 
     const [balanceIn, setBalanceIn] = useState("");
@@ -409,7 +417,7 @@ const SwapSection = () => {
                     </Alert>
                 </Paper>
             )}
-            <Grid container spacing={2} style={{ marginBottom: isMobile ? 150 : 150, maxWidth: 540 }}>
+            <Grid container spacing={2} style={{ marginBottom: 100, maxWidth: 540 }}>
                 <Grid item xs={12} md={12} style={{ margin: 10, padding: 10 }}>
                     <Paper className={classes.paperA}>
                         <Box
@@ -434,14 +442,18 @@ const SwapSection = () => {
                                         {loading && <CircularProgress />}
                                         {!loading && (
                                             <TextField
-                                                label={<div style={{ fontFamily: "Lilita One", fontSize: '18px', color: ' #8A00F6' }}>From</div>}
-                                                type="number"
+                                                label={<div style={{ fontSize: '18px', color: '#8B3EFF' }}>From</div>}
+                                                type="text" // Change type to text
                                                 className={classes.customTextField}
-                                                inputProps={assetIn.name === 'DiviTrend' ? { max: context.balance } : { max: balanceOut }}
-                                                value={amount ?? 0}
+                                                inputProps={{
+                                                    pattern: '^[0-9,.]*$', // Set a pattern to allow only numbers, commas, and dots
+                                                    max: assetIn.name === 'DiviTrend' ? context.balance : balanceOut,
+                                                }}
+                                                value={amount?.toLocaleString('en-US') ?? ''}
                                                 onChange={(e) => {
-                                                    const value = parseFloat(e.target.value);
-                                                    setAmountIn(isNaN(value) ? undefined : value);
+                                                    const inputValue = e.target.value;
+                                                    const filteredValue = inputValue.match(/^[0-9,.]*$/); // Filter the input value
+                                                    setAmountIn(filteredValue ? Number(filteredValue[0]) : undefined); // Set the filtered value in state
                                                 }}
                                                 focused
                                                 InputLabelProps={{
@@ -495,7 +507,6 @@ const SwapSection = () => {
                                     <PrettoSlider
                                         aria-label="pretto-slider"
                                         defaultValue={sliderValue}
-                                        valueLabelDisplay="auto"
                                         step={assetIn.name !== 'Ethereum' ? (balanceNative / 100) : (OutPutBalance / 100000)}
                                         min={0}
                                         max={assetIn.name !== 'Ethereum' ? balanceNative : OutPutBalance}
@@ -544,7 +555,7 @@ const SwapSection = () => {
                                         {loading && <CircularProgress />}
                                         {!loading && (
                                             <TextField
-                                                label={<div style={{ fontFamily: "Lilita One", fontSize: '18px', color: '#8A00F6' }}>To</div>}
+                                                label={<div style={{ fontSize: '18px', color: '#8B3EFF' }}>To</div>}
                                                 type="number"
                                                 className={classes.customTextField}
                                                 value={amountOut?.toLocaleString(undefined, {

@@ -63,7 +63,8 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     minHeight: 170,
-    background: 'linear-gradient(305deg, rgba(0,0,0,1) 56%, rgba(35,34,36,1) 96%);',
+    background: "url('57.png') no-repeat center",
+    backgroundPosition: 'center',
     padding: theme.spacing(2),
     border: "2px solid #8A00F6",
     borderRadius: 30,
@@ -79,7 +80,25 @@ const useStyles = makeStyles((theme) => ({
       marginTop: 20
     },
   },
-
+  paperEnd: {
+    minHeight: 170,
+    backgroundPosition: 'center',
+    background: 'rgba(0,0,0 ,0)',
+    padding: theme.spacing(2),
+    border: "2px solid #8A00F6",
+    borderRadius: 30,
+    boxShadow: "0 3px 15px 2px linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(35,22,88,1) 35%)",
+    textAlign: "center",
+    position: "relative", // Aggiunto per posizionare l'icona all'interno
+    "@media screen and (max-width: 768px)": {
+      minHeight: '170px',
+    },
+    "@media screen and (max-width: 667px)": {
+      minHeight: '170px',
+      width: '100%',
+      marginTop: 20
+    },
+  },
   title: {
     position: "absolute",
     top: "10%",
@@ -389,7 +408,7 @@ const Welcome = () => {
               </Paper>
             </Grid>
             <Grid item xs={12}>
-              <Paper className={classes.paper}>
+              <Paper className={classes.paperEnd}>
                 {isMobile && (
                   <img src={"11.png"} alt="" className={classes.icon} />
                 )}
@@ -526,7 +545,7 @@ const Welcome = () => {
               </Paper>
             </Grid>
             <Grid item xs={12}>
-              <Paper className={classes.paper}>
+              <Paper className={classes.paperEnd}>
                 {isMobile && (
                   <img src={"11.png"} alt="" className={classes.icon} />
                 )}

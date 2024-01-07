@@ -25,7 +25,7 @@ import CardDetailsComponent from "./Staking/comp_modal/NftCard";
 const drawerWidth = 240;
 
 const PrettoSlider = styled(Slider)({
-    color: '#52af77',
+    color: '#A4FE66',
     height: 8,
     width: '70%',
     '& .MuiSlider-track': {
@@ -71,9 +71,9 @@ const useStyles = makeStyles((theme) => ({
     root: {
         position: "relative",
         width: "100%",
-        height: "140vh",
+        height: "100vh",
         overflow: "auto",
-        background: 'linear-gradient(135deg, #000000, #0B0230)',
+        background: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(11,2,48,1) 35%)',
 
         marginLeft: 0,
         marginRight: 0,
@@ -164,8 +164,8 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center'
     },
     paperA: {
-        minHeight: 900,
-        background: "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(18, 17, 17, 0.7))",
+        minHeight: '100%',
+        background: 'rgba(0,0,0 ,0)',
         padding: theme.spacing(2),
         border: '2px solid #8500FF',
         textAlign: "center",
@@ -296,8 +296,6 @@ const useStyles = makeStyles((theme) => ({
         //borderBottom: 'none',
         //borderTop: 'none',
         textAlign: "center",
-        height: '450px',
-        width: '80%',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -310,12 +308,9 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         background: "url('54.png') no-repeat center",
         backgroundOrigin: 'border-box',
-        backgroundSize: '100% 146%',
         backgroundPosition: 'center',
         padding: theme.spacing(2),
-        //border: "2px solid #8500FF",
-        //borderBottom: 'none',
-        //borderTop: 'none',
+        border: "2px solid #8A00F6",
         textAlign: "center",
         height: '100px',
         width: '70%',
@@ -343,13 +338,14 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        height: '800px',
+        minHeight: '70vh',
+        maxHeight: '80%',
         overflowY: 'auto',
         scrollbarWidth: 'thin',
         gap: 20,
         scrollbarColor: '#8B3EFF transparent',  // added scroll bar (Chrome, Edge)
         "@media screen and (max-width: 768px)": {
-            minHeight: 100,
+            minHeight: '100%',
         },
     },
     progressiveBar: {
@@ -417,7 +413,7 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         top: "25px",
         left: "68%",
-        color: " rgba(139, 62, 255, 1)",
+        color: " #A4FE66",
         "@media screen and (max-width: 768px)": {
         },
     },
@@ -780,7 +776,7 @@ const Launchpad = () => {
                     <LogoSpinnerAnimation loading={loading} />
                 </Paper>
             </Collapse>
-            <Container maxWidth="xl" style={{ marginTop: isMobile ? 100 : -50 }}>
+            <Container maxWidth="xl" style={{ marginTop: isMobile ? 100 : -10 }}>
                 <Grid container spacing={2} style={{ marginTop: isMobile ? 200 : 0 }} className={classes.mobile}>
                     <Grid item xs={12} md={6}>
 
@@ -789,29 +785,30 @@ const Launchpad = () => {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                 <div className={classes.title}>LIVE </div>
-                                <TimerIcon fontSize="large" className={classes.iconTimer} />
                             </div>
-                            <div className={classes.claimable} style={{ height: isMobile ? 300 : '450px', marginTop: isMobile ? 100 : 'auto' }}>
+                            <div className={classes.claimable} style={{ width: isMobile ? 300 : '280px', height: isMobile ? 300 : '280px', marginTop: isMobile ? 100 : 'auto' }}>
                                 <img
                                     src="NFT1.jpeg"
                                     alt=""
                                     className={classes.imageFactory}
                                 />
                             </div>
-                            <Grid container style={{ marginTop: 550, padding: 0, justifyContent: 'center' }} spacing={1}>
+                            <Grid container style={{ marginTop: 320, padding: 20, justifyContent: 'center' }} spacing={1}>
+                                
+                                <Grid item xs={12} md={12} style={{ marginBottom: 10 }}>
+                                    <div style={{ display: "flex", flexDirection: 'row', marginTop: 0 }}>
+                                        <LinearProgress style={{ marginTop: 10, display: "flex", width: '100%', flexDirection: 'row' }} className={classes.greenBar} color="secondary" variant="determinate" value={(alreadyMinted / 299) * 100} /> <Typography style={{ marginLeft: 10 }} className={classes.subtitleLil}>{((alreadyMinted / 299) * 100).toFixed(2)}%</Typography>
+                                    </div>
+                                </Grid>
+
                                 <div>
-                                    <Box style={{ minWidth: 270, height: '100%', display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
+                                    <Box style={{ minWidth: '100%', height: '100%', display: 'flex', flexDirection: 'row', marginTop: 0, justifyContent: 'center' }}>
                                         <Typography variant="body1" className={classes.subtitleLeft} style={{ marginRight: 5 }}>{alreadyMinted}
                                         </Typography>
                                         <Typography className={classes.subtitleLeft} style={{ color: 'grey' }} variant="body2">/ 299
                                         </Typography>
                                     </Box>
                                 </div>
-                                <Grid item xs={12} md={12} style={{ marginBottom: 10, marginTop: 20 }}>
-                                    <div style={{ display: "flex", flexDirection: 'row' }}>
-                                        <LinearProgress style={{ marginTop: 10, display: "flex", width: '100%', flexDirection: 'row' }} className={classes.greenBar} color="secondary" variant="determinate" value={(alreadyMinted / 299) * 100} /> <Typography style={{ marginLeft: 10 }} className={classes.subtitleLil}>{((alreadyMinted / 299) * 100).toFixed(2)}%</Typography>
-                                    </div>
-                                </Grid>
                                 <Grid item md={12} xs={12} style={{ marginTop: 10, justifyContent: 'center', display: 'flex', marginBottom: 20 }} >
                                     <PrettoSlider
                                         aria-label="pretto slider"
@@ -871,8 +868,7 @@ const Launchpad = () => {
                                 <Grid item xs={12} md={12}>
                                     <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 0 }}>MY TDF: ({context.FactoriesTokenIds?.length})</Typography>
                                     <Paper className={classes.myTDF}>
-                                        <Divider style={{ border: '1px solid #f57c00', borderLeft: 'none', borderRight: 'none', borderBottom: 'none' }} light={true}></Divider>
-                                        <Box style={{ marginTop: 30, marginBottom: 30 }}>
+                                        <Box style={{ marginTop: 20, marginBottom: 20 }}>
                                             <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                 {
                                                     factoryIds &&

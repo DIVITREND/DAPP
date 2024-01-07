@@ -48,7 +48,7 @@ const TokenSelector: React.FC<{ assets: IAsset[]; disabled: boolean; onChange: D
     <>
       <Button
         size="large"
-        style={{ width: 120, color: 'white', fontFamily: "Lilita One", border: '2px solid #8A00F6', background: 'rgba(0,0,0, 0.5)', borderRadius: "20px" }}
+        style={{ width: 120, color: 'white',  border: '2px solid #8B3EFF', background: 'rgba(0,0,0, 0.5)', borderRadius: "20px" }}
         variant="outlined"
         disabled={disabled}
         onClick={handleOpen}
@@ -77,7 +77,7 @@ const TokenSelector: React.FC<{ assets: IAsset[]; disabled: boolean; onChange: D
                   startIcon={<img src={asset.logo} alt={asset.name} width={30} />}
                   style={{ justifyContent: 'flex-start', width: '100%', marginTop: 10 }}
                 >
-                  <Typography variant="body1" style={{fontFamily: "Lilita One",}}>
+                  <Typography variant="body1" style={{}}>
                     {`${asset.name} - ${asset.symbol}`}
                   </Typography>
                 </Button>

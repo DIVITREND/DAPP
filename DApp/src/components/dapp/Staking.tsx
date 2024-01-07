@@ -159,10 +159,10 @@ const useStyles = makeStyles((theme) => ({
     boxGridInactive: {
         padding: theme.spacing(2),
         backgroundOrigin: 'border-box',
-        backgroundSize: '130% 120%',
+        background: "url('57.png') no-repeat center",
         backgroundPosition: 'center',
         borderRadius: 30,
-        borderBottom: 'none',
+        border: '2px solid #8500FF',
         boxShadow: "0 -10px 7px rgba(255, 255, 255, 0)",
         textAlign: "center",
         "@media screen and (max-width: 768px)": {
@@ -561,9 +561,9 @@ const Staking = () => {
                         <Typography variant="body1" className={classes.desc}>
                             Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
                         </Typography>
-                        <Grid container style={{ marginTop: 80 }} spacing={3}>
+                        <Grid container style={{ marginTop: 100 }} spacing={2}>
                             <Grid item xs={6} md={6}>
-                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
                                             className={classes.button}
@@ -595,7 +595,7 @@ const Staking = () => {
 
                             </Grid>
                             <Grid item xs={6} md={6}>
-                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
                                             className={classes.button}
@@ -626,7 +626,7 @@ const Staking = () => {
                                 </Box>
                             </Grid>
                             <Grid item xs={6} md={6}>
-                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
                                             className={classes.button}
@@ -657,7 +657,7 @@ const Staking = () => {
                                 </Box>
                             </Grid>
                             <Grid item xs={6} md={6}>
-                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '280px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', backgroundImage: 'url("58.png")', padding: 40 }}>
+                                <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
                                             className={classes.button}
@@ -689,7 +689,7 @@ const Staking = () => {
                                 </Box>
                             </Grid>
                         </Grid>
-                        <div style={{ height: selectedButton > 0 ? 200 : 105 }} ></div>
+                        <div style={{ height: selectedButton > 0 ? 260 : 160 }} ></div>
                     </Paper>
                 </Grid>
 

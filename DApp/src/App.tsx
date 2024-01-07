@@ -305,11 +305,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Swap', paths: ['/swap'], element: <SwapSection /> },
   { name: 'Launchpad', paths: ['/launchpad'], element: <Launchpad /> },
   { name: 'Staking', paths: ['/staking'], element: <Staking /> },
-  {
-    name: 'Wallet',
-    paths: ['/wallet'],
-    element: <WalletUser />,
-  },
+
 ];
 
 const App: React.FC = () => {
