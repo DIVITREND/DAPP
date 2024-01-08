@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
             zIndex: -1,
         },
         "@media screen and (max-width: 768px)": {
-            height: "140vh",
+            height: "100vh",
         },
     },
     paperA: {
@@ -155,7 +155,7 @@ const useStyles = makeStyles((theme) => ({
         borderBottom: `1px solid ${theme.palette.divider}`,
         flexGrow: 1,
         marginRight: theme.spacing(2),
-        marginLeft: theme.spacing(2),
+        marginLeft: theme.spacing(0),
         color: 'white'
     },
     swapButton: {
@@ -417,7 +417,7 @@ const SwapSection = () => {
                     </Alert>
                 </Paper>
             )}
-            <Grid container spacing={2} style={{ marginBottom: 100, maxWidth: 540 }}>
+            <Grid container style={{ marginBottom: isMobile ? 200 : 100, maxWidth: 540 }}>
                 <Grid item xs={12} md={12} style={{ margin: 10, padding: 10 }}>
                     <Paper className={classes.paperA}>
                         <Box
@@ -477,17 +477,17 @@ const SwapSection = () => {
                                         />
                                     )}
                                 </Grid>
-                                <div style={{ display: 'flex', position: 'absolute', left: "15%", top: '22%' }}>
+                                <div style={{ display: 'flex', position: 'absolute', left: "15%", top: '25%' }}>
                                     <Typography variant="caption" className={classes.balanceIn}>
                                         {assetIn.name !== 'Ethereum' ? '$' + ((amount ?? 0) * (wethPrice ?? 0)).toFixed(1) : '$' + balanceConvertToken}
                                     </Typography>
                                 </div>
-                                <div style={{ display: 'flex', position: 'absolute', flexDirection: 'row', right: "20%", top: isMobile ? '25%' : '22%' }}>
+                                <div style={{ display: 'flex', position: 'absolute', flexDirection: 'row', right: "20%", top: isMobile ? '30%' : '22%' }}>
                                     <AccountBalanceWalletIcon fontSize="small" style={{ color: 'white', marginTop: 1, marginRight: 10 }} />
                                     <Typography variant="caption" className={classes.balanceIn}>
                                         {assetIn.name === 'DiviTrend' ? (context.balance?.toLocaleString(undefined, {
                                             maximumFractionDigits: 2,
-                                        }) + (context.balance ? '♦' : '')) : (balanceOut)
+                                        }) + (context.balance ? 'ETH' : '')) : (balanceOut)
                                         }
                                     </Typography>
                                 </div>
@@ -496,11 +496,11 @@ const SwapSection = () => {
                                     md={12}
                                     xs={12}
                                     style={{
-                                        marginTop: 20,
+                                        marginTop: isMobile ? 100 : 20,
                                         justifyContent: 'center',
                                         display: 'flex',
                                         gap: 10,
-                                        padding: 10,
+                                        padding: 5,
                                         width: '100%',
                                     }}
                                 >
@@ -526,26 +526,25 @@ const SwapSection = () => {
                                         }}
                                     />
                                 </Grid>
-                                <Box width={'100%'}>
                                     <Grid
                                         container
                                         style={{
                                             display: 'flex',
                                             flexDirection: 'row',
                                             justifyContent: 'center',
+                                            alignItems: 'center'
                                         }}
                                         className={classes.divider}
                                     >
                                         <ShuffleTokenSelectors onTokenSwap={handleTokenSwap} />
                                     </Grid>
-                                </Box>
                                 <Grid
                                     container
                                     style={{
                                         flexDirection: 'row',
                                         justifyContent: 'center',
                                         width: '100%',
-                                        marginTop: 50,
+                                        marginTop: isMobile ? 20 : 50,
                                         gap: 10,
                                         padding: 10,
                                     }}
@@ -584,7 +583,7 @@ const SwapSection = () => {
                                         />
                                     )}
                                 </Grid>
-                                <div style={{ display: 'flex', position: 'absolute', left: "15%", bottom: '25%', flexDirection: 'row' }}>
+                                <div style={{ display: 'flex', position: 'absolute', left: "15%", bottom: isMobile ? '20%' :'25%', flexDirection: 'row' }}>
                                     <Tooltip
                                         title="Estimated quote, taxes not included"
                                         placement="top"
@@ -596,7 +595,7 @@ const SwapSection = () => {
                                         -
                                     </Typography>
                                 </div>
-                                <div style={{ display: 'flex', position: 'absolute', flexDirection: 'row', right: "20%", bottom: isMobile ? '20%' : '25%' }}>
+                                <div style={{ display: 'flex', position: 'absolute', flexDirection: 'row', right: "20%", bottom: isMobile ? '15%' : '25%' }}>
                                     <AccountBalanceWalletIcon fontSize="small" style={{ color: 'white', marginTop: 1, marginRight: 10 }} />
                                     <Typography variant="caption" className={classes.balanceIn}>
                                         {assetIn.name !== 'DiviTrend' ? (context.balance?.toLocaleString(undefined, {

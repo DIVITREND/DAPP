@@ -74,7 +74,6 @@ const useStyles = makeStyles((theme) => ({
         height: "100vh",
         overflow: "auto",
         background: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(11,2,48,1) 35%)',
-
         marginLeft: 0,
         marginRight: 0,
         alignItems: "center",
@@ -339,7 +338,7 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'row',
         justifyContent: 'center',
         minHeight: '70vh',
-        maxHeight: '80%',
+        maxHeight: '70vh',
         overflowY: 'auto',
         scrollbarWidth: 'thin',
         gap: 20,
@@ -776,8 +775,8 @@ const Launchpad = () => {
                     <LogoSpinnerAnimation loading={loading} />
                 </Paper>
             </Collapse>
-            <Container maxWidth="xl" style={{ marginTop: isMobile ? 100 : -10 }}>
-                <Grid container spacing={2} style={{ marginTop: isMobile ? 200 : 0 }} className={classes.mobile}>
+            <Container maxWidth="xl" style={{ marginTop: isMobile ? 20 : -10, marginBottom: isMobile ? 100 : 0 }}>
+                <Grid container spacing={2} style={{ marginTop: isMobile ? 10 : 0 }} className={classes.mobile}>
                     <Grid item xs={12} md={6}>
 
                         <Paper className={classes.paperA} style={{ marginTop: isMobile ? '400px' : '0px' }} >
@@ -786,7 +785,7 @@ const Launchpad = () => {
                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                 <div className={classes.title}>LIVE </div>
                             </div>
-                            <div className={classes.claimable} style={{ width: isMobile ? 300 : '280px', height: isMobile ? 300 : '280px', marginTop: isMobile ? 100 : 'auto' }}>
+                            <div className={classes.claimable} style={{ width: isMobile ? 300 : '280px', height: isMobile ? 300 : '280px', marginTop: isMobile ? -20 : 'auto' }}>
                                 <img
                                     src="NFT1.jpeg"
                                     alt=""
@@ -817,7 +816,7 @@ const Launchpad = () => {
                                         value={comp}
                                         min={1}
                                         step={1}
-                                        max={5}
+                                        max={10}
                                         onChange={(_, value) => setComp(value as number)}
                                     />
                                 </Grid>

@@ -105,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
     left: "50%",
     transform: "translateX(-50%)",
     fontWeight: 900,
-    color: "#52af77",
+    color: "#A4FE66",
     textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
     fontFamily: "Open Sans",
     fontSize: '24px'
@@ -119,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
     textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
     fontFamily: "Open Sans",
     fontWeight: 400,
-    fontSize: '18px'
+    fontSize: '14px'
   },
   subtitle: {
     position: "absolute",
@@ -286,10 +286,6 @@ const Welcome = () => {
           <Grid container spacing={5} className={classes.mobile}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"10.png"} alt="" className={classes.icon} />
-                )}
-                <img src={"10.png"} alt="" className={classes.icon} />
                 <div className={classes.title}>
                   $TRND:
                 </div>
@@ -303,7 +299,7 @@ const Welcome = () => {
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
-                            {price.toFixed(7)} ♦
+                            {price.toFixed(7)}
                           </div>
                         );
                       })()}
@@ -335,12 +331,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   LP $TRND:
                 </div>
@@ -361,12 +352,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   MARKET CAP:
                 </div>
@@ -393,12 +379,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   BURNED:
                 </div>
@@ -427,12 +408,7 @@ const Welcome = () => {
           <Grid spacing={5} className={classes.mobile} style={{ height: '100%' }}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"10.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"10.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   $TRND:
                 </div>
@@ -446,7 +422,7 @@ const Welcome = () => {
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
-                            {price.toFixed(7)} ♦
+                            {price.toFixed(7)}
                           </div>
                         );
                       })()}
@@ -475,12 +451,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   LP $TRND:
                 </div>
@@ -501,12 +472,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   MARKET CAP:
                 </div>
@@ -530,12 +496,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   BURNED:
                 </div>
@@ -546,9 +507,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12}>
               <Paper className={classes.paperEnd}>
-                {isMobile && (
-                  <img src={"11.png"} alt="" className={classes.icon} />
-                )}
+                
                 <div className={classes.title}>
                   CAPITAL:
                 </div>

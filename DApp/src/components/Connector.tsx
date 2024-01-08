@@ -44,8 +44,11 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         };
     }, [context.connected]);
 
+    const ethlogo = '73.png';
+    const divilogo = '77.png';
+
     useEffect(() => {
-        if (context.balance) setBalance(`${context.balance.toFixed(2)} ${context.chainSymbol}`);
+        if (context.balance) setBalance(`${context.balance.toFixed(2)}`);
     }, [context.balance, context.chainSymbol]);
 
     function onError(...args: any[]) {
@@ -83,7 +86,14 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
         <Flex alignItems={"center"}>
             {children}
-            {balance ? <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ marginRight: 15 }}>{balance}</Text> : " "}
+            {balance ? (
+                <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ display: "flex", alignItems: "center", marginRight: 15 }}>
+                    <span style={{ marginBottom: -2 }}>0.00037</span>
+                    <img src={divilogo} style={{ width: 18, height: 18, marginLeft: 5 }} alt="" />
+                </Text>
+            ) : (
+                " "
+            )} {balance ? <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ marginRight: 15 }}>{balance} <img src={ethlogo} style={{ width: 13, height: 13 }} alt="" /></Text> : " "}
             <Button
                 variant="contained"
                 disableElevation
@@ -94,7 +104,7 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 disabled={loading}
             >
                 {loading ? (
-                    <CircularProgress size={20} style={{color: '#8500FF'}} /> // Replaced with CircularProgress
+                    <CircularProgress size={20} style={{ color: '#8500FF' }} /> // Replaced with CircularProgress
                 ) : (
                     <Text>{context.addressSigner !== undefined ? `${context.addressSigner.substring(0, 7)}...` : "CONNECT"}</Text>
                 )}
