@@ -26,6 +26,7 @@ import ModalStaking from "./ModalStaking";
 import { NftStake } from "../../../entities/IStaking";
 import { useTokenAttributeCalculator } from "./comp_modal/TokenAttributeCalculator";
 import { Link } from "react-router-dom";
+import ModalExit from "./ModalExit";
 
 interface StakingLeftProps {
     vesting: number;
@@ -103,18 +104,30 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
         }
     );
     const [openModal, setOpenModal] = useState(false);
+    const [openModalExit, setOpenModalExit] = useState(false);
     const [externalButton, setExternalButton] = useState(0);
     const [alreadyStakedToFetch, setAlreadyStaked] = useState([] as number[])
+    const [malusPerc, setMalusPerc] = useState(0)
 
     const handleButtonClick = (n: number) => {
         setOpenModal(true);
         setExternalButton(n);
     };
 
+    const handleModalExit = () => {
+        setOpenModalExit(true);
+    };
+
     const handleCloseModal = () => {
         setOpenModal(false);
         setExternalButton(0);
     };
+
+    const handleCloseModalExit = () => {
+        setOpenModalExit(false);
+        setExternalButton(0);
+    };
+
     const [wethPrice, setWethPrice] = useState<number | undefined>(undefined);
 
     /* STYLE */
@@ -161,6 +174,15 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
         try {
             const ctx = await EtherHelper.STAKING_PENDING_REW(vestingN !== 0 ? vestingN - 1 : 0, context)
             saveContext(ctx)
+        } catch (e) {
+            console.log("error on stakingPendingRew: ", e)
+        }
+    }
+
+    const actualMalus = async (vestingN: number) => {
+        try {
+            const perc_malus = await EtherHelper.STAKING_GET_ACTUAL_MALUS(vestingN !== 0 ? vestingN - 1 : 0, context)
+            setMalusPerc(perc_malus)
         } catch (e) {
             console.log("error on stakingPendingRew: ", e)
         }
@@ -266,6 +288,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     }
 
     const handleExitStaking = async () => {
+        handleCloseModalExit()
         setIsLoading(true)
 
         await compoundAndClaim()
@@ -370,6 +393,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
         setIsLoading(true)
         userRevShare();
         nftUserData();
+        actualMalus(vesting - 1)
         vestingData();
         stakingDataRew();
         stakingPendingRew(vesting);
@@ -434,7 +458,6 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
                 </Collapse>
                 {!isMobile && (
                     <div>
-                        <CurrencyExchangeIcon fontSize="large" className={classes.icon} />
                         <div className={classes.rewardsVesting}>{months + 'M'}</div>
                     </div>
                 )}
@@ -550,7 +573,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
                 </Box>
             </div>
             {/* STATS */}
-            <Grid container style={{ marginTop: isMobile ? '430px' : '270px', padding: 20 }} spacing={2}>
+            <Grid container style={{ marginTop: isMobile ? '430px' : '270px', padding: 20 }} spacing={4}>
                 <Grid item xs={12} md={6}>
                     <Box className={classes.boxGrid} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                         <Typography className={classes.subtitleLeft} variant="body1" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
@@ -586,9 +609,13 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
                             <span>APY:</span>
                             <span style={{ color: '#A4FE66' }}>{`${(APY / 100)}%` ?? <Skeleton />}</span>
                         </Typography>
+                        <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span>MALUS:</span>
+                            <span style={{ color: '#A4FE66' }}>{`${malusPerc.toFixed(2)}%` ?? <Skeleton />}</span>
+                        </Typography>
                         {userDeposit && Number(userDeposit) > 0 ? (
-                        <div style={{ width: '100%', alignItems: 'center', position: 'absolute', bottom: 50, left: '0%' }}>
-                        <Button onClick={() => handleExitStaking()} size="small" variant='contained' style={{ fontFamily: "Open Sans", color: 'black', border: '1px solid black', minWidth: 100, background: '#A4FE66', textShadow: '1px 1px 2px white' , marginBottom: 0}}>
+                        <div style={{ width: '100%', display: 'flex', marginTop: 15, justifyContent: 'center', alignItems: 'center', marginBottom: -15 }}>
+                        <Button onClick={handleModalExit} size="small" variant='contained' style={{ fontFamily: "Open Sans", color: 'black', border: '1px solid black', minWidth: 100, background: '#A4FE66', textShadow: '1px 1px 2px white' , marginBottom: 0}}>
                                 EXIT
                             </Button>
                         </div>
@@ -669,6 +696,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
             </Grid>
             {/* QUI */}
             <ModalStaking open={openModal} onClose={handleCloseModal} externalButton={externalButton} context={context} />
+            <ModalExit open={openModalExit} onClose={handleCloseModalExit} exitFunction={handleExitStaking} amountStaked={Number(userDeposit)} malusPerc={malusPerc} vesting={Number(months)}/>
             <BoosterStaked clickable={handleButtonClick} vesting={vesting} maxtokenIdsstaked={maxNftSlot} context={context} />
             <div style={{ height: 100 }} ></div>
         </Paper >

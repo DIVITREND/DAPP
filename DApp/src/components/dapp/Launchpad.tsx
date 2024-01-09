@@ -4,20 +4,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@mui/material/Container";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@mui/material/Grid";
-import { Box, Button, Divider, Icon, Typography, useMediaQuery, LinearProgress, Tooltip, Collapse, IconButton } from "@material-ui/core";
+import { Box, Button, Typography, useMediaQuery, LinearProgress, Tooltip, Collapse, IconButton } from "@material-ui/core";
 import { EtherContext } from "../../ethers/EtherContext";
 import { EtherContextRepository } from "../../ethers/EtherContextRepository";
-import TimerIcon from '@mui/icons-material/Timer';
 import { Alert, AlertTitle, Slider } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import { CardMedia } from '@mui/material';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import SendIcon from '@mui/icons-material/Send';
 import EtherHelper from "../../ethers/EtherHelper";
-import { ethers } from "ethers";
 import LogoSpinnerAnimation from "../LogoSpinnerAnimation";
 import InfoIcon from '@mui/icons-material/Info';
 import CardDetailsComponent from "./Staking/comp_modal/NftCard";
@@ -149,19 +141,6 @@ const useStyles = makeStyles((theme) => ({
         borderRight: 'none',
         borderTop: 'none',
     },
-    paperB: {
-        minHeight: 170,
-        backgroundColor: "rgba(255, 255, 255, 0)",
-        padding: theme.spacing(2),
-        border: "2px solid rgba(216,178,167, 1)",
-        borderRadius: 30,
-        borderLeft: 'none',
-        borderRight: 'none',
-        boxShadow: "0 3px 15px 2px rgba(255, 105, 135, 0.3)",
-        textAlign: "center",
-        position: "relative",
-        justifyContent: 'center'
-    },
     paperA: {
         minHeight: '100%',
         background: 'rgba(0,0,0 ,0)',
@@ -214,18 +193,6 @@ const useStyles = makeStyles((theme) => ({
         "@media screen and (max-width: 768px)": {
         },
     },
-    boxGridInactive: {
-        padding: theme.spacing(2),
-        backgroundOrigin: 'border-box',
-        backgroundSize: '130% 120%',
-        backgroundPosition: 'center',
-        borderRadius: 30,
-        borderBottom: 'none',
-        boxShadow: "0 -10px 7px rgba(255, 255, 255, 0)",
-        textAlign: "center",
-        "@media screen and (max-width: 768px)": {
-        },
-    },
     title: {
         position: "absolute",
         top: "3%",
@@ -250,20 +217,6 @@ const useStyles = makeStyles((theme) => ({
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
 
         fontSize: "24px",
-        "@media screen and (max-width: 768px)": {
-            width: '100%',
-        },
-    },
-    rewardsVesting: {
-        position: "relative",
-        top: "50%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        fontWeight: "bold",
-        color: "white",
-        textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-
-        fontSize: "20px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
         },
@@ -347,30 +300,6 @@ const useStyles = makeStyles((theme) => ({
             minHeight: '100%',
         },
     },
-    progressiveBar: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        "@media screen and (max-width: 768px)": {
-            minHeight: 100,
-        },
-    },
-    balance: {
-        position: "absolute",
-        top: "60%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        color: "white",
-        textShadow: "0px 3px 2px rgba(255, 105, 135, 0.5)",
-
-        fontSize: "22px",
-        display: 'flex',
-        flexDirection: 'row',
-        "@media screen and (max-width: 768px)": {
-            width: '100%',
-            justifyContent: 'center'
-        },
-    },
     subtitle: {
         color: "white",
         fontSize: "18px",
@@ -392,11 +321,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "14px",
 
     },
-    subtitleLil3: {
-        color: "white",
-        fontSize: "12px",
-
-    },
     icon: {
         position: "absolute",
         top: "10px",
@@ -406,14 +330,6 @@ const useStyles = makeStyles((theme) => ({
         "@media screen and (max-width: 768px)": {
             top: "30px",
             left: "10%",
-        },
-    },
-    iconTimer: {
-        position: "absolute",
-        top: "25px",
-        left: "68%",
-        color: " #A4FE66",
-        "@media screen and (max-width: 768px)": {
         },
     },
     user: {
@@ -429,96 +345,26 @@ const useStyles = makeStyles((theme) => ({
             left: "50%",
         },
     },
-    chip: {
-        position: "absolute",
-        top: "70%",
-        left: "18%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-        fontFamily: "Josefin Sans",
-    },
-    chip2: {
-        position: "absolute",
-        top: "70%",
-        left: "48%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-    },
-    chip3: {
-        position: "absolute",
-        top: "70%",
-        left: "78%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-    },
-    chipContainer: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-    },
     mobile: {
         marginTop: 0,
         "@media screen and (max-width: 768px)": {
             marginTop: 100,
         },
     },
-    menuButton: {
-        position: "absolute",
-        top: "20px",
-        right: `-${drawerWidth}px`, // Slide out from the right
-        transform: "translateX(50%)", // Center the icon horizontally
-        fontSize: "52px",
-        color: 'white',
-    },
-
-    drawerHeader: {
-        marginTop: 100,
-        background: 'black',
-        color: 'white',
-        display: "flex",
-        alignItems: "center",
-        padding: theme.spacing(0, 1),
-        // Add other styles as needed
-    },
     drawer: {
         width: drawerWidth,
         flexShrink: 0,
-        background: 'black',
-    },
-    drawerPaper: {
-        width: drawerWidth,
-        backgroundColor: 'black',
-    },
-
-    drawerContent: {
         background: 'black',
     },
     row: {
         display: 'flex',
         flexDirection: 'row'
     },
-    gradientBox: {
-        width: '80px',
-        height: '80px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     image: {
         maxWidth: '80%',
         maxHeight: '80%',
         borderRadius: '50%',
         border: '2px solid transparent',
-    },
-    compandcoll: {
-        background: "url('52.png') no-repeat center",
-        backgroundOrigin: 'border-box',
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-        color: 'white',
-        fontSize: 12,
-        width: '85px',
-        height: '80px'
     },
     border: {
         position: 'absolute',
@@ -560,65 +406,11 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: 'rgba(0,0,0, 0)',
         },
     },
-    scrollingText: {
-        width: '100%',
-        height: '50px',
-        overflow: 'hidden',
-        color: "white",
-        fontSize: "16px",
-
-        whiteSpace: 'nowrap',
-        animation: '$scroll 20s linear infinite',
-        textAlign: 'center',
-        lineHeight: '50px',
-    },
-    '@keyframes scroll': {
-        '0%': {
-            transform: 'translateX(100%)',
-        },
-        '100%': {
-            transform: 'translateX(-100%)',
-        },
-    },
-
     imageFactory: {
         width: '100%',
         height: 'auto',
         border: '2px solid transparent',
         borderRadius: 20,
-    },
-    progressBar: {
-        width: "50%", // Larghezza della barra di avanzamento
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-        marginLeft: "auto",
-        marginRight: "auto",
-    },
-    themeDark: {
-        background: 'url("bg.jpg")',
-        maxWidth: 245,
-        minWidth: 245,
-        minHeight: 300,
-        maxHeight: 600,
-        border: "2px solit white",
-        borderRadius: 20,
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-    },
-    themeDarkFooter: {
-        background: 'url("bg.jpg")',
-        maxWidth: 245,
-        minWidth: 245,
-        maxHeight: 50,
-        border: "2px solit white",
-        borderRadius: 20,
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-    },
-    image_card: {
-        position: 'relative',
-        height: 0,
-        paddingTop: '100%', // 16:9
     },
     paperAlert: {
         padding: theme.spacing(2),
@@ -644,10 +436,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const CustomizedHeader = styled(CardHeader)`
-  background: 'bg.jpg';
-`;
-
 const Launchpad = () => {
     const classes = useStyles();
     const isMobile = useMediaQuery("(max-width:960px)");
@@ -657,7 +445,6 @@ const Launchpad = () => {
     const [weiToPay, setWeiToPay] = useState(0)
     const [alreadyMinted, setAlreadyMinted] = useState(0)
     const [alertInfo, setAlertInfo] = useState<{ severity: "success" | "error", message: string } | null>(null);
-    const [tokenCards, setTokenCards] = useState<JSX.Element[]>();
     const r_topay = weiToPay
     const toShow_toPay = comp * 100
     const [factoryIds, setTokenFactIds] = useState(context.FactoriesTokenIds)

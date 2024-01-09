@@ -499,9 +499,10 @@ const Staking = () => {
 
         async function getRateLimitStakable() {
             await EtherHelper.STAKING_CALC_RATE_LIMIT(context)
-            .then((data) => {
-                console.log("getRateLimitStakable.data: ", data)
-                setRateLimit(data);})
+                .then((data) => {
+                    console.log("getRateLimitStakable.data: ", data)
+                    setRateLimit(data);
+                })
         }
 
         getRateLimitStakable()
@@ -540,7 +541,7 @@ const Staking = () => {
                 vesting={vesting}
             />
 
-            <Grid container spacing={2} style={{ marginTop: isMobile ? 20 : 30, marginBottom: isMobile ? 0 : 50, padding: 15 }} className={classes.mobile}>
+            <Grid container spacing={2} style={{ marginTop: isMobile ? 20 : 30, marginBottom: isMobile ? 0 : 50, padding: 20 }} className={classes.mobile}>
                 <Grid item xs={12} md={6}>
                     {selectedButton === 0 ? (
                         <StakingDash />
@@ -561,14 +562,14 @@ const Staking = () => {
                         <Typography variant="body1" className={classes.desc}>
                             Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
                         </Typography>
-                        <Grid container style={{ marginTop: 100 }} spacing={2}>
+                        <Grid container style={{ marginTop: 80, padding: 20 }} spacing={4}>
                             <Grid item xs={6} md={6}>
                                 <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
                                             className={classes.button}
                                             style={{
-                                                backgroundImage: selectedButton === 1 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 1 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                                backgroundImage: selectedButton === 1 ? "" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 1 ? '2px solid #A4FE66' : '', marginTop: 20
                                             }}
                                             onClick={() => handleClick(1)}
                                         >
@@ -584,10 +585,10 @@ const Staking = () => {
                                         <span style={{ color: '#A4FE66' }}>1</span>
                                     </Typography>
                                     <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
-                                        <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 1 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 1 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(0)}>
+                                        <Button size="small" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 1 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 1 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 1 ? 'transparent' : 'transparent' }} onClick={() => handleStakingModal(0)} >
                                             Deposit
                                         </Button>
-                                        <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(1)}>
+                                        <Button size="small" variant='text' style={{ fontFamily: "Open Sans", color: selectedButton === 1 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 1 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 1 ? 'transparent' : 'transparent' }} onClick={() => handleClick(1)}>
                                             View
                                         </Button>
                                     </div>
@@ -600,7 +601,7 @@ const Staking = () => {
                                         <Button
                                             className={classes.button}
                                             style={{
-                                                backgroundImage: selectedButton === 2 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 2 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                                backgroundImage: selectedButton === 2 ? "" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 2 ? '2px solid #A4FE66' : '', marginTop: 20
                                             }}
                                             onClick={() => handleClick(2)}
                                         >
@@ -615,10 +616,10 @@ const Staking = () => {
                                             <span style={{ color: '#A4FE66' }}>2</span>
                                         </Typography>
                                         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
-                                            <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 2 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 2 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(1)}>
+                                            <Button size="small" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 2 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 2 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 2 ? 'transparent' : 'transparent' }} onClick={() => handleStakingModal(1)} >
                                                 Deposit
                                             </Button>
-                                            <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(2)}>
+                                            <Button size="small" variant='text' style={{ fontFamily: "Open Sans", color: selectedButton === 2 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 2 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 2 ? 'transparent' : 'transparent' }} onClick={() => handleClick(2)}>
                                                 View
                                             </Button>
                                         </div>
@@ -631,7 +632,7 @@ const Staking = () => {
                                         <Button
                                             className={classes.button}
                                             style={{
-                                                backgroundImage: selectedButton === 3 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 3 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                                backgroundImage: selectedButton === 3 ? "" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 3 ? '2px solid #A4FE66' : '', marginTop: 20
                                             }}
                                             onClick={() => handleClick(3)}
                                         >
@@ -646,10 +647,10 @@ const Staking = () => {
                                             <span style={{ color: '#A4FE66' }}>5</span>
                                         </Typography>
                                         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
-                                            <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 3 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 3 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(2)}>
+                                            <Button size="small" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 3 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 3 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 3 ? 'transparent' : 'transparent' }} onClick={() => handleStakingModal(2)} >
                                                 Deposit
                                             </Button>
-                                            <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(3)}>
+                                            <Button size="small" variant='text' style={{ fontFamily: "Open Sans", color: selectedButton === 3 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 3 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 3 ? 'transparent' : 'transparent' }} onClick={() => handleClick(3)}>
                                                 View
                                             </Button>
                                         </div>
@@ -662,7 +663,7 @@ const Staking = () => {
                                         <Button
                                             className={classes.button}
                                             style={{
-                                                backgroundImage: selectedButton === 4 ? "url('52.png')" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 4 ? '1px solid rgba(6, 1, 26, 1)' : '', marginTop: 20
+                                                background: selectedButton === 4 ? "none" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 4 ? '2px solid #A4FE66' : '', marginTop: 20
                                             }}
                                             onClick={() => handleClick(4)}
                                         >
@@ -677,10 +678,10 @@ const Staking = () => {
                                             <span style={{ color: '#A4FE66' }}>10</span>
                                         </Typography>
                                         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20 }}>
-                                            <Button size="medium" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 4 ? 'white' : '#8B3EFF', border: '1px solid #8B3EFF', background: selectedButton === 4 ? '#8B3EFF' : 'transparent' }} onClick={() => handleStakingModal(3)} >
+                                            <Button size="small" variant="contained" style={{ fontFamily: "Open Sans", color: selectedButton === 4 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 4 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 4 ? 'transparent' : 'transparent' }} onClick={() => handleStakingModal(3)} >
                                                 Deposit
                                             </Button>
-                                            <Button size="medium" variant='text' style={{ fontFamily: "Open Sans", color: '#8B3EFF', border: '1px solid #8B3EFF' }} onClick={() => handleClick(4)}>
+                                            <Button size="small" variant='text' style={{ fontFamily: "Open Sans", color: selectedButton === 4 ? '#A4FE66' : '#8B3EFF', border: selectedButton === 4 ? '1px solid #A4FE66' : '1px solid  #8B3EFF', background: selectedButton === 4 ? 'transparent' : 'transparent' }} onClick={() => handleClick(4)}>
                                                 View
                                             </Button>
                                         </div>
@@ -689,7 +690,7 @@ const Staking = () => {
                                 </Box>
                             </Grid>
                         </Grid>
-                        <div style={{ height: selectedButton > 0 ? 260 : 160 }} ></div>
+                        <div style={{ height: selectedButton > 0 ? 240 : 160 }} ></div>
                     </Paper>
                 </Grid>
 

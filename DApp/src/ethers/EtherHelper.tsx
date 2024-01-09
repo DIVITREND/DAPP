@@ -408,6 +408,20 @@ export default class EtherHelper {
         return context
     }
 
+    public static async STAKING_GET_ACTUAL_MALUS(stakingOption: number, context: IEtherContext): Promise<number> {
+        try {
+            if (!context.connected) return 0;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner);
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const malus = await staking.connect(signer).getActualMalus(context.addressSigner ?? '', stakingOption)
+            return (malus / 1000)
+        } catch (e) {
+            console.log("Error in STAKING_GET_ACTUAL_MALUS: ", JSON.stringify(e))
+            return 0;
+        }
+    }
+
     public static async UNSTAKING_BOOST(tokenIds: number[], stakingOption: number, context: IEtherContext): Promise<IEtherContext> {
         try {
             if (!context.connected) return context;
@@ -1131,7 +1145,7 @@ export default class EtherHelper {
                 context.toastId = `swapETHforExactTokens_${transactionResult.transactionHash}`
                 console.log('EtherHelper.swap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
             } else {
-                const amountOutMin = await router.getAmountsOut(amountIn, path);
+                const amountOutMin = await router.getAmountsOut(amountInWei, path);
                 const transactionResult = await router.swapExactTokensForETH(amountInWei.toString(), amountOutMin, path, signer.getAddress(), deadline);
                 context.toastId = `swapTokensforExactETH_${transactionResult.transactionHash}`
                 console.log('EtherHelper.swap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
