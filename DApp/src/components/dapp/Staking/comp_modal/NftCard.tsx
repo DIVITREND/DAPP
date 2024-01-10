@@ -10,7 +10,6 @@ const CardDetailsComponent = ({ context, tokenId, index, selectedTokenCards, han
         edition: '',
         attributes: [],
     } as any);
-    const [selected, setSelected] = useState(isSelected);
     const [images, setImages] = useState('');
     const isMobile = window.innerWidth < 768;
 
@@ -18,9 +17,7 @@ const CardDetailsComponent = ({ context, tokenId, index, selectedTokenCards, han
         const fetchCardDetails = async () => {
             try {
                 const fetchedMetadata = await EtherHelper.getTokenURI(context, tokenId);
-                const isSelected = selectedTokenCards.includes(index);
                 setMetadata(fetchedMetadata);
-                setSelected(isSelected);
                 setImages(fetchedMetadata.image.split(' '));
             } catch (error) {
                 console.error('Error fetching card details:', error);

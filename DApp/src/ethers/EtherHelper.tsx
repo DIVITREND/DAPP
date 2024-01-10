@@ -467,11 +467,11 @@ export default class EtherHelper {
             .connect(context.addressSigner ?? '')
             .getLastStakingCount(context.addressSigner ?? '')
             .then((data: any[]) => {
-                    return {
-                        amount: Number(ethers.utils.formatEther(data[0])),
-                        timestamp: data[1].toNumber(),
-                        nDeposit: data[2].toNumber()
-                    } 
+                return {
+                    amount: Number(ethers.utils.formatEther(data[0])),
+                    timestamp: data[1].toNumber(),
+                    nDeposit: data[2].toNumber()
+                }
             });
 
         return user_full_data as IFullData
@@ -852,15 +852,44 @@ export default class EtherHelper {
         return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
     }
 
+    private static async estimateGasForPayNfts(context: IEtherContext, price: number, amount: number): Promise<number> {
+        try {
+            if (!context.connected) return 0;
+
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner);
+
+            const Factories = new Contract(
+                AddressFactory.getFactoriesAddress(context.chainId ?? 11155111),
+                DivitrendFactoriesABI,
+                signer
+            ) as DivitrendFactories;
+
+            const gasEstimate = await Factories.estimateGas.payNfts(amount, { value: price });
+
+            return gasEstimate.toNumber(); 
+        } catch (e) {
+            console.error('Errore durante la stima del gas per payNfts:', e);
+            return 0; 
+        }
+    }
+
     public static async FACTORIES_PAYNFT(context: IEtherContext, price: number, amount: number): Promise<IEtherContext> {
         try {
             if (!context.connected) return context;
+
+            const gasEstimate = await this.estimateGasForPayNfts(context, price, amount);
+
+            if (gasEstimate === 0) {
+                return context;
+            }
+
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
             const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
-            const tx = await Factories.connect(signer).payNfts(amount, { value: price })
+            const tx: ContractTransaction = await Factories.connect(signer).payNfts(amount, { value: price, gasLimit: gasEstimate + 30000 });
             let transactionResult = await tx.wait();
             console.log('EtherHelper.PAY TX Hash: ', JSON.stringify(transactionResult.transactionHash));
             context = {
@@ -952,7 +981,7 @@ export default class EtherHelper {
 
     public static async FACTORIES_TOTAL_REV(context: IEtherContext) {
         try {
-            if (!context.connected || !context) return ;
+            if (!context.connected || !context) return;
 
             const NFTs = context.nft_staked_data?.nft_staked_ids ?? [];
             const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(11155111));
@@ -998,18 +1027,18 @@ export default class EtherHelper {
     public static async getQuoteTokenToEth(amountOut: number, tokenIn: string, context: IEtherContext): Promise<number> {
         const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
         console.log("getQuoteTokenToEth.amount: ", amountOut.toFixed(0))
-        const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), EtherHelper.ABI_SWAP(), provider)
 
         async function getWETHPrice(): Promise<ethers.BigNumber> {
             const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
             const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), EtherHelper.ABI_SWAP(), provider)
             try {
-                const amountsOut = await UniswapRouter.getAmountsIn(amountOut, [tokenIn, AddressFactory.getWETH(context.chainId ?? 11155111)]);
+                const amountParsed = amountOut.toFixed(0)
+                console.log("getQuoteTokenToEth.amountParsed: ",amountOut.toFixed(0))
+                const amountsOut = await UniswapRouter.getAmountsIn(amountParsed, [tokenIn, AddressFactory.getWETH(context.chainId ?? 11155111)]);
                 const wethPrice = amountsOut[0];
-                console.log(amountsOut[1])
                 return wethPrice;
             } catch (error) {
-                console.error('Errore nel recupero del prezzo di WETH:', error);
+                console.error('Error quote WETH:', error);
                 return BigNumber.from(0)
             }
         }
@@ -1053,7 +1082,7 @@ export default class EtherHelper {
             } else {
                 try {
                     const gQuoteOut = await EtherHelper.getQuoteTokenToEth(amount, quoteAddress, context);
-                    const q_mapOut = ethers.utils.formatEther(gQuoteOut)
+                    const q_mapOut = gQuoteOut * 1e18
                     console.log("EtherHelper.getQuote(%s):", q_mapOut, q_mapOut);
                 } catch (error) {
                     console.error("Error in getting Token to ETH quote:", error);

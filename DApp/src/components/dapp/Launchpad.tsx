@@ -58,7 +58,6 @@ const PrettoSlider = styled(Slider)({
     },
 });
 
-
 const useStyles = makeStyles((theme) => ({
     root: {
         position: "relative",
@@ -500,15 +499,14 @@ const Launchpad = () => {
     }
 
     useEffect(() => {
-
         async function getSignerInfo() {
             await EtherHelper.querySignerInfo(context)
         }
-
+    
         getSignerInfo().then(() => {
-            setTokenFactIds(context.FactoriesTokenIds)
-        })
-
+            const filteredTokenIds = context.FactoriesTokenIds?.filter((tokenId) => tokenId !== 0);
+            setTokenFactIds(filteredTokenIds);
+        });
     }, [context, context.FactoriesTokenIds, context.toastStatus]);
 
     async function claimNFTs() {

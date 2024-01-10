@@ -592,7 +592,7 @@ const SwapSection = () => {
                                         <InfoOutlinedIcon className={classes.infoIcon} />
                                     </Tooltip>
                                     <Typography variant="caption" className={classes.balanceIn}>
-                                        -
+                                        {assetIn.name !== 'Ethereum' ? '$' + ((amountOut ?? 0) * (wethPrice ?? 0)).toFixed(1) : '$' + balanceConvertToken}
                                     </Typography>
                                 </div>
                                 <div style={{ display: 'flex', position: 'absolute', flexDirection: 'row', right: "20%", bottom: isMobile ? '15%' : '25%' }}>
