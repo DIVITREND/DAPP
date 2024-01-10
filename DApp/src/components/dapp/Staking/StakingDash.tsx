@@ -1,5 +1,4 @@
-import React from 'react';
-import { makeStyles, Paper, Typography } from '@material-ui/core';
+import { makeStyles, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -17,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
     imageContainer: {
         position: 'absolute',
-        top: '50%',
+        top: '60%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         zIndex: 2,
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
         color: '#8500FF',
         fontSize: '44px',
         position: 'absolute',
-        top: '62%',
+        top: '70%',
         left: '0',
         width: '100%',
         zIndex: 2,
@@ -77,6 +76,7 @@ export const StakingDash = () => {
             <div className={classes.topRectangle}></div>
             <div className={classes.bottomRectangle}></div>
             <div className={classes.text} >DIVITREND STAKING</div>
+            <div style={{height: 200}}></div>
         </Paper>
     );
 };

@@ -701,7 +701,7 @@ const Staking = () => {
                         {isMobile ? (
                             <div/>
                         ) : (
-                            <div style={{ height: selectedButton > 0 ? 240 : 160 }} ></div>
+                            <div style={{ height: selectedButton > 0 ? 240 : 110 }} ></div>
                         )}
                     </Paper>
                 </Grid>
