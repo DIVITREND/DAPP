@@ -12,6 +12,8 @@ const CardDetailsComponent = ({ context, tokenId, index, selectedTokenCards, han
     } as any);
     const [selected, setSelected] = useState(isSelected);
     const [images, setImages] = useState('');
+    const isMobile = window.innerWidth < 768;
+
     useEffect(() => {
         const fetchCardDetails = async () => {
             try {
@@ -46,26 +48,26 @@ const CardDetailsComponent = ({ context, tokenId, index, selectedTokenCards, han
                 <Card
                     style={{
                         marginBottom: 10,
-                        width: 100,
+                        width: isMobile ? 50 : 100,
                         position: 'relative',
                         border: '2px solid #A4FE66',
                     }}
                 >
                     <CardMedia
-                        style={{ height: 100, objectFit: 'cover' }}
+                        style={{ height: isMobile ? 50 : 100, objectFit: 'cover' }}
                         image={images && images.length > 0 ? 'https://ipfs.filebase.io/ipfs/' + (images[0] && images[0].slice(7)) : ''}
                         title={metadata ? metadata.edition : ''}
                     />
                 </Card>
             </ButtonBase>
-            <Typography variant="body1" style={{ color: '#A4FE66' }}>
+            <Typography variant={isMobile ? "body2" : "body1"} style={{ color: '#A4FE66' }}>
                 FACTORY #{metadata.edition}
             </Typography>
             <Typography variant="body2" style={{ color: '#A4FE66' }}>
-                Rev Share: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'Rev Share')?.value || ''}
+                REV: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'Rev Share')?.value || ''}
             </Typography>
             <Typography variant="body2" style={{ color: '#A4FE66' }}>
-                APY boost: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'APY boost')?.value || ''}
+                APY: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'APY boost')?.value || ''}
             </Typography>
         </div>
     );

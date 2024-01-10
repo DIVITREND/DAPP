@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from 'react';
-import { Box, Button, Grid, Paper } from '@material-ui/core';
+import { Box, Button, Grid, Paper, useMediaQuery } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import { IEtherContext } from '../../../../ethers/IEtherContext';
 import EtherHelper from '../../../../ethers/EtherHelper';
@@ -41,6 +41,7 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
     const handleChangeChecker = (event: ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
     };
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     useEffect(() => {
         if (!context) return
@@ -187,20 +188,22 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                     const tokenElement = uriInfo ? (
                         <div onClick={() => handleUnstake(allTokenIds[i])} key={`token_${tokenId}`} style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                             <Box className={classes.gradientBox}>
-                                <div className={classes.border}></div>
                                 <img src={'https://ipfs.filebase.io/ipfs/' + uriInfo?.uri.slice(7)} alt={`Token ${tokenId}`} className={classes.image} />
                             </Box>
                             <div className={classes.content}>FACTORY #{tokenId}</div>
                             <div className={classes.content}>
-                                REV {uriInfo?.attributes.find((attribute: any) => attribute.trait_type === 'Rev Share')?.value || ''} - APY {uriInfo?.attributes.find((attribute: any) => attribute.trait_type === 'APY boost')?.value || ''}
+                                REV {uriInfo?.attributes.find((attribute: any) => attribute.trait_type === 'Rev Share')?.value || ''} 
+                            </div>
+                            <div className={classes.content}>
+                                APY {uriInfo?.attributes.find((attribute: any) => attribute.trait_type === 'APY boost')?.value || ''}
                             </div>
                         </div>
 
                     ) : (
                         < Box key={`token_${i}`} className={classes.gradientBox} >
-                            <div className={classes.border}></div>
+
                             <img src={image} alt={`Token ${tokenId}`} className={classes.image} />
-                            <div style={{ color: "#A4FE66", fontSize: 22 }}>
+                            <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 22 }}>
                                 #{tokenId}
                             </div>
                         </Box >
@@ -221,7 +224,7 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
             for (let i = 0; i < remainingSlotsAfterSelection; i++) {
                 tokensAndAddTokens.push(
                     <Box key={`addToken_${i}`} className={classes.gradientBox}>
-                        <div className={classes.border}></div>
+
                         <AddIcon
                             className={classes.image}
                             fontSize="large"
@@ -246,8 +249,8 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                     tokensAndAddTokens.push(
                         <Box key={`selectedToken_${i}`} className={classes.gradientBox}>
                             <Box key={`selectedToken_${i}`} className={classes.gradientBox}>
-                                <div className={classes.border}></div>
-                                <div style={{ color: "#A4FE66", fontSize: 22 }}>
+
+                                <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 22 }}>
                                     #{selectedTokenIndex}
                                 </div>
                             </Box>
@@ -371,9 +374,18 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
 
     }, [context, context.FactoriesTokenIds, context.toastStatus]);
 
+    const mobileTokens = renderedTokens.reduce((rows: JSX.Element[][], token, index) => {
+        const rowIndex = Math.floor(index / 3);
+        if (!rows[rowIndex]) {
+            rows[rowIndex] = [];
+        }
+        rows[rowIndex].push(token);
+        return rows;
+    }, []);
+
     return (
         <div style={{ width: '100%', marginBottom: 100 }}>
-            <Grid container spacing={1}>
+            <Grid container spacing={isMobile ? 1 : 1}>
                 <Collapse in={alertInfo !== null}>
 
                     <Paper elevation={3} className={classes.paperAlert}>
@@ -400,8 +412,8 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                         backgroundPosition: 'center',
                         backgroundClip: 'padding-box',
                         textAlign: "center",
-                        marginTop: '20px',
-                        padding: '20px',
+                        marginTop: '30px',
+                        padding: '10px',
                         borderRadius: '10px',
                         display: 'flex',
                         flexDirection: 'row',
@@ -430,101 +442,119 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                         </div>
                     </div>
                 </Grid>
-                <Grid item xs={12} sm={6} md={12}>
+                <Grid item xs={12} sm={12} md={12}>
                     <div style={{
-                        background: "url('54.png') no-repeat center",
-                        color: '#FFFFFF',
-                        backgroundPosition: 'center',
-                        backgroundClip: 'padding-box',
-                        textAlign: "center",
-                        border: '2px solid #8B3EFF',
-                        padding: '20px',
-                        borderRadius: '10px',
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
+                        flexDirection: 'row',
                         justifyContent: 'center',
-                        height: '100%',
-                        minHeight: '300px',
-                        marginTop: -10
+                        height: isMobile ? 30 : 50,
+                        marginBottom: 10,
+                        marginTop: 10,
+                        top: 0,
+                        zIndex: 1
                     }}>
-                        {isLoading ?
-                            (
-                                <>
-                                </>
-                            ) : (
-                                <div>
-                                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', height: 50, marginBottom: 10, marginTop: -10 }}>
-                                        <Button size="small" variant="outlined" style={{ color: '#A4FE66', borderColor: '#A4FE66', marginRight: 10 }} onClick={() => handleStake()}>STAKE {selectedTokenCards.length} NFT</Button>
-                                        <Button size="small" variant="outlined" style={{ color: '#A4FE66', borderColor: '#A4FE66', marginLeft: 10 }} onClick={() => handleUnstakeAll()}>UNSTAKE ALL {alreadyStakedToFetch.length}</Button>
-                                    </div>
-
-                                    <div style={{ width: '100%', marginTop: 0, maxHeight: '100%', minHeight: 140 }}>
-                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 10, marginBottom: '10px', alignItems: 'center', marginTop: 20 }}>
-                                            {tokensRow1}
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 10, alignItems: 'center', marginRight: 10, marginTop: 20 }}>
-                                            {tokensRow2}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                        <Button size="small" variant="outlined" style={{ color: '#A4FE66', borderColor: '#A4FE66', marginRight: 10 }} onClick={() => handleStake()}>STAKE {selectedTokenCards.length} NFT</Button>
+                        <Button size="small" variant="outlined" style={{ color: '#A4FE66', borderColor: '#A4FE66', marginLeft: 10 }} onClick={() => handleUnstakeAll()}>UNSTAKE ALL {alreadyStakedToFetch.length}</Button>
                     </div>
+                </Grid>
+                <Grid item xs={12} sm={6} md={12}>
+                    {isLoading ?
+                        (
+                            <>
+                            </>
+                        ) : (
+                            <div style={{
+                                width: '100%',
+                                maxHeight: 200,
+                                overflowY: 'scroll',
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                marginTop: 0,
+                                border: '2px solid #8500FF',
+                                borderRadius: 20,
+                                color: '#A4FE66'
+                            }}>
+                                {mobileTokens.map((row, index) => {
+                                    const remainingItems = 3 - row.length;
+                                    const adjustedRow = [...row];
+
+                                    for (let i = 0; i < remainingItems; i++) {
+                                        adjustedRow.push(<div key={`empty_${i}`}></div>);
+                                    }
+
+                                    return (
+                                        <div key={`mobileRow_${index}`} style={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'center',
+                                            gap: 20,
+                                            marginTop: 5,
+                                            alignItems: 'center', // Aggiunto l'allineamento al centro degli elementi figlio
+                                        }}>
+                                            {adjustedRow}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+
+                        )}
                 </Grid>
                 <Grid item xs={12} sm={6} md={12}>
                     <Box style={{
                         padding: '20px',
-                        borderRadius: '10px',
+                        borderRadius: '20px',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: '100%',
+                        minHeight: isMobile ? '100px' : '250px',
+                        maxHeight: isMobile ? '250px' : '250px',
+                        overflowY: isMobile ? 'auto' : 'auto',
                         border: '2px solid #8B3EFF',
+                        width: '100%',
                     }}>
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             marginBottom: 10,
-                            marginTop: -10
+                            marginTop: isMobile ? -10 : -10
                         }}>
                             <GreenSwitch checked={checked} onChange={handleChangeChecker} />
                         </div>
                         {checked === false ? (
-                            <div style={{ minHeight: 200, maxHeight: 200, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                <Grid container spacing={10}>
+                            <div style={{ minHeight: isMobile ? 100 : 200, maxHeight: isMobile ? 200 : 200, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                <Grid container spacing={isMobile ? 2 : 10}>
                                     <Grid item xs={6} sm={4} md={4}>
                                         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                                             <Box className={classes.gradientBox}>
-                                                <div className={classes.border}></div>
-                                                <div style={{ color: "#A4FE66", fontSize: 22 }}>
+                                                <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 22 }}>
                                                     {totalRevShare}%
                                                 </div>
                                             </Box>
-                                            <div style={{ color: "#A4FE66", fontSize: 16, textAlign: 'center', marginTop: 20, maxWidth: '100%', whiteSpace: 'nowrap' }}>TOTAL REVENUE</div>
+                                            <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 16, textAlign: 'center', marginTop: isMobile ? 10 : 20, maxWidth: '100%', whiteSpace: 'nowrap' }}>TOTAL REVENUE</div>
                                         </div>
                                     </Grid>
                                     <Grid item xs={6} sm={4} md={4}>
                                         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                                             <Box className={classes.gradientBox}>
-                                                <div className={classes.border}></div>
-                                                <div style={{ color: "#A4FE66", fontSize: 22 }}>
+                                                <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 22 }}>
                                                     {totalApyBoost}%
                                                 </div>
                                             </Box>
-                                            <div style={{ color: "#A4FE66", fontSize: 16, textAlign: 'center', marginTop: 20, maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>TOTAL BOOST</div>
+                                            <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 16, textAlign: 'center', marginTop: isMobile ? 10 : 20, maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>TOTAL BOOST</div>
                                         </div>
                                     </Grid>
                                     <Grid item xs={12} sm={4} md={4}>
                                         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                                             <Box className={classes.gradientBox}>
-                                                <div className={classes.border}></div>
-                                                <div style={{ color: "#A4FE66", fontSize: 22 }}>
+                                                <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 22 }}>
                                                     {alreadyStakedToFetch.length}
                                                 </div>
                                             </Box>
-                                            <div style={{ color: "#A4FE66", fontSize: 16, textAlign: 'center', marginTop: 20, maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>TOTAL STAKED</div>
+                                            <div style={{ color: "#A4FE66", fontSize: isMobile ? 14 : 16, textAlign: 'center', marginTop: isMobile ? 10 : 20, maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>TOTAL STAKED</div>
                                         </div>
                                     </Grid>
                                 </Grid>
@@ -532,28 +562,31 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                             </div>
 
                         ) : (
-                            <div>
-                                {isLoading ? (<></>) : (
-                                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 20, minHeight: 180, maxHeight: 180, overflowY: "auto"}}>
-                                        {
-                                            factoryIds &&
-                                            factoryIds.map((tokenId, index) => {
-                                                const isSelected = selectedTokenCards.includes(index);
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto', marginTop: 20, maxHeight: '50vh', width: '100%' }}>
+                                {factoryIds && factoryIds.length > 0 && (
+                                    Array.from({ length: Math.ceil(factoryIds.length / (isMobile ? 2 : 4)) }, (_, rowIndex) => (
+                                        <div
+                                            key={`row_${rowIndex}`}
+                                            style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: isMobile ? 10 : 30, marginTop: isMobile ? 5 : 10 }}
+                                        >
+                                            {factoryIds.slice(rowIndex * (isMobile ? 2 : 4), rowIndex * (isMobile ? 2 : 4) + (isMobile ? 2 : 4)).map((tokenId, index) => {
+                                                const cardIndex = rowIndex * (isMobile ? 2 : 4) + index;
+                                                const isSelected = selectedTokenCards.includes(cardIndex);
 
                                                 return (
                                                     <CardDetailsComponent
                                                         key={tokenId}
                                                         context={context}
                                                         tokenId={tokenId}
-                                                        index={index}
+                                                        index={cardIndex}
                                                         selectedTokenCards={selectedTokenCards}
                                                         handleCardClick={handleCardClickInComponent}
                                                         isSelected={isSelected}
                                                     />
                                                 );
-                                            })
-                                        }
-                                    </div>
+                                            })}
+                                        </div>
+                                    ))
                                 )}
                             </div>
                         )}

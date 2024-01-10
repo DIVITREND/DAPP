@@ -22,7 +22,7 @@ const GlobalStats = () => {
     const [nftEthRev, setNftEthRev] = useState(0)
     const isMobile = useMediaQuery('(max-width:768px)');
     const [ethetrnd, setEthetrnd] = useState({} as ICTBalance);
-    
+
     useEffect(() => {
         async function getEthClaimed() {
             const ethClaimed = await EtherHelper.STAKING_ALL_TOKENS_BALANCE(context)
@@ -37,118 +37,134 @@ const GlobalStats = () => {
     }, [context]);
 
     return (
-        <div style={{ width: '93%', margin: 10 }}>
+        <div style={{ width: isMobile ? '100%' : '93%', margin: 10 }}>
             <Grid container spacing={5}>
-                <Grid item xs={12} md={12}>
+                <Grid item xs={6} md={6}>
                     <Box
                         style={{
-                            borderRadius: '5px',
+                            borderRadius: '5px', 
+                            color: '#A4FE66',
                             textAlign: 'center',
-                            height: '100%',
                             display: 'flex',
-                            flexDirection: isMobile ? 'row' : 'row',
-                            justifyContent: 'center',
-                            marginLeft: isMobile ? 0 : 0,
-                            gap: isMobile ? 40 : 20
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 20,
                         }}
                     >
-                        <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
-                            <Button
-                                style={{
-                                    backgroundImage: "url('52.png')",
-                                    color: 'white',
-                                    fontFamily: 'Open Sans',
-                                    border: '2px solid #A4FE66',
-                                    borderRadius: '50%',
-                                    height: isMobile ? 90 : 150,
-                                    width: isMobile ? 90 : 150,
-                                    justifyContent: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                {context.tot_trnd_staked ? Number(context.tot_trnd_staked?.toFixed(0)).toLocaleString('en-US') : 0}  <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
-                            </Button>
-                            <p />
-                            $TRND STAKED
-                        </div>
-                        <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
-                            <Button
-                                style={{
-                                    backgroundImage: "url('52.png')",
-                                    color: 'white',
-                                    fontFamily: 'Open Sans',
-                                    border: '2px solid #A4FE66',
-                                    borderRadius: '50%',
-                                    height: isMobile ? 90 : 150,
-                                    width: isMobile ? 90 : 150,
-                                    justifyContent: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                {context.nft_staked}
-                            </Button>
-                            <p />
-                            FACT STAKED
-                        </div>
+                        <Button
+                            style={{
+                                backgroundImage: "url('52.png')",
+                                color: 'white',
+                                fontFamily: 'Open Sans',
+                                border: '2px solid #A4FE66',
+                                borderRadius: '50%',
+                                height: isMobile ? 90 : 150,
+                                width: isMobile ? 90 : 150,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            {context.tot_trnd_staked ? Number(context.tot_trnd_staked?.toFixed(0)).toLocaleString('en-US') : 0}  <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
+                        </Button>
+                        <p>$TRND STAKED</p>
                     </Box>
                 </Grid>
-                <Grid key={3} item xs={12} md={12}>
+                <Grid item xs={6} md={6}>
                     <Box
                         style={{
-                            borderRadius: '5px',
+                            borderRadius: '5px', 
+                            color: '#A4FE66',
                             textAlign: 'center',
-                            height: '100%',
                             display: 'flex',
-                            flexDirection: isMobile ? 'column' : 'row',
-                            justifyContent: 'center',
+                            flexDirection: 'column',
                             alignItems: 'center',
-                            gap: isMobile ? 0 : 20,
-                            marginRight: isMobile ? 0 : 'auto',
-                            marginLeft: 0
+                            gap: 20,
                         }}
                     >
-                        <div style={{ alignItems: 'center', color: '#A4FE66' }}>
-                            <Button
-                                style={{
-                                    backgroundImage: "url('52.png')",
-                                    color: 'white',
-                                    fontFamily: 'Open Sans',
-                                    border: '2px solid #A4FE66',
-                                    borderRadius: '50%',
-                                    height: isMobile ? 90 : 150,
-                                    width: isMobile ? 90 : 150,
-                                    justifyContent: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                {ethetrnd.trnd_balance?.toLocaleString('en-US')}  <img src="74.png" alt="" style={{ width: 15, height: 15 }} />
-                            </Button>
-                            <p />
-                            ETH DISTRIBUTED
-                        </div>
-                        <div style={{ alignItems: 'center', color: '#A4FE66' }}>
-                            <Button
-                                style={{
-                                    backgroundImage: "url('52.png')",
-                                    color: 'white',
-                                    fontFamily: 'Open Sans',
-                                    border: '2px solid #A4FE66',
-                                    borderRadius: '50%',
-                                    height: isMobile ? 90 : 150,
-                                    width: isMobile ? 90 : 150,
-                                    justifyContent: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                {ethetrnd.eth_balance?.toLocaleString('en-US')}  <img src="74.png" alt="" style={{ width: 15, height: 15 }} />
-                            </Button>
-                            <p />
-                            ETH DEPOSITED
-                        </div>
+                        <Button
+                            style={{
+                                backgroundImage: "url('52.png')",
+                                color: 'white',
+                                fontFamily: 'Open Sans',
+                                border: '2px solid #A4FE66',
+                                borderRadius: '50%',
+                                height: isMobile ? 90 : 150,
+                                width: isMobile ? 90 : 150,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            {context.nft_staked}
+                        </Button>
+                        <p>FACT STAKED</p>
+                    </Box>
+                </Grid>
+                <Grid item xs={6} md={6}>
+                    <Box
+                        style={{
+                            borderRadius: '5px', 
+                            color: '#A4FE66',
+                            textAlign: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 20,
+                        }}
+                    >
+                        <Button
+                            style={{
+                                backgroundImage: "url('52.png')",
+                                color: 'white',
+                                fontFamily: 'Open Sans',
+                                border: '2px solid #A4FE66',
+                                borderRadius: '50%',
+                                height: isMobile ? 90 : 150,
+                                width: isMobile ? 90 : 150,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            {ethetrnd.trnd_balance?.toLocaleString('en-US')}  <img src="74.png" alt="" style={{ width: 15, height: 15 }} />
+                        </Button>
+                        <p>ETH DISTRIBUTED</p>
+                    </Box>
+                </Grid>
+                <Grid item xs={6} md={6}>
+                    <Box
+                        style={{
+                            borderRadius: '5px', 
+                            color: '#A4FE66',
+                            textAlign: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 20,
+                        }}
+                    >
+                        <Button
+                            style={{
+                                backgroundImage: "url('52.png')",
+                                color: 'white',
+                                fontFamily: 'Open Sans',
+                                border: '2px solid #A4FE66',
+                                borderRadius: '50%',
+                                height: isMobile ? 90 : 150,
+                                width: isMobile ? 90 : 150,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            {ethetrnd.eth_balance?.toLocaleString('en-US')}  <img src="74.png" alt="" style={{ width: 15, height: 15 }} />
+                        </Button>
+                        <p>ETH DEPOSITED</p>
                     </Box>
                 </Grid>
             </Grid >

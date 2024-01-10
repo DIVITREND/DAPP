@@ -3,23 +3,23 @@ import Switch from '@material-ui/core/Switch';
 
 export const GreenSwitch = withStyles({
     switchBase: {
-      color: '#8500FF',
-      '&$checked': {
-        color: '#5ad043',
-      },
-      '&$checked + $track': {
-        backgroundColor: '#5ad043',
-      },
+        color: '#8500FF',
+        '&$checked': {
+            color: '#5ad043',
+        },
+        '&$checked + $track': {
+            backgroundColor: '#5ad043',
+        },
     },
     checked: {
-      '& + $track': {
-        backgroundColor: '#8500FF',
-      },
+        '& + $track': {
+            backgroundColor: '#8500FF',
+        },
     },
     track: {
-      backgroundColor: '#8500FF',
+        backgroundColor: '#8500FF',
     },
-  })(Switch);
+})(Switch);
 
 export const PrettoSlider = styled(Slider)({
     color: '#52af77',
@@ -188,8 +188,8 @@ export const useStyleStaking: any = makeStyles((theme) => ({
             position: 'absolute',
             width: '50px',
             height: '50px',
-            top: 0,
-            left: 1,
+            top: -15,
+            left: -15,
             zIndex: 1,
         }
     },
@@ -263,6 +263,17 @@ export const useStyleStaking: any = makeStyles((theme) => ({
     desc: {
         position: "absolute",
         top: "70%",
+        left: "50%",
+        transform: "translateX(-50%)",
+        color: "#8A00F6",
+        textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
+
+        fontWeight: 400,
+        fontSize: '18px'
+    },
+    descMobile: {
+        position: "absolute",
+        top: "50%",
         left: "50%",
         transform: "translateX(-50%)",
         color: "#8A00F6",
@@ -526,8 +537,14 @@ export const useStyleStaking: any = makeStyles((theme) => ({
         width: '80px',
         height: '80px',
         display: 'flex',
+        border: '2px solid #A4FE66',
+        borderRadius: '50%',
         alignItems: 'center',
         justifyContent: 'center',
+        "@media screen and (max-width: 768px)": {
+            width: 'calc(80px - 20px)',
+            height: 'calc(80px - 20px)',
+        },
     },
     image: {
         maxWidth: '80%',
@@ -549,6 +566,10 @@ export const useStyleStaking: any = makeStyles((theme) => ({
         height: 'calc(80px - 4px)',
         border: '2px solid #A4FE66',
         borderRadius: '50%',
+        "@media screen and (max-width: 768px)": {
+            width: 'calc(80px - 20px)',
+            height: 'calc(80px - 20px)',
+        },
     },
     button: {
         width: '100px',

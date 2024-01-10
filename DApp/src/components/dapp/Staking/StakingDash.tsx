@@ -4,7 +4,7 @@ import { makeStyles, Paper, Typography } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
     container: {
         minHeight: 950,
-        background: "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(18, 17, 17, 0.7))",
+        background: "black",
         padding: theme.spacing(2),
         border: '2px solid #8500FF',
         textAlign: "center",

@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@mui/material/Grid";
-import { Box, Button, Divider, Icon, Typography, useMediaQuery } from "@material-ui/core";
+import { Box, Button, Typography, useMediaQuery } from "@material-ui/core";
 import { EtherContext } from "../../ethers/EtherContext";
 import { EtherContextRepository } from "../../ethers/EtherContextRepository";
 import { StakingLeft } from "./Staking/StakingLeft";
@@ -11,7 +11,6 @@ import { IconButton } from "@material-ui/core";
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { Alert, AlertTitle, Collapse } from "@mui/material";
 import LogoSpinnerAnimation from "../LogoSpinnerAnimation";
-import { useStyleStaking } from "./Staking/useStyleStaking";
 import StakingModal from "./Staking/StakingModal";
 import EtherHelper from "../../ethers/EtherHelper";
 
@@ -245,6 +244,18 @@ const useStyles = makeStyles((theme) => ({
             width: '100%',
         },
     },
+    descMobile: {
+        position: "absolute",
+        top: "15%",
+        left: "50%",
+        transform: "translateX(-50%)",
+        color: "white",
+        fontFamily: "Open Sans",
+        fontSize: "16px",
+        "@media screen and (max-width: 768px)": {
+            width: '100%',
+        },
+    },
     claimable: {
         position: "absolute",
         left: "50%",
@@ -417,11 +428,8 @@ const useStyles = makeStyles((theme) => ({
 const Staking = () => {
     const classes = useStyles();
     const isMobile = useMediaQuery("(max-width:960px)");
-    //const [openDrawer, setOpenDrawer] = useState(false);
     const { context, saveContext } = React.useContext(EtherContext) as EtherContextRepository;
-    //const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
     const [selectedButton, setSelectedButton] = useState(0);
-    //const [rewards, setRewards] = useState(680); // Numero totale di rewards
     const [loading, setIsLoading] = useState(false);
     const [alertInfo, setAlertInfo] = useState<{ severity: "success" | "error", message: string } | null>(null);
     const [isStakingModalOpen, setIsStakingModalOpen] = useState(false);
@@ -559,11 +567,11 @@ const Staking = () => {
                             <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 1400 $
                             </Typography>
                         </Box>
-                        <Typography variant="body1" className={classes.desc}>
+                        <Typography variant="body1" className={isMobile ? classes.descMobile :  classes.desc }>
                             Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
                         </Typography>
-                        <Grid container style={{ marginTop: 80, padding: 20 }} spacing={4}>
-                            <Grid item xs={6} md={6}>
+                        <Grid container style={{ marginTop: 80, padding: isMobile ? 20 : 20 }} spacing={isMobile ? 2 : 4}>
+                            <Grid item xs={12} md={6}>
                                 <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
@@ -595,7 +603,7 @@ const Staking = () => {
                                 </Box>
 
                             </Grid>
-                            <Grid item xs={6} md={6}>
+                            <Grid item xs={12} md={6}>
                                 <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
@@ -626,7 +634,7 @@ const Staking = () => {
                                     </div>
                                 </Box>
                             </Grid>
-                            <Grid item xs={6} md={6}>
+                            <Grid item xs={12} md={6}>
                                 <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
@@ -657,13 +665,13 @@ const Staking = () => {
                                     </div>
                                 </Box>
                             </Grid>
-                            <Grid item xs={6} md={6}>
+                            <Grid item xs={12} md={6}>
                                 <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
                                     <div>
                                         <Button
                                             className={classes.button}
                                             style={{
-                                                background: selectedButton === 4 ? "none" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 4 ? '2px solid #A4FE66' : '', marginTop: 20
+                                                backgroundImage: selectedButton === 4 ? "" : "url('53.png')", color: 'white', fontFamily: "Open Sans", border: selectedButton === 4 ? '2px solid #A4FE66' : '', marginTop: 20
                                             }}
                                             onClick={() => handleClick(4)}
                                         >
@@ -690,7 +698,11 @@ const Staking = () => {
                                 </Box>
                             </Grid>
                         </Grid>
-                        <div style={{ height: selectedButton > 0 ? 240 : 160 }} ></div>
+                        {isMobile ? (
+                            <div/>
+                        ) : (
+                            <div style={{ height: selectedButton > 0 ? 240 : 160 }} ></div>
+                        )}
                     </Paper>
                 </Grid>
 

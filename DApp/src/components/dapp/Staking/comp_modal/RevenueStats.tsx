@@ -123,11 +123,10 @@ const RevenueStats = () => {
                     </Box>
                 </Grid>
                 <Grid key={2} item xs={12} md={8}>
-
                     <Box
                         style={{
-                            width: 'auto',
-                            minHeight: isMobile ? '400px' : '600px',
+                            width: isMobile ? '100%' : 'auto',
+                            minHeight: isMobile ? '200px' : '600px',
                             display: 'flex',
                             flexDirection: 'column',
                             marginTop: 0,
@@ -140,7 +139,8 @@ const RevenueStats = () => {
                             backgroundClip: 'padding-box',
                             maxHeight: isMobile ? '40%' : '80%',
                             overflowY: 'auto',
-                            marginLeft: 10
+                            marginLeft: isMobile ? 0 : 10,
+                            padding: 5,
                         }}
                     >
                         <TableContainer component={Paper}>

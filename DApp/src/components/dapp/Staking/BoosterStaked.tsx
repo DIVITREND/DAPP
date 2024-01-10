@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box } from '@material-ui/core';
+import { Box, useMediaQuery } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import { IEtherContext } from '../../../ethers/IEtherContext';
 import EtherHelper from '../../../ethers/EtherHelper';
@@ -33,6 +33,7 @@ const BoosterStaked: React.FC<BoosterStakedProps> = ({ clickable, vesting, maxto
     const [tokenImages, setTokenImages] = useState<{ [tokenId: number]: string }>({});
     const [uriStaked, setUriStaked] = useState([] as { uri: string, id: number, attributes: [{ trait_type: string, value: string }] }[] | undefined)
     const [alreadyStakedToFetch, setAlreadyStaked] = useState([] as number[])
+    const isMobile = useMediaQuery('(max-width:768px)');
 
     let selectedTokenCards: any[] = []
 
@@ -75,7 +76,6 @@ const BoosterStaked: React.FC<BoosterStakedProps> = ({ clickable, vesting, maxto
 
         const renderTokensAndAddTokens = () => {
             const numTokens = allTokenIds.length;
-            const remainingSlots = maxTokenIdStaked - numTokens;
             const tokensPerRow = 5;
             let tokensCount = 0;
 
@@ -132,7 +132,7 @@ const BoosterStaked: React.FC<BoosterStakedProps> = ({ clickable, vesting, maxto
                             className={classes.image}
                             fontSize="large"
                             style={{ color: 'white', marginRight: 3 }}
-                            onClick={() => handleTokenClick(4)} 
+                            onClick={() => handleTokenClick(4)}
                         />
                     </Box>
                 );
@@ -171,14 +171,48 @@ const BoosterStaked: React.FC<BoosterStakedProps> = ({ clickable, vesting, maxto
     const tokensRow1 = renderedTokens.slice(0, 5);
     const tokensRow2 = renderedTokens.slice(5, 11);
 
+    const mobileTokens = renderedTokens.reduce((rows: JSX.Element[][], token, index) => {
+        const rowIndex = Math.floor(index / 3);
+        if (!rows[rowIndex]) {
+            rows[rowIndex] = [];
+        }
+        rows[rowIndex].push(token);
+        return rows;
+    }, []);
+
     return (
-        <div style={{ width: '100%', marginTop: 0, maxHeight: 140, minHeight: 140 }}>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 20, marginBottom: '10px' }}>
-                {tokensRow1}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 20, marginRight: 20, marginTop: 40, marginBottom: 20 }}>
-                {tokensRow2}
-            </div>
+        <div>
+            {!isMobile ? (
+                // Vista desktop con 2 righe di token
+                <div style={{ width: '100%', marginTop: 0, maxHeight: 140, minHeight: 140 }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 20, marginBottom: '10px' }}>
+                        {tokensRow1}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 20, marginRight: 20, marginTop: 40, marginBottom: 20 }}>
+                        {tokensRow2}
+                    </div>
+                </div>
+            ) : (
+                // Vista mobile con token raggruppati in righe di 3
+                <div style={{ width: '100%', marginTop: 0, alignItems: 'center' }}>
+                    {mobileTokens.map((row, index) => {
+                        // Se è l'ultima riga, calcola quanti elementi mancano per arrivare a 3
+                        const remainingItems = 2 - row.length;
+
+                        // Aggiungi spazi vuoti per allineare l'ultimo elemento
+                        const adjustedRow = [...row];
+                        for (let i = 0; i < remainingItems; i++) {
+                            adjustedRow.push(<div key={`empty_${i}`}></div>);
+                        }
+
+                        return (
+                            <div key={`mobileRow_${index}`} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 5, padding: 10, marginBottom: '10px' }}>
+                                {adjustedRow}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 };

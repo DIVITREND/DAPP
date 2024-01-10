@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import ChainAvatar from "./ChainAvatar";
 import EtherHelper from "../ethers/EtherHelper";
-import { CircularProgress } from "@material-ui/core"; // Import CircularProgress
+import { CircularProgress, useMediaQuery } from "@material-ui/core"; // Import CircularProgress
 import { EtherContext } from "../ethers/EtherContext";
 import { Flex, Text } from "@chakra-ui/react";
 import { Button, makeStyles } from "@material-ui/core";
@@ -31,7 +31,7 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [balance, setBalance] = useState<string | undefined>();
     const classes = useStyles();
-
+    const isMobile = useMediaQuery("(max-width: 768px)");
     const { context, saveContext } = React.useContext(EtherContext) as EtherContextRepository;
 
     useLayoutEffect(() => {
@@ -86,14 +86,17 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
         <Flex alignItems={"center"}>
             {children}
-            {balance ? (
-                <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ display: "flex", alignItems: "center", marginRight: 15 }}>
-                    <span style={{ marginBottom: -2 }}>0.00037</span>
-                    <img src={divilogo} style={{ width: 18, height: 18, marginLeft: 5 }} alt="" />
-                </Text>
-            ) : (
-                " "
-            )} {balance ? <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ marginRight: 15 }}>{balance} <img src={ethlogo} style={{ width: 13, height: 13 }} alt="" /></Text> : " "}
+            {isMobile ? '' : (
+                balance ? (
+                    <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ display: "flex", alignItems: "center", marginRight: 10, marginLeft: -10 }}>
+                        <span style={{ marginBottom: -2 }}>0.00037</span>
+                        <img src={divilogo} style={{ width: 18, height: 18, marginLeft: 5 }} alt="" />
+                    </Text>
+                ) : (
+                    " "
+                )
+            )}
+            {balance ? <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} style={{ marginRight: 15, minWidth: isMobile ? 60 : 'auto' }}>{balance} <img src={ethlogo} style={{ width: 13, height: 13 }} alt="" /></Text> : " "}
             <Button
                 variant="contained"
                 disableElevation

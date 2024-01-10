@@ -467,13 +467,14 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
             </div>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div className={classes.title}>
-                    {startTimePending && context.trnd_to_claim !== undefined && context.trnd_to_claim > 0 && startTimePending > 0
-                        ? countdownTitle
-                        : 'Not Active'
+                    {
+                        startTimePending && context.trnd_to_claim !== undefined && context.trnd_to_claim > 0 && startTimePending > 0
+                            ? (isMobile ? countdown : countdownTitle)
+                            : 'Not Active'
                     }
                 </div>
             </div>
-            <div className={classes.claimableLeft} style={{ top: isMobile ? '10%' : '12%' }}>
+            <div className={classes.claimableLeft} style={{ top: isMobile ? '7%' : '12%' }}>
                 <Box
                     style={{
                         position: 'relative',
@@ -614,11 +615,11 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
                             <span style={{ color: '#A4FE66' }}>{`${malusPerc.toFixed(2)}%` ?? <Skeleton />}</span>
                         </Typography>
                         {userDeposit && Number(userDeposit) > 0 ? (
-                        <div style={{ width: '100%', display: 'flex', marginTop: 15, justifyContent: 'center', alignItems: 'center', marginBottom: -15 }}>
-                        <Button onClick={handleModalExit} size="small" variant='contained' style={{ fontFamily: "Open Sans", color: 'black', border: '1px solid black', minWidth: 100, background: '#A4FE66', textShadow: '1px 1px 2px white' , marginBottom: 0}}>
-                                EXIT
-                            </Button>
-                        </div>
+                            <div style={{ width: '100%', display: 'flex', marginTop: 15, justifyContent: 'center', alignItems: 'center', marginBottom: -15 }}>
+                                <Button onClick={handleModalExit} size="small" variant='contained' style={{ fontFamily: "Open Sans", color: 'black', border: '1px solid black', minWidth: 100, background: '#A4FE66', textShadow: '1px 1px 2px white', marginBottom: 0 }}>
+                                    EXIT
+                                </Button>
+                            </div>
                         ) : (
                             <></>
                         )}
@@ -696,7 +697,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
             </Grid>
             {/* QUI */}
             <ModalStaking open={openModal} onClose={handleCloseModal} externalButton={externalButton} context={context} />
-            <ModalExit open={openModalExit} onClose={handleCloseModalExit} exitFunction={handleExitStaking} amountStaked={Number(userDeposit)} malusPerc={malusPerc} vesting={Number(months)}/>
+            <ModalExit open={openModalExit} onClose={handleCloseModalExit} exitFunction={handleExitStaking} amountStaked={Number(userDeposit)} malusPerc={malusPerc} vesting={Number(months)} />
             <BoosterStaked clickable={handleButtonClick} vesting={vesting} maxtokenIdsstaked={maxNftSlot} context={context} />
             <div style={{ height: 100 }} ></div>
         </Paper >

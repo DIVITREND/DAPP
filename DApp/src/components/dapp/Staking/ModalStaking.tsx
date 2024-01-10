@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Tabs, Tab } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
-import FactoryIcon from '@mui/icons-material/Factory';
 import { CombinedTokensIcons } from './comp_modal/CombinedTokensIcons';
 import { IEtherContext } from '../../../ethers/IEtherContext';
 import RevenueStats from './comp_modal/RevenueStats';
 import GlobalStats from './comp_modal/GlobalStats';
 import { TrndStats } from './comp_modal/TrndStats';
+import CloseIcon from '@mui/icons-material/Close';
 
 const UnselectedDATA = '69.png';
 const SelectedDATA = '70.png';
@@ -28,9 +25,9 @@ const SelectedDIVI = '78.png';
 
 const CustomTabs = withStyles({
     indicator: {
-      display: 'none', // Nascondi l'indicatore di selezione
+        display: 'none', // Nascondi l'indicatore di selezione
     },
-  })(Tabs);
+})(Tabs);
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -52,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
         width: 900,
         height: '93%',
         "@media screen and (max-width: 768px)": {
-            width: 400,
+            width: '100%',
+            border: 'none',
         },
         "@media screen and (max-height: 1180px)": {
             height: '99%',
@@ -72,12 +70,16 @@ const useStyles = makeStyles((theme) => ({
         color: '#FFFFFF',
         marginTop: theme.spacing(2),
     },
-    tabs: {
+    tabsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         position: 'absolute',
         bottom: 10,
-        left: '5%',
         width: '100%',
-        color: '#A4FE66',
+        "@media screen and (max-width: 768px)": {
+            left: '2%',
+        }
     },
     tabLabel: {
         display: 'flex',
@@ -91,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
 const ComponentOne = () => {
     return (
         <div>
-            <h2 style={{color: '#A4FE66'}}>Coming Soon...</h2>
+            <h2 style={{ color: '#A4FE66' }}>Coming Soon...</h2>
         </div>
     );
 };
@@ -128,7 +130,7 @@ const ModalStaking = ({ open, onClose, externalButton, context }: { open: boolea
             width: '35px',
             height: '35px',
         };
-    
+
         switch (tabValue) {
             case 1:
                 return activeTab === 1 ? <img src={SelectedDATA} alt="Selected Tab 1" style={imageStyle} /> : <img src={UnselectedDATA} alt="Unselected Tab 1" style={imageStyle} />;
@@ -148,46 +150,51 @@ const ModalStaking = ({ open, onClose, externalButton, context }: { open: boolea
     return (
         <Modal open={open} onClose={onClose} className={classes.modal}>
             <div className={classes.paper}>
+                <CloseIcon style={{ position: 'absolute', top: 10, right: 10, color: '#A4FE66', cursor: 'pointer' }} onClick={onClose} />
+
                 {activeTab === 1 && <ComponentOne />}
                 {activeTab === 2 && <GlobalStats />}
                 {activeTab === 3 && <RevenueStats />}
                 {activeTab === 4 && <CombinedTokensIcons tokenIdStaked={context.nft_staked_data?.nft_staked_ids ?? []} />}
                 {activeTab === 5 && <TrndStats tokenIdStaked={context.nft_staked_data?.nft_staked_ids ?? []} />}
 
-                <CustomTabs value={activeTab} onChange={handleTabChange} className={classes.tabs}>
-                    <Tab
-                        label=""
-                        value={1}
-                        icon={getTabIcon(1)}
-                        className={classes.tabLabel}
-                    />
-                    <Tab
-                        label=""
-                        value={2}
-                        icon={getTabIcon(2)}
-                        className={classes.tabLabel}
-                    />
-                    <Tab
-                        label=""
-                        value={3}
-                        icon={getTabIcon(3)}
-                        className={classes.tabLabel}
-                    />
-                    <Tab
-                        label=""
-                        value={4}
-                        icon={getTabIcon(4)}
-                        className={classes.tabLabel}
-                    />
-                    <Tab
-                        label=""
-                        value={5}
-                        icon={getTabIcon(5)}
-                        className={classes.tabLabel}
-                    />
-                </CustomTabs>
+                <div className={classes.tabsContainer}>
+
+                    <CustomTabs value={activeTab} onChange={handleTabChange} >
+                        <Tab
+                            label=""
+                            value={1}
+                            icon={getTabIcon(1)}
+                            className={classes.tabLabel}
+                        />
+                        <Tab
+                            label=""
+                            value={2}
+                            icon={getTabIcon(2)}
+                            className={classes.tabLabel}
+                        />
+                        <Tab
+                            label=""
+                            value={3}
+                            icon={getTabIcon(3)}
+                            className={classes.tabLabel}
+                        />
+                        <Tab
+                            label=""
+                            value={4}
+                            icon={getTabIcon(4)}
+                            className={classes.tabLabel}
+                        />
+                        <Tab
+                            label=""
+                            value={5}
+                            icon={getTabIcon(5)}
+                            className={classes.tabLabel}
+                        />
+                    </CustomTabs>
+                </div>
             </div>
-        </Modal>
+        </Modal >
     );
 };
 

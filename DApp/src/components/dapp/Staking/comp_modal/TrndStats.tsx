@@ -161,10 +161,7 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
                 </Grid>
                 <Grid item xs={12} sm={6} md={12}>
                     <div style={{
-                        background: "url('54.png') no-repeat center",
                         color: '#FFFFFF',
-                        backgroundPosition: 'center',
-                        backgroundClip: 'padding-box',
                         textAlign: "center",
                         //border: '2px solid #8B3EFF',
                         padding: '20px',
@@ -174,7 +171,7 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         height: '100%',
-                        minHeight: '300px',
+                        minHeight: '100px',
                         marginTop: -10,
                         gap: 10
                     }}>
@@ -249,6 +246,27 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
                                 <p />
                                 FACT STAKED
                             </div>
+                        </div>
+                    </div>
+                </Grid>
+                <Grid item xs={12} sm={6} md={12}>
+                    <div style={{
+                        color: '#FFFFFF',
+                        textAlign: "center",
+                        //border: '2px solid #8B3EFF',
+                        padding: '20px',
+                        borderRadius: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                        minHeight: '100px',
+                        marginTop: -10,
+                        gap: 10
+                    }}>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-around', gap: 20, padding: 10 }}>
                             <div style={{ alignItems: 'center', color: '#A4FE66', gap: 2 }}>
                                 <Button
                                     style={{
@@ -291,8 +309,6 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
                             </div>
                         </div>
                     </div>
-                </Grid>
-                <Grid item xs={12} sm={6} md={12}>
                 </Grid>
             </Grid>
         </div >
