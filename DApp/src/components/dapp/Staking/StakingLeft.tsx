@@ -181,7 +181,8 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
 
     const actualMalus = async (vestingN: number) => {
         try {
-            const perc_malus = await EtherHelper.STAKING_GET_ACTUAL_MALUS(vestingN !== 0 ? vestingN - 1 : 0, context)
+            const perc_malus = await EtherHelper.STAKING_GET_ACTUAL_MALUS(vestingN, context)
+            console.log("vesting & malus: ", vestingN + ' - ' + perc_malus)
             setMalusPerc(perc_malus)
         } catch (e) {
             console.log("error on stakingPendingRew: ", e)
@@ -191,11 +192,9 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     const userRevShare = async () => {
         try {
             const data = await EtherHelper.STAKING_REV_SHARE(context) as IClaimETH[]
-            console.log("data: ", data)
             if (data && data[0] !== undefined) {
                 setEthRev(data[0].eth_rew ?? 1)
                 setNftEthRev(data[0].nft_eth_rew ?? 1)
-                console.log("data: ", data[0].eth_rew, data[0].nft_eth_rew)
             }
         } catch (e) {
             console.log("error on stakingPendingRew: ", e)
@@ -326,7 +325,6 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     const unStakeBooster = async (ids: number[]) => {
         try {
             const ctx = await EtherHelper.UNSTAKING_BOOST(ids, vesting - 1, context);
-            console.log('StakeBooster', ctx);
             saveContext({ ...ctx, reload: true });
             if (ctx.toastStatus) {
                 setIsLoading(false)

@@ -414,6 +414,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner);
             const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            console.log("VESTING: ", stakingOption)
             const malus = await staking.connect(signer).getActualMalus(context.addressSigner ?? '', stakingOption)
             return (malus / 1000)
         } catch (e) {
@@ -951,10 +952,13 @@ export default class EtherHelper {
 
     public static async FACTORIES_TOTAL_REV(context: IEtherContext) {
         try {
+            if (!context.connected || !context) return ;
+
             const NFTs = context.nft_staked_data?.nft_staked_ids ?? [];
             const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(11155111));
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
-            const totData = await factories.getTotalBoosts(NFTs, { from: context.addressSigner })
+            const signer = provider.getSigner(context.addressSigner)
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const totData = await factories.getTotalBoosts(NFTs, { from: signer.getAddress() })
                 .then((data) => {
                     const numbersArray = data.map((n) => n.toNumber());
                     console.log("EtherHelper.FACTORIES_TOTAL_REV: ", JSON.stringify(numbersArray))

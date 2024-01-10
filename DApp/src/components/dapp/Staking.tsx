@@ -252,6 +252,7 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         fontFamily: "Open Sans",
         fontSize: "16px",
+        padding: 10,
         "@media screen and (max-width: 768px)": {
             width: '100%',
         },
@@ -567,9 +568,9 @@ const Staking = () => {
                             <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 1400 $
                             </Typography>
                         </Box>
-                        <Typography variant="body1" className={isMobile ? classes.descMobile :  classes.desc }>
-                            Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
-                        </Typography>
+                            <Typography variant="body1" className={isMobile ? classes.descMobile : classes.desc}>
+                                Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
+                            </Typography>
                         <Grid container style={{ marginTop: 80, padding: isMobile ? 20 : 20 }} spacing={isMobile ? 2 : 4}>
                             <Grid item xs={12} md={6}>
                                 <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>
@@ -699,7 +700,7 @@ const Staking = () => {
                             </Grid>
                         </Grid>
                         {isMobile ? (
-                            <div/>
+                            <div />
                         ) : (
                             <div style={{ height: selectedButton > 0 ? 240 : 110 }} ></div>
                         )}
