@@ -867,10 +867,10 @@ export default class EtherHelper {
 
             const gasEstimate = await Factories.estimateGas.payNfts(amount, { value: price });
 
-            return gasEstimate.toNumber(); 
+            return gasEstimate.toNumber();
         } catch (e) {
             console.error('Errore durante la stima del gas per payNfts:', e);
-            return 0; 
+            return 0;
         }
     }
 
@@ -1015,38 +1015,38 @@ export default class EtherHelper {
         return balance;
     }
 
-    public static async getQuoteEthToToken(amountIn: number, tokenOut: string, context: IEtherContext): Promise<number> {
+    public static async getQuoteEthToToken(amountIn: number, tokenIn: string, tokenOut: string, context: IEtherContext): Promise<number> {
+        console.log("getQuoteEthToToken", tokenOut, tokenIn, amountIn)
         const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
         const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), EtherHelper.ABI_SWAP(), provider)
 
-        const amounts = await UniswapRouter.getAmountsOut(amountIn, [AddressFactory.getWETH(context.chainId ?? 11155111), tokenOut]);
-        const amountOut = amounts[amounts.length - 1];
+        const amountParsed = ethers.utils.parseEther(amountIn.toString())
+        const amounts = await UniswapRouter.getAmountsOut(amountParsed, [tokenOut, tokenIn]);
+        const amountOut = amounts[1];
         return amountOut;
     }
 
-    public static async getQuoteTokenToEth(amountOut: number, tokenIn: string, context: IEtherContext): Promise<number> {
-        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-        console.log("getQuoteTokenToEth.amount: ", amountOut.toFixed(0))
+    public static async getQuoteTokenToEth(amountOut: number, tokenIn: string, tokenOut: string, context: IEtherContext): Promise<number> {
 
+        console.log("getQuoteTokenToEth", tokenOut, tokenIn, amountOut)
         async function getWETHPrice(): Promise<ethers.BigNumber> {
             const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
             const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), EtherHelper.ABI_SWAP(), provider)
             try {
-                const amountParsed = amountOut.toFixed(0)
-                console.log("getQuoteTokenToEth.amountParsed: ",amountOut.toFixed(0))
-                const amountsOut = await UniswapRouter.getAmountsIn(amountParsed, [tokenIn, AddressFactory.getWETH(context.chainId ?? 11155111)]);
-                const wethPrice = amountsOut[0];
-                return wethPrice;
+                const amountParsed = ethers.utils.parseEther(amountOut.toString())
+                const amountsOut = await UniswapRouter.getAmountsOut(amountParsed, [tokenOut, tokenIn]);
+                const amount = amountsOut[1];
+                return amount;
             } catch (error) {
-                console.error('Error quote WETH:', error);
+                //console.error('Error quote WETH:', error);
                 return BigNumber.from(0)
             }
         }
 
         try {
             const amountsETH: string = await getWETHPrice().then((price) => {
-                console.log('Prezzo di WETH:', ethers.utils.formatUnits(price, 18));
-                return ethers.utils.formatUnits(price, 18)
+                console.log('TRND TO WETH:', ethers.utils.formatEther(price));
+                return ethers.utils.formatEther(price)
             });
             return Number(amountsETH);
         } catch (e) {
@@ -1065,95 +1065,37 @@ export default class EtherHelper {
         await approved.wait();
     }
 
-    public static async getQuote(amount: number, quoteAddress: string, chainId: number, isETH: boolean, context: IEtherContext): Promise<number> {
-        const amountInWei = ethers.utils.parseUnits(amount.toString(), 18);
-        console.log(amountInWei)
-        console.log(amountInWei.toString(), quoteAddress, chainId)
+    public static async getQuote(amount: number, quoteAddress: string, quoteOutAddress: string, chainId: number, isETH: boolean, context: IEtherContext): Promise<number> {
+        //const amountInWei = ethers.utils.parseUnits(amount.toString(), 18);
         try {
             if (!amount || amount === 0) return 0;
-            if (isETH) {
+            if (isETH === true) {
                 try {
-                    const gQuote = await EtherHelper.getQuoteEthToToken(amount, quoteAddress, context);
-                    const q_map = ethers.utils.formatEther(gQuote)
-                    console.log("EtherHelper.getQuote(%s):", q_map, q_map);
+                    const gQuote = await EtherHelper.getQuoteEthToToken(amount, quoteAddress, quoteOutAddress, context);
+                    console.log("EtherHelper.getQuote(%s):", gQuote);
+                    const parsedWei = parseFloat(ethers.utils.formatEther(gQuote)).toFixed(2);
+                    const value = parsedWei.replace(",", ""); // Rimuove la virgola
+                    return Number(value)
                 } catch (error) {
                     console.error("Error in getting ETH to Token quote:", error);
-                }
-            } else {
-                try {
-                    const gQuoteOut = await EtherHelper.getQuoteTokenToEth(amount, quoteAddress, context);
-                    const q_mapOut = gQuoteOut * 1e18
-                    console.log("EtherHelper.getQuote(%s):", q_mapOut, q_mapOut);
-                } catch (error) {
-                    console.error("Error in getting Token to ETH quote:", error);
+                    return 0
                 }
             }
+
+            try {
+                const gQuoteOut = await EtherHelper.getQuoteTokenToEth(amount, quoteAddress, quoteOutAddress, context);
+                console.log("EtherHelper.getQuote(%s):", gQuoteOut);
+                return gQuoteOut
+            } catch (error) {
+                console.error("Error in getting Token to ETH quote:", error);
+                return 0
+            }
+
         } catch (error) {
             // @ts-expect-error
             console.log("EtherHelper.getQuote FAILED [%s]: %s", error.code, error.message);
+            return 0;
         }
-
-        return 0;
-    }
-
-    public static initialSwap(): ISwap {
-        return {
-            swapAmount: undefined
-        } as ISwap;
-    }
-
-    public static async initialInfoPool(context: IEtherContext): Promise<IEtherContext> {
-        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(this.getChainId()));
-
-        const router = new ethers.Contract(AddressFactory.getRouterV2(11155111), RouterV2, provider)
-        const pair = new ethers.Contract(AddressFactory.getPair(11155111), PairV2, provider)
-
-        const reserves = pair.getReserves()
-            .then(([reserve0, reserve1, blockTimestampLast]: any) => {
-                context.reserve0 = reserve0.toString();
-                context.reserve1 = reserve1.toString();
-                context.blockTimestampLast = blockTimestampLast.toString();
-            })
-            .catch((e: any) => console.log("Error in initialInfoPool.Reserves:", e));
-
-
-        const price0CumulativeLast = pair.price0CumulativeLast()
-            .then((r: any) => context.price0CumLast = r.toString())
-            .catch((e: any) => console.log(e))
-
-        const price1CumulativeLast = pair.price1CumulativeLast()
-            .then((r: any) => context.price1CumLast = r.toString())
-            .catch((e: any) => console.log(e))
-
-        const kLast = pair.price1CumulativeLast()
-            .then((r: any) => context.kLast = r.toString())
-            .catch((e: any) => console.log(e))
-
-        await Promise.all([
-            price0CumulativeLast,
-            price1CumulativeLast,
-            kLast,
-            reserves,
-        ]);
-
-        context = { ...context }
-        console.log("EtherHelper.InitialInfoFactory: ", context)
-
-        return { ...context };
-    }
-
-    public static async totalSupply(address: string): Promise<number> {
-        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(this.getChainId()));
-        const erc20 = new ethers.Contract(address, IERC20ABI, provider)
-
-        let supply = 0;
-
-        await erc20
-            .totalSupply()
-            .then((result: BigNumber) => supply = Number(ethers.utils.formatEther(result)))
-            .catch((error: any) => console.log("EtherHelper.getBalance: ", JSON.stringify(error)));
-
-        return supply;
     }
 
     public static async executeSwap(
@@ -1166,7 +1108,8 @@ export default class EtherHelper {
         const provider = EtherHelper.initProvider();
         const signer = provider.getSigner(context.addressSigner);
         const router = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), ABIswap, signer)
-        const path = isEthToToken ? [AddressFactory.getWETH(context.chainId ?? 11155111), asset] : [asset, AddressFactory.getWETH(context.chainId ?? 11155111)];
+        const path = isEthToToken ? [AddressFactory.getWETH(context.chainId ?? 11155111), asset] : [AddressFactory.getTokenAddress(context.chainId ?? 11155111), AddressFactory.getWETH(context.chainId ?? 11155111)];
+        console.log(isEthToToken, path)
         const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
         const amountInWei = ethers.utils.parseUnits(amountIn.toString(), 0);
         console.log(amountInWei.toString())
@@ -1175,21 +1118,26 @@ export default class EtherHelper {
             if (isEthToToken) {
                 const amountOutMin = await router.getAmountsOut(amountInWei, path);
                 const transactionResult = await router.swapExactETHForTokens(amountOutMin[1], path, signer.getAddress(), deadline, { value: amountInWei.toString() });
-                context.toastId = `swapETHforExactTokens_${transactionResult.transactionHash}`
+                context = {
+                    ...context,
+                    toastStatus: 'success',
+                    toastId: `swapETHforExactTokens_${transactionResult.transactionHash}`,
+                    toastTitle: 'DiviSwap',
+                    toastDescription: 'Successfully swapped - TX: ' + transactionResult.transactionHash,
+                };
                 console.log('EtherHelper.swap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
             } else {
-                const amountOutMin = await router.getAmountsOut(amountInWei, path);
-                const transactionResult = await router.swapExactTokensForETH(amountInWei.toString(), amountOutMin, path, signer.getAddress(), deadline);
-                context.toastId = `swapTokensforExactETH_${transactionResult.transactionHash}`
+                const amountOutMin = await router.getAmountsOut(amountInWei, path)
+                const transactionResult = await router.swapExactTokensForETH(amountInWei.toString(), amountOutMin[1], path, signer.getAddress(), deadline)
+                context = {
+                    ...context,
+                    toastStatus: 'success',
+                    toastId: `swapTokensforExactETH_${transactionResult.transactionHash}`,
+                    toastTitle: 'DiviSwap',
+                    toastDescription: 'Successfully swapped - TX: ' + transactionResult.transactionHash,
+                };
                 console.log('EtherHelper.swap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
             }
-
-            context = {
-                ...context,
-                toastStatus: 'success',
-                toastTitle: 'DiviSwap',
-                toastDescription: 'Successfully swapped ETH',
-            };
 
         } catch (error) {
             context = {
@@ -1201,7 +1149,7 @@ export default class EtherHelper {
             };
         }
 
-        return context;
+        return await this.querySignerInfo({ ...context, ...this.initialSwap() }).then(this.queryProviderInfo);
     }
 
     public static async swap(context: IEtherContext): Promise<IEtherContext> {
@@ -1268,8 +1216,10 @@ export default class EtherHelper {
             const slippageTolerance = "0.5"
             const swapAmountBN = ethers.utils.parseEther(context.swapAmount.toString())
 
+            let isEthToToken = (context.swapToken?.address ?? '') !== AddressFactory.getWETH(context.chainId ?? 11155111);
+
             if (context.swapToken && context.swapToken?.address) {
-                let transactionResult = await EtherHelper.executeSwap(ABIswap, context.swapToken.address, swapAmountBN, true, context)
+                let transactionResult = await EtherHelper.executeSwap(ABIswap, context.swapToken.address, swapAmountBN, isEthToToken, context)
                 console.log(transactionResult)
                 return transactionResult
             }
@@ -1287,6 +1237,65 @@ export default class EtherHelper {
         return await this.querySignerInfo({ ...context, ...this.initialSwap() }).then(this.queryProviderInfo);
     }
 
+    public static initialSwap(): ISwap {
+        return {
+            swapAmount: undefined
+        } as ISwap;
+    }
+
+    public static async initialInfoPool(context: IEtherContext): Promise<IEtherContext> {
+        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(this.getChainId()));
+
+        const router = new ethers.Contract(AddressFactory.getRouterV2(11155111), RouterV2, provider)
+        const pair = new ethers.Contract(AddressFactory.getPair(11155111), PairV2, provider)
+
+        const reserves = pair.getReserves()
+            .then(([reserve0, reserve1, blockTimestampLast]: any) => {
+                context.reserve0 = reserve0.toString();
+                context.reserve1 = reserve1.toString();
+                context.blockTimestampLast = blockTimestampLast.toString();
+            })
+            .catch((e: any) => console.log("Error in initialInfoPool.Reserves:", e));
+
+
+        const price0CumulativeLast = pair.price0CumulativeLast()
+            .then((r: any) => context.price0CumLast = r.toString())
+            .catch((e: any) => console.log(e))
+
+        const price1CumulativeLast = pair.price1CumulativeLast()
+            .then((r: any) => context.price1CumLast = r.toString())
+            .catch((e: any) => console.log(e))
+
+        const kLast = pair.price1CumulativeLast()
+            .then((r: any) => context.kLast = r.toString())
+            .catch((e: any) => console.log(e))
+
+        await Promise.all([
+            price0CumulativeLast,
+            price1CumulativeLast,
+            kLast,
+            reserves,
+        ]);
+
+        context = { ...context }
+        console.log("EtherHelper.InitialInfoFactory: ", context)
+
+        return { ...context };
+    }
+
+    public static async totalSupply(address: string): Promise<number> {
+        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(this.getChainId()));
+        const erc20 = new ethers.Contract(address, IERC20ABI, provider)
+
+        let supply = 0;
+
+        await erc20
+            .totalSupply()
+            .then((result: BigNumber) => supply = Number(ethers.utils.formatEther(result)))
+            .catch((error: any) => console.log("EtherHelper.getBalance: ", JSON.stringify(error)));
+
+        return supply;
+    }
 
     public static async querySignerInfo(context: IEtherContext): Promise<IEtherContext> {
         if (!context.addressSigner) return context;

@@ -15,13 +15,27 @@ const useStyles = makeStyles({
         background: "#111",
         border: "2px solid #8A00F6",
         borderRadius: 3,
-        color: "white", //dark purple
-        height: 48,
+        color: "white", 
+        height: '38px',
         padding: "0 0px",
         fontWeight: "bold",
         fontFamily: "Roboto",
         "&:hover": {
             background: "#8A00F6",
+            color: "white",
+        },
+    },
+    buttonNotConnected: {
+        background: "#8A00F6",
+        border: "2px solid #8A00F6",
+        borderRadius: 3,
+        color: "white", 
+        height: '38px',
+        padding: "0 0px",
+        fontWeight: "bold",
+        fontFamily: "Roboto",
+        "&:hover": {
+            background: "#111",
             color: "white",
         },
     },
@@ -101,7 +115,7 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 variant="contained"
                 disableElevation
                 size="small"
-                style={{ marginRight: "-20px", minWidth: 100 }}
+                style={{ marginRight: "-20px", minWidth: isMobile ? 100 : 80 }}
                 className={classes.button}
                 onClick={context.connected ? disconnect : connect}
                 disabled={loading}
@@ -109,7 +123,7 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 {loading ? (
                     <CircularProgress size={20} style={{ color: '#8500FF' }} /> // Replaced with CircularProgress
                 ) : (
-                    <Text>{context.addressSigner !== undefined ? `${context.addressSigner.substring(0, 7)}...` : "CONNECT"}</Text>
+                    <Text>{context.addressSigner !== undefined ? `${context.addressSigner.substring(0, 6)}...` : "CONNECT"}</Text>
                 )}
             </Button>
         </Flex>

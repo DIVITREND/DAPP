@@ -1,5 +1,5 @@
 body {
-  background: 'rgba(17, 17, 17, 0.7)';
+  background: linear-gradient(135deg, #000000, #0B0230);
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;

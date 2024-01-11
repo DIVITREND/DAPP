@@ -1,14 +1,12 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
     IconButton,
     Button,
-    InputAdornment,
     Tooltip,
     CircularProgress,
     Grid,
-    Container,
     Paper,
     styled,
     TextField,
@@ -19,11 +17,9 @@ import {
 } from '@material-ui/core';
 import { EtherContext } from '../../ethers/EtherContext';
 import { EtherContextRepository } from '../../ethers/EtherContextRepository';
-import PageHeader from '../PageHeader';
 import { makeStyles } from '@material-ui/core/styles';
 import ShuffleIcon from '@material-ui/icons/Shuffle';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import { useParams } from 'react-router-dom';
 import TokenSelector, { IAsset } from './TokenSelector';
 import AddressFactory from '../../common/AddressFactory';
 import EtherHelper from '../../ethers/EtherHelper';
@@ -32,7 +28,8 @@ import { StatsHelper } from '../stats_helper/StatsHelper';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { Alert, AlertTitle } from "@mui/material";
 import LogoSpinnerAnimation from '../LogoSpinnerAnimation';
-
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 const PrettoSlider = styled(Slider)({
     color: '#52af77',
     height: 8,
@@ -170,8 +167,20 @@ const useStyles = makeStyles((theme) => ({
             color: 'black'
         },
     },
+    impact: {
+        color: "#A4FE66",
+        textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
+        fontSize: '16px',
+        fontStyle: 'italic'
+    },
     balanceIn: {
         color: "lightgray",
+        textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
+        fontSize: '16px',
+        fontStyle: 'italic'
+    },
+    impactDown: {
+        color: "red",
         textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
         fontSize: '16px',
         fontStyle: 'italic'
@@ -227,26 +236,15 @@ const ShuffleTokenSelectors = ({ onTokenSwap }: { onTokenSwap: () => void }) => 
 };
 
 const SwapSection = () => {
-    const { id } = useParams();
-    const [refId, setRefId] = useState<number | undefined>();
-    const [open, setOpen] = React.useState(false);
-    const handleClose = () => {
-        setOpen(false);
-    };
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
     const { context, saveContext } = React.useContext(EtherContext) as EtherContextRepository;
 
     const natives: IAsset[] = [
-        { name: "Ethereum", symbol: "ETH", logo: '74.png', disabled: false },
+        { name: "Ethereum", symbol: "WETH", address: AddressFactory.getWETH(context.chainId ?? 11155111), logo: '74.png', disabled: false },
     ];
     const tokens: IAsset[] = [
         { name: "DiviTrend", symbol: "TRND", address: AddressFactory.getTokenAddress(context.chainId ?? 11155111), logo: '78.png', disabled: false },
     ];
 
-    const [balanceIn, setBalanceIn] = useState("");
     const [balanceOut, setBalanceOut] = useState("");
 
     const [amount, setAmountIn] = useState<number | undefined>(0);
@@ -272,10 +270,10 @@ const SwapSection = () => {
 
     const handleTokenSwap = () => {
         setTokenLists([tokenLists[1], tokenLists[0]]);
-
-        // Aggiorna anche assetIn e assetOut in base al nuovo ordine
         setAssetIn(tokenLists[1][0]);
         setAssetOut(tokenLists[0][0]);
+        console.log("In and Out", tokenLists[1][0], tokenLists[0][0])
+        console.log("TOKEN LIST", [tokenLists[1], tokenLists[0]])
     };
 
     const isConnected = context.connected ?? false;
@@ -292,31 +290,24 @@ const SwapSection = () => {
     }, []);
 
     useEffect(() => {
-        if (amount && amount > 0 && assetOut.address && context.chainId) {
+        if (amount && context.chainId) {
             setLoading(true)
             setSliderValue(parseInt((amount * ((context.balance ?? 1) / 100)).toFixed(2)));
-            if (assetOut.symbol === 'eth') {
-                let isETH = true
-                console.log("amount, assetOut.address", amount, assetOut.address)
-                EtherHelper.getQuote(amount, assetOut.address, context.chainId, isETH, context).then((n) => { setAmountOut(n); });
-                setLoading(false)
-            } else {
-                let isETH = false
-                console.log("amount, assetOut.address", amount, assetOut.address)
-                EtherHelper.getQuote(amount, assetOut.address, context.chainId, isETH, context).then((n) => { setAmountOut(n); });
-                setLoading(false)
-            }
+            let isETH: boolean = assetOut.symbol === 'TRND' ? true : false;
+            EtherHelper.getQuote(amount, (assetOut.address ?? ''), (assetIn.address ?? ''), context.chainId, isETH, context).then((n) => { setAmountOut(n); });
+            setLoading(false)
+
         } else {
             setAmountOut(0);
             setSliderValue(0);
             setLoading(false)
 
         }
-    }, [amount, assetOut]);
+    }, [amount, assetOut, context, assetIn]);
 
     useEffect(() => {
         if (assetOut.address && context.addressSigner) {
-            EtherHelper.getBalance(assetOut.address, context.addressSigner).then(a => setBalanceOut(`${a.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${assetOut.symbol}`));
+            EtherHelper.getBalance(assetOut.address, context.addressSigner).then(a => setBalanceOut(`${a.toLocaleString(undefined, { maximumFractionDigits: 2 })}`));
         }
     }, [assetOut, context.addressSigner]);
 
@@ -325,7 +316,6 @@ const SwapSection = () => {
         setSwapLoading(true);
         setLoading(true);
         EtherHelper.swap({ ...context, swapAmount: amount, swapToken: assetOut }).then((ctx) => {
-            console.log("Rewards.swap: ", JSON.stringify(ctx));
             setLoading(true)
             setAmountIn(0);
             setAmountOut(0);
@@ -348,11 +338,6 @@ const SwapSection = () => {
         });
     }
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>): void {
-        const value = parseInt(e.target.value);
-        setRefId(isNaN(value) || value === 0 ? undefined : value);
-    }
-
     useEffect(() => {
         async function getInitDataPool() {
             const data_ctx = await EtherHelper.initialInfoPool(context);
@@ -369,6 +354,12 @@ const SwapSection = () => {
         return false;
     }
 
+    const calculatePriceImpact = (amountIn: number) => {
+        const reserves = Number(ethers.utils.formatEther(context.reserve0 ?? 0));
+        const priceImpact = (amountIn / (reserves + amountIn)) * 100;
+        return priceImpact;
+    }
+
     const classes = useStyles();
 
     //CONVERT BALANCE OUTPUT
@@ -380,10 +371,10 @@ const SwapSection = () => {
     const balancePercentage = (((amount ?? 0) / (assetIn.name !== 'Ethereum' ? balanceNative : OutPutBalance)) * 100).toFixed(1);
     const res_0 = Number(parseFloat(context.reserve0 ?? '0'));
     const res_1 = Number(parseFloat(context.reserve1 ?? '0'));
-    const price = res_0 / res_1; // TRND
-    const balanceConvertToken = ((amount ?? 0) * (price)).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
-    })
+    //const price = res_0 / res_1; // WETH/TRND
+    const priceImpact = calculatePriceImpact(amount ?? 0);
+    const priceImpactClass = priceImpact <= 1 ? classes.impact : classes.impactDown;
+    const PriceImpactIcon = priceImpact <= 1 ? ArrowDropUpIcon : ArrowDropDownIcon;
     return (
         <div className={classes.root}>
             <div className={classes.overlay} ></div>
@@ -406,17 +397,6 @@ const SwapSection = () => {
                     <LogoSpinnerAnimation loading={loading} />
                 </Paper>
             </Collapse>
-            {isConnected === false && (
-                <Paper elevation={3} className={classes.paperAlert}>
-                    <Alert
-                        variant="outlined"
-                        severity={"info"}
-                        onClose={handleCloseAlert}
-                    >
-                        <AlertTitle>{"Connect Your Wallet — Please connect your wallet! "}</AlertTitle>
-                    </Alert>
-                </Paper>
-            )}
             <Grid container style={{ marginBottom: isMobile ? 200 : 100, maxWidth: 540 }}>
                 <Grid item xs={12} md={12} style={{ margin: 10, padding: 10 }}>
                     <Paper className={classes.paperA}>
@@ -433,8 +413,8 @@ const SwapSection = () => {
                                         width: '100%',
                                         marginTop: 10,
                                         marginBottom: 50,
-                                        gap: 5,
-                                        padding: 5,
+                                        gap: 10,
+                                        padding: 10,
                                     }}
                                     spacing={2}
                                 >
@@ -442,52 +422,57 @@ const SwapSection = () => {
                                         {loading && <CircularProgress />}
                                         {!loading && (
                                             <TextField
-                                                label={<div style={{ fontSize: '18px', color: '#8B3EFF' }}>From</div>}
-                                                type="text" // Change type to text
-                                                className={classes.customTextField}
-                                                inputProps={{
-                                                    pattern: '^[0-9,.]*$', // Set a pattern to allow only numbers, commas, and dots
-                                                    max: assetIn.name === 'DiviTrend' ? context.balance : balanceOut,
-                                                }}
-                                                value={amount?.toLocaleString('en-US') ?? ''}
-                                                onChange={(e) => {
-                                                    const inputValue = e.target.value;
-                                                    const filteredValue = inputValue.match(/^[0-9,.]*$/); // Filter the input value
-                                                    setAmountIn(filteredValue ? Number(filteredValue[0]) : undefined); // Set the filtered value in state
-                                                }}
-                                                focused
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                                style={{ minWidth: 200 }}
-                                            />
+                                            label={<div style={{ fontSize: '18px', color: '#8B3EFF' }}>From</div>}
+                                            type="text"
+                                            className={classes.customTextField}
+                                            inputProps={{
+                                                max: assetIn.name === 'DiviTrend' ? context.balance : balanceOut,
+                                            }}
+                                            value={amount?.toLocaleString(undefined, { maximumFractionDigits: assetIn.name === 'DiviTrend' ? 2 : 4 }) ?? ''}
+                                            onChange={(e) => {
+                                                const inputValue = e.target.value;
+                                                const filteredValue = inputValue.match(/^[0-9]*[.,]?[0-9]*$/); // Allow only one dot or comma
+                                                if (filteredValue) {
+                                                    console.log("SetAmountIn: ", Number(filteredValue[0].replace(',', '.')));
+                                                    setAmountIn(Number(filteredValue[0].replace(',', '.'))); // Replace comma with dot before converting to number
+                                                }
+                                            }}
+                                            focused
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            style={{ minWidth: 200 }}
+                                        />
                                         )}
                                     </FormControl>
-                                    {assetIn.name === 'natives' ? (
-                                        <TokenSelector
-                                            assets={tokenLists[0]}
-                                            disabled={disabled || isDisabled()}
-                                            onChange={setAssetIn}
-                                        />
-                                    ) : (
-                                        <TokenSelector
-                                            assets={tokenLists[1]}
-                                            disabled={disabled || isDisabled()}
-                                            onChange={setAssetOut}
-                                        />
-                                    )}
+                                    <TokenSelector
+                                        assets={tokenLists[0]}
+                                        disabled={disabled || isDisabled()}
+                                        onChange={setAssetOut}
+                                    />
                                 </Grid>
-                                <div style={{ display: 'flex', position: 'absolute', left: "15%", top: '25%' }}>
-                                    <Typography variant="caption" className={classes.balanceIn}>
-                                        {assetIn.name !== 'Ethereum' ? '$' + ((amount ?? 0) * (wethPrice ?? 0)).toFixed(1) : '$' + balanceConvertToken}
-                                    </Typography>
+                                <div style={{ display: 'flex', position: 'absolute', left: "15%", top: isMobile ? '25%' : '22%' }}>
+                                    <Tooltip
+                                        title="Price Impact"
+                                        placement="top"
+                                        arrow
+                                    >
+                                        <div>
+                                            <PriceImpactIcon className={priceImpactClass} />
+                                            <Typography variant="caption" className={priceImpactClass}>
+                                                {priceImpact.toFixed(0)}%
+                                            </Typography>
+                                        </div>
+                                    </Tooltip>
                                 </div>
                                 <div style={{ display: 'flex', position: 'absolute', flexDirection: 'row', right: "20%", top: isMobile ? '30%' : '22%' }}>
                                     <AccountBalanceWalletIcon fontSize="small" style={{ color: 'white', marginTop: 1, marginRight: 10 }} />
                                     <Typography variant="caption" className={classes.balanceIn}>
-                                        {assetIn.name === 'DiviTrend' ? (context.balance?.toLocaleString(undefined, {
+                                        {assetIn.name === 'Ethereum' ? (context.balance?.toLocaleString(undefined, {
                                             maximumFractionDigits: 2,
-                                        }) + (context.balance ? 'ETH' : '')) : (balanceOut)
+                                        })) : context.trndBalance?.toLocaleString(undefined, {
+                                            maximumFractionDigits: 2,
+                                        })
                                         }
                                     </Typography>
                                 </div>
@@ -507,37 +492,30 @@ const SwapSection = () => {
                                     <PrettoSlider
                                         aria-label="pretto-slider"
                                         defaultValue={sliderValue}
-                                        step={assetIn.name !== 'Ethereum' ? (balanceNative / 100) : (OutPutBalance / 100000)}
+                                        step={assetIn.name !== 'Ethereum' ? 1 : (1 / 1000)}
                                         min={0}
-                                        max={assetIn.name !== 'Ethereum' ? balanceNative : OutPutBalance}
-                                        value={assetIn.name !== 'Ethereum' ? Number(amount?.toFixed(2)) : Number(amount?.toFixed(2))}
-                                        valueLabelFormat={(value) => `${balancePercentage}%`}
+                                        max={assetIn.name === 'Ethereum' ? balanceNative : context.trndBalance}
+                                        value={assetIn.name === 'Ethereum' ? Number(amount?.toFixed(2)) : Number(amount?.toFixed(2))}
+                                        valueLabelFormat={() => `${balancePercentage}%`}
                                         onChange={(event: any, newValue: number | number[]) => {
-                                            // format balanceOut
-                                            const cleanedStringOutput = balanceOut.replace(/[,$]/g, '');  // rmc [",","."]
-                                            const BalanceOutInEther = parseFloat(cleanedStringOutput);  // (n) => converted
-                                            // Decimale format
-                                            const decimalPlacesInBalanceOut = (cleanedStringOutput.split('.')[1] || []).length;
-                                            console.log("cleanedStringOutput", cleanedStringOutput)
                                             const amountWithCorrectDecimals = parseFloat(newValue.toString());
-                                            console.log("amountWithCorrectDecimals", amountWithCorrectDecimals)
-                                            // correct amount - formatted
+                                            console.log("FROM - Amount", assetIn.name, amountWithCorrectDecimals)
                                             setAmountIn(isNaN(amountWithCorrectDecimals) ? undefined : amountWithCorrectDecimals);
                                         }}
                                     />
                                 </Grid>
-                                    <Grid
-                                        container
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}
-                                        className={classes.divider}
-                                    >
-                                        <ShuffleTokenSelectors onTokenSwap={handleTokenSwap} />
-                                    </Grid>
+                                <Grid
+                                    container
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}
+                                    className={classes.divider}
+                                >
+                                    <ShuffleTokenSelectors onTokenSwap={handleTokenSwap} />
+                                </Grid>
                                 <Grid
                                     container
                                     style={{
@@ -555,10 +533,10 @@ const SwapSection = () => {
                                         {!loading && (
                                             <TextField
                                                 label={<div style={{ fontSize: '18px', color: '#8B3EFF' }}>To</div>}
-                                                type="number"
+                                                type="text"
                                                 className={classes.customTextField}
                                                 value={amountOut?.toLocaleString(undefined, {
-                                                    maximumFractionDigits: 2,
+                                                    maximumFractionDigits: 4,
                                                 })} hiddenLabel={false}
 
                                                 focused
@@ -569,21 +547,14 @@ const SwapSection = () => {
                                             />
                                         )}
                                     </FormControl>
-                                    {assetOut.name === 'tokens' ? (
-                                        <TokenSelector
-                                            assets={tokenLists[1]}
-                                            disabled={disabled || isDisabled()}
-                                            onChange={setAssetOut}
-                                        />
-                                    ) : (
-                                        <TokenSelector
-                                            assets={tokenLists[0]}
-                                            disabled={disabled || isDisabled()}
-                                            onChange={setAssetOut}
-                                        />
-                                    )}
+                                    <TokenSelector
+                                        assets={tokenLists[1]}
+                                        disabled={disabled || isDisabled()}
+                                        onChange={setAssetOut}
+                                    />
+
                                 </Grid>
-                                <div style={{ display: 'flex', position: 'absolute', left: "15%", bottom: isMobile ? '20%' :'25%', flexDirection: 'row' }}>
+                                <div style={{ display: 'flex', position: 'absolute', left: "15%", bottom: isMobile ? '20%' : '25%', flexDirection: 'row' }}>
                                     <Tooltip
                                         title="Estimated quote, taxes not included"
                                         placement="top"
@@ -592,15 +563,24 @@ const SwapSection = () => {
                                         <InfoOutlinedIcon className={classes.infoIcon} />
                                     </Tooltip>
                                     <Typography variant="caption" className={classes.balanceIn}>
-                                        {assetIn.name !== 'Ethereum' ? '$' + ((amountOut ?? 0) * (wethPrice ?? 0)).toFixed(1) : '$' + balanceConvertToken}
+                                        {assetIn.name === 'Ethereum'
+                                            ? (amount === 0
+                                                ? 0
+                                                : ((amount ?? 0) * (wethPrice ?? 0)).toFixed(2)
+                                            )
+                                            : (amount === 0
+                                                ? 0
+                                                : ((amountOut ?? 0) * (wethPrice ?? 0)).toFixed(2)
+                                            )
+                                        }$
                                     </Typography>
                                 </div>
                                 <div style={{ display: 'flex', position: 'absolute', flexDirection: 'row', right: "20%", bottom: isMobile ? '15%' : '25%' }}>
                                     <AccountBalanceWalletIcon fontSize="small" style={{ color: 'white', marginTop: 1, marginRight: 10 }} />
                                     <Typography variant="caption" className={classes.balanceIn}>
-                                        {assetIn.name !== 'DiviTrend' ? (context.balance?.toLocaleString(undefined, {
+                                        {assetIn.name === 'DiviTrend' ? (context.balance?.toLocaleString(undefined, {
                                             maximumFractionDigits: 2,
-                                        }) + (context.balance ? '♦' : '')) : (balanceOut)
+                                        })) : (balanceOut)
                                         }
                                     </Typography>
                                 </div>

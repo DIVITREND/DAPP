@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       display: 'flex',
-      background: '#333',
+      background: 'linear-gradient(135deg, #000000, #0B0230)',
       color: '#fff',
       minHeight: '100vh',
     },
@@ -88,7 +88,10 @@ const useStyles = makeStyles((theme) =>
       borderTop: 'none',
       borderRight: 'none',
       borderLeft: 'none',
-      height: 56
+      height: 66,
+      "@media screen and (max-width: 768px)": {
+        height: 58,
+      },
     },
     hyStyle: {
       background: 'rgba(216,178,167, 1)', /* Imposta il gradient bianco-azzurrino */
@@ -386,7 +389,7 @@ const App: React.FC = () => {
     <Router>
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed" className={classes.appBar}>
+        <AppBar position="fixed" className={classes.appBar} style={{ justifyContent: context.addressSigner === undefined ? 'space-between' : 'flex-start' }}>
           <Toolbar>
             <IconButton
               style={{ color: '#8500FF' }}
@@ -425,7 +428,7 @@ const App: React.FC = () => {
                     <div key={key}>
                       <NavItem
                         to={link.paths[0]}
-                        onClick={handleDrawerToggle} // Chiudi il drawer quando si fa clic su un elemento
+                        onClick={handleDrawerToggle}
                       >
                         {link.name}
                       </NavItem>
@@ -447,10 +450,12 @@ const App: React.FC = () => {
               </>
             )}
             {isMobile && (
-              <div style={{ marginLeft: 20, display: 'flex', alignItems: 'center', gap: 10, marginRight: 10 }}>
-                <Connector>
-                  <ModeSwitcher mr={4} />
-                </Connector>
+              <div style={{ width: '100%', marginLeft: 20, display: 'flex', alignItems: 'center', gap: 10, marginRight: 10 }}>
+                <div style={{ flexGrow: context.addressSigner === undefined ? 1 : 0 }}>
+                  <Connector>
+                    <ModeSwitcher mr={4} />
+                  </Connector>
+                </div>
                 <IconButton style={{ marginLeft: 10, color: '#8500FF' }} onClick={handleOpen} aria-label="Menu">
                   <AppsIcon fontSize="large" />
                 </IconButton>
@@ -477,6 +482,7 @@ const App: React.FC = () => {
             classes={{
               paper: classes.drawerPaper,
             }}
+            style={{ zIndex: 9999 }}
           >
             <div style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 10, flexDirection: 'column' }}>
               {LinkItems.map((link, key) => (
