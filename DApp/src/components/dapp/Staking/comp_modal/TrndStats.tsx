@@ -100,7 +100,6 @@ export const TrndStats: React.FC<TrndStatsProps> = ({ tokenIdStaked }) => {
         { vesting: 2, months: 12 },
         { vesting: 3, months: 24 }
     ]
-
     //{Number(context.trnd_to_claim?.toFixed(2)).toLocaleString('en-US')} <img src="78.png" alt="" style={{ width: 15, height: 15 }} />
 
     useEffect(() => {

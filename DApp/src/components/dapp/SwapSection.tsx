@@ -492,7 +492,7 @@ const SwapSection = () => {
                                     <PrettoSlider
                                         aria-label="pretto-slider"
                                         defaultValue={sliderValue}
-                                        step={assetIn.name !== 'Ethereum' ? 1 : (1 / 1000)}
+                                        step={assetIn.name !== 'Ethereum' ? (1/1000) : (1 / 1000)}
                                         min={0}
                                         max={assetIn.name === 'Ethereum' ? balanceNative : context.trndBalance}
                                         value={assetIn.name === 'Ethereum' ? Number(amount?.toFixed(2)) : Number(amount?.toFixed(2))}

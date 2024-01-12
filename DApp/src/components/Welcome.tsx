@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@mui/material/Container";
 import { Paper } from "@material-ui/core";
@@ -19,6 +20,8 @@ import { ethers } from "ethers";
 import { Pair } from "../entities/stats/Pair";
 import { StatsHelper } from "./stats_helper/StatsHelper";
 import AddressFactory from "../common/AddressFactory";
+import { WelcomeUserData } from "./dapp/WelcomeUserData";
+import { GreenSwitch } from "./dapp/Staking/useStyleStaking";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -110,6 +113,17 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Open Sans",
     fontSize: '24px'
   },
+  titleBottom: {
+    position: "absolute",
+    bottom: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
+    fontWeight: 900,
+    color: "#A4FE66",
+    textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
+    fontFamily: "Open Sans",
+    fontSize: '24px'
+  },
   desc: {
     position: "absolute",
     top: "70%",
@@ -124,6 +138,20 @@ const useStyles = makeStyles((theme) => ({
   subtitle: {
     position: "absolute",
     top: "30%",
+    left: "50%",
+    transform: "translateX(-50%)",
+    color: 'white',
+    fontSize: '32px',
+    fontFamily: "Open Sans",
+    fontWeight: 700,
+    "@media screen and (max-width: 768px)": {
+      top: '40%',
+      width: '100%',
+    },
+  },
+  subtitleBottom: {
+    position: "absolute",
+    top: "10%",
     left: "50%",
     transform: "translateX(-50%)",
     color: 'white',
@@ -240,8 +268,13 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     maxHeight: 'auto',
     top: 55,
-},
+  },
 }));
+
+interface ICTBalance {
+  trnd_balance: number;
+  eth_balance: number;
+}
 
 const Welcome = () => {
   const classes = useStyles();
@@ -250,6 +283,12 @@ const Welcome = () => {
   const [wethPrice, setWethPrice] = useState<number | undefined>(undefined);
   const [usdtPrice, setUsdtPrice] = useState<number | undefined>(undefined);
   const [reserveWETH, setWETHReserve] = useState<number>(0);
+  const [ethetrnd, setEthetrnd] = useState({} as ICTBalance);
+  const [checked, setChecked] = useState(false);
+
+  const handleChangeChecker = (event: ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
 
   useEffect(() => {
     if (!context) return context
@@ -264,17 +303,36 @@ const Welcome = () => {
       .then(price => setUsdtPrice(price));
   }, []);
 
-  console.log([wethPrice])
-
-
   useEffect(() => {
     async function getInitDataPool() {
+      await EtherHelper.queryStakingInfo(context)
       const data_ctx = await EtherHelper.initialInfoPool(context);
       saveContext(data_ctx)
-      console.log(data_ctx)
     }
     getInitDataPool()
   }, [])
+
+  useEffect(() => {
+    async function getEthClaimed() {
+      const ethClaimed = await EtherHelper.STAKING_ALL_TOKENS_BALANCE(context)
+      return ethClaimed;
+    }
+
+    getEthClaimed().then((ethClaimed: ICTBalance) => {
+      console.log('ethClaimed', ethClaimed)
+      setEthetrnd({ trnd_balance: ethClaimed.trnd_balance, eth_balance: ethClaimed.eth_balance });
+    })
+
+  }, [context]);
+
+  async function updateCTX() {
+    await EtherHelper.initialInfoPool({ ...context })
+  }
+
+  useEffect(() => {
+    if (!context) return;
+    updateCTX()
+  }, [context])
 
   const isConnected = context.connected ?? false;
 
@@ -290,7 +348,7 @@ const Welcome = () => {
                   $TRND:
                 </div>
                 <div className={classes.subtitle}>
-                  {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
@@ -304,9 +362,8 @@ const Welcome = () => {
                         );
                       })()}
                     </>
-                  )}
-                  {!context.reserve0 && context.reserve1 && (
-                    <Skeleton animation="wave" />
+                  ) : (
+                    <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
                   )}
                 </div>
                 <Chip
@@ -331,89 +388,120 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                
-                <div className={classes.title}>
-                  LP $TRND:
-                </div>
-                <div className={classes.subtitle}>
-                  {wethPrice && (
-                    <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
-                  )}
-                </div>
-                {context.reserve0 && context.reserve1 && (
-                  <div className={classes.desc}>
-                    {ethers.utils.formatEther(context.reserve0)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF' }}>{checked ? 'MC' : 'LP'}</span></div>
+                {checked ? (
+                  <div>
+                    <div className={classes.title}>
+                      LP $TRND:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {wethPrice && (
+                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
+                      )}
+                    </div>
+                    {context.reserve0 && context.reserve1 ? (
+                      <div className={classes.desc}>
+                        {Number(ethers.utils.formatEther(context.reserve0)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                      </div>
+                    ) : (
+                      <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <div className={classes.title}>
+                      MARKET CAP:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {context.reserve0 && context.reserve1 ? (
+                        <>
+                          {(() => {
+                            const res_0 = Number(parseFloat(context.reserve0));
+                            const res_1 = Number(parseFloat(context.reserve1));
+                            const price = res_0 / res_1;
+                            return (
+                              <>
+                                ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                              </>
+                            );
+                          })()}
+                        </>
+                      ) : (
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                      )}
+                    </div>
                   </div>
                 )}
-                {!context.reserve0 && context.reserve1 && (
-                  <Skeleton animation="wave" />
-                )}
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                
-                <div className={classes.title}>
-                  MARKET CAP:
-                </div>
-                <div className={classes.subtitle}>
-                  {context.reserve0 && context.reserve1 && (
-                    <>
-                      {(() => {
-                        const res_0 = Number(parseFloat(context.reserve0));
-                        const res_1 = Number(parseFloat(context.reserve1));
-                        const price = res_0 / res_1;
-                        return (
-                          <>
-                            ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
-                          </>
-                        );
-                      })()}
-                    </>
-                  )}
-                  {!context.reserve0 && context.reserve1 && (
-                    <Skeleton animation="wave" />
-                  )}
-                </div>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Paper className={classes.paper}>
-                
-                <div className={classes.title}>
-                  BURNED:
-                </div>
-                <div className={classes.subtitle}>
-                  0 $TRND
-                </div>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paperEnd}>
-                {isMobile && (
-                  <img src={"11.png"} alt="" className={classes.icon} />
-                )}
 
                 <div className={classes.title}>
-                  STAKED CAPITAL:
+                  STAKED CAPITAL
                 </div>
                 <div className={classes.subtitle}>
-                  $ 0
+                  0$
+                </div>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Paper className={classes.paper}>
+                <div className={classes.title}>
+                  STAKING DATA
+                </div>
+                <WelcomeUserData />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  DISTRIBUTED REV
+                </div>
+                <div className={classes.subtitleBottom}>
+                  {ethetrnd.trnd_balance?.toLocaleString('en-US') ?? <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="74.png" alt="" style={{ width: 30, height: 30 }} />
+                </div>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  TOTAL $TRND STAKED
+                </div>
+                <div className={classes.subtitleBottom} style={{ display: 'flex', alignItems: 'center' }}>
+                  {context.tot_trnd_staked ? context.tot_trnd_staked?.toLocaleString('en-US') : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="78.png" alt="" style={{ width: 40, height: 40 }} />
+                </div>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  TOTAL $FACT STAKED
+                </div>
+                <div className={classes.subtitleBottom}>
+                  {context.nft_staked ? context.nft_staked : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
                 </div>
               </Paper>
             </Grid>
           </Grid>
         )}
+
+        {/* MOBILE */}
+
         {isMobile && (
           <Grid spacing={5} className={classes.mobile} style={{ height: '100%' }}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                
+
                 <div className={classes.title}>
                   $TRND:
                 </div>
                 <div className={classes.subtitlePrice}>
-                  {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
@@ -427,6 +515,8 @@ const Welcome = () => {
                         );
                       })()}
                     </>
+                  ) : (
+                    <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
                   )}
                 </div>
                 <Chip
@@ -451,33 +541,60 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                
-                <div className={classes.title}>
-                  LP $TRND:
-                </div>
-                <div className={classes.subtitle}>
-                  {wethPrice && (
-                    <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
-                  )}
-                </div>
-                {context.reserve0 && context.reserve1 && (
-                  <div className={classes.desc}>
-                    {ethers.utils.formatEther(context.reserve0)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF', marginLeft: -5 }}>{checked ? 'MC' : 'LP'}</span></div>
+                {checked ? (
+                  <div>
+                    <div className={classes.title}>
+                      LP $TRND:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {wethPrice && (
+                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
+                      )}
+                    </div>
+                    {context.reserve0 && context.reserve1 ? (
+                      <div className={classes.desc}>
+                        {Number(ethers.utils.formatEther(context.reserve0)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                      </div>
+                    ) : (
+                      <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                    )}
                   </div>
-                )}
-                {!context.reserve0 && context.reserve1 && (
-                  <Skeleton animation="wave" />
+                ) : (
+                  <div>
+                    <div className={classes.title}>
+                      MARKET CAP:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {context.reserve0 && context.reserve1 ? (
+                        <>
+                          {(() => {
+                            const res_0 = Number(parseFloat(context.reserve0));
+                            const res_1 = Number(parseFloat(context.reserve1));
+                            const price = res_0 / res_1;
+                            return (
+                              <>
+                                ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                              </>
+                            );
+                          })()}
+                        </>
+                      ) : (
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                      )}
+                    </div>
+                  </div>
                 )}
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                
+
                 <div className={classes.title}>
-                  MARKET CAP:
+                  CAPITAL
                 </div>
                 <div className={classes.subtitle}>
-                  {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
@@ -490,29 +607,51 @@ const Welcome = () => {
                         );
                       })()}
                     </>
+                  ) : (
+                    <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
                   )}
                 </div>
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                
                 <div className={classes.title}>
-                  BURNED:
+                  STAKING DATA
                 </div>
-                <div className={classes.subtitle}>
-                  0 $TRND
+                <WelcomeUserData />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  DISTRIBUTED REV
+                </div>
+                <div className={classes.title} style={{color: 'white'}}>
+                  {ethetrnd.trnd_balance?.toLocaleString('en-US') ?? <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="74.png" alt="" style={{ width: 30, height: 30 }} />
                 </div>
               </Paper>
             </Grid>
-            <Grid item xs={12}>
+
+            <Grid item xs={12} md={4}>
               <Paper className={classes.paperEnd}>
-                
-                <div className={classes.title}>
-                  CAPITAL:
+                <div className={classes.titleBottom} >
+                  TOTAL $TRND STAKED
                 </div>
-                <div className={classes.subtitle}>
-                  $ 0
+                <div className={classes.title} style={{ display: 'flex', alignItems: 'center', color: 'white' }}>
+                  {context.tot_trnd_staked ? context.tot_trnd_staked?.toLocaleString('en-US') : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="78.png" alt="" style={{ width: 40, height: 40 }} />
+                </div>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  TOTAL $FACT STAKED
+                </div>
+                <div className={classes.title} style={{color: 'white'}}>
+                  {context.nft_staked ? context.nft_staked : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
                 </div>
               </Paper>
             </Grid>

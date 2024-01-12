@@ -473,7 +473,8 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                                 marginTop: 0,
                                 border: '2px solid #8500FF',
                                 borderRadius: 20,
-                                color: '#A4FE66'
+                                color: '#A4FE66',
+                                justifyContent: 'center',
                             }}>
                                 {mobileTokens.map((row, index) => {
                                     const remainingItems = 3 - row.length;
@@ -489,8 +490,10 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                                             flexDirection: 'row',
                                             justifyContent: 'center',
                                             gap: 20,
+                                            marginLeft: 30,
                                             marginTop: 5,
-                                            alignItems: 'center', // Aggiunto l'allineamento al centro degli elementi figlio
+                                            width: '100%',
+                                            alignItems: 'center',
                                         }}>
                                             {adjustedRow}
                                         </div>

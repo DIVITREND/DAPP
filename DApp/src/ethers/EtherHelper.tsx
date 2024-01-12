@@ -1117,7 +1117,8 @@ export default class EtherHelper {
         try {
             if (isEthToToken) {
                 const amountOutMin = await router.getAmountsOut(amountInWei, path);
-                const transactionResult = await router.swapExactETHForTokens(amountOutMin[1], path, signer.getAddress(), deadline, { value: amountInWei.toString() });
+                const tx = await router.swapExactETHForTokens(amountOutMin[1], path, signer.getAddress(), deadline, { value: amountInWei.toString() });
+                const transactionResult = await tx.wait()
                 context = {
                     ...context,
                     toastStatus: 'success',
@@ -1128,7 +1129,8 @@ export default class EtherHelper {
                 console.log('EtherHelper.swap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
             } else {
                 const amountOutMin = await router.getAmountsOut(amountInWei, path)
-                const transactionResult = await router.swapExactTokensForETH(amountInWei.toString(), amountOutMin[1], path, signer.getAddress(), deadline)
+                const tx = await router.swapExactTokensForETH(amountInWei.toString(), amountOutMin[1], path, signer.getAddress(), deadline)
+                const transactionResult = await tx.wait()
                 context = {
                     ...context,
                     toastStatus: 'success',
