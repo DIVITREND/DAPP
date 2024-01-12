@@ -103,14 +103,3 @@ const config: HardhatUserConfig = {
 };
 
 export default config;
-
-//
-//     {
-//       network: "mainnet",
-//       chainId: 25,
-//       urls: {
-//         apiURL: "https://api.cronoscan.com/api",
-//         browserURL: "https://cronoscan.com/",
-//       },
-//     },
-//

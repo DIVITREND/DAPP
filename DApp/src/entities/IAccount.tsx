@@ -6,4 +6,5 @@ export interface IAccount {
     //whitelisted?: boolean;
     claimed?: boolean;
     otherBalance?: number;
+    trndBalance?: number;
   }

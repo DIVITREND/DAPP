@@ -15,10 +15,12 @@ async function main() {
         DeployHelper.getDeployerAddress(chainId)
     );
     const trnd = new Contract(DeployHelper.getTokenAddress(chainId), TRND_ABI, deployer) as Divitrend
-
+    
     const tsupply = await trnd.connect(deployer).totalSupply()
     console.log(tsupply)
 
+    const mint_to = await trnd.transfer(DeployHelper.getStaking(chainId), ethers.utils.parseEther('10000'))
+    console.log(mint_to)
 }
 main().catch((error) => {
     console.error(error);

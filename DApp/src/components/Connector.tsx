@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import ChainAvatar from "./ChainAvatar";
 import EtherHelper from "../ethers/EtherHelper";
-import { CircularProgress } from "@material-ui/core"; // Import CircularProgress
+import { CircularProgress, useMediaQuery } from "@material-ui/core"; // Import CircularProgress
 import { EtherContext } from "../ethers/EtherContext";
 import { Flex, Text } from "@chakra-ui/react";
 import { Button, makeStyles } from "@material-ui/core";
@@ -15,13 +15,27 @@ const useStyles = makeStyles({
         background: "#111",
         border: "2px solid #8A00F6",
         borderRadius: 3,
-        color: "white", //dark purple
-        height: 48,
+        color: "white", 
+        height: '38px',
         padding: "0 0px",
         fontWeight: "bold",
         fontFamily: "Roboto",
         "&:hover": {
             background: "#8A00F6",
+            color: "white",
+        },
+    },
+    buttonNotConnected: {
+        background: "#8A00F6",
+        border: "2px solid #8A00F6",
+        borderRadius: 3,
+        color: "white", 
+        height: '38px',
+        padding: "0 0px",
+        fontWeight: "bold",
+        fontFamily: "Roboto",
+        "&:hover": {
+            background: "#111",
             color: "white",
         },
     },
@@ -31,7 +45,7 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [balance, setBalance] = useState<string | undefined>();
     const classes = useStyles();
-
+    const isMobile = useMediaQuery("(max-width: 768px)");
     const { context, saveContext } = React.useContext(EtherContext) as EtherContextRepository;
 
     useLayoutEffect(() => {
@@ -44,8 +58,11 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         };
     }, [context.connected]);
 
+    const ethlogo = '73.png';
+    const divilogo = '77.png';
+
     useEffect(() => {
-        if (context.balance) setBalance(`${context.balance.toFixed(2)} ${context.chainSymbol}`);
+        if (context.balance) setBalance(`${context.balance.toFixed(2)}`);
     }, [context.balance, context.chainSymbol]);
 
     function onError(...args: any[]) {
@@ -83,20 +100,30 @@ const Connector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
         <Flex alignItems={"center"}>
             {children}
-            {balance ? <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ marginRight: 15 }}>{balance}</Text> : " "}
+            {isMobile ? '' : (
+                balance ? (
+                    <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} mr={2} style={{ display: "flex", alignItems: "center", marginRight: 10, marginLeft: -10 }}>
+                        <span style={{ marginBottom: -2 }}>0.00037</span>
+                        <img src={divilogo} style={{ width: 18, height: 18, marginLeft: 5 }} alt="" />
+                    </Text>
+                ) : (
+                    " "
+                )
+            )}
+            {balance ? <Text fontSize={{ base: "2x1" }} fontWeight={"bold"} style={{ marginRight: 15, minWidth: isMobile ? 60 : 'auto' }}>{balance} <img src={ethlogo} style={{ width: 13, height: 13 }} alt="" /></Text> : " "}
             <Button
                 variant="contained"
                 disableElevation
                 size="small"
-                style={{ marginRight: "-20px", minWidth: 100 }}
+                style={{ marginRight: "-20px", minWidth: isMobile ? 100 : 80 }}
                 className={classes.button}
                 onClick={context.connected ? disconnect : connect}
                 disabled={loading}
             >
                 {loading ? (
-                    <CircularProgress size={20} style={{color: '#8500FF'}} /> // Replaced with CircularProgress
+                    <CircularProgress size={20} style={{ color: '#8500FF' }} /> // Replaced with CircularProgress
                 ) : (
-                    <Text>{context.addressSigner !== undefined ? `${context.addressSigner.substring(0, 7)}...` : "CONNECT"}</Text>
+                    <Text>{context.addressSigner !== undefined ? `${context.addressSigner.substring(0, 6)}...` : "CONNECT"}</Text>
                 )}
             </Button>
         </Flex>

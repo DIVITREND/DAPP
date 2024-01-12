@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@mui/material/Container";
 import { Paper } from "@material-ui/core";
@@ -12,19 +14,21 @@ import Chip from "@mui/material/Chip";
 import { useMediaQuery } from "@material-ui/core";
 import { EtherContext } from "../ethers/EtherContext";
 import { EtherContextRepository } from "../ethers/EtherContextRepository";
-import { Skeleton } from "@mui/material";
+import { Alert, AlertTitle, Skeleton } from "@mui/material";
 import EtherHelper from "../ethers/EtherHelper";
 import { ethers } from "ethers";
 import { Pair } from "../entities/stats/Pair";
 import { StatsHelper } from "./stats_helper/StatsHelper";
 import AddressFactory from "../common/AddressFactory";
+import { WelcomeUserData } from "./dapp/WelcomeUserData";
+import { GreenSwitch } from "./dapp/Staking/useStyleStaking";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     position: "relative",
     width: "100%",
     height: "100vh",
-    background: "url(bg.jpg)",
+    background: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(11,2,48,1) 35%)',
     backgroundSize: "cover",
     backgroundPosition: "center",
     marginLeft: 0,
@@ -62,11 +66,12 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     minHeight: 170,
-    backgroundColor: 'rgba(255, 255, 255, 0)', // Sfondo semi-trasparente
+    background: "url('57.png') no-repeat center",
+    backgroundPosition: 'center',
     padding: theme.spacing(2),
     border: "2px solid #8A00F6",
     borderRadius: 30,
-    boxShadow: "0 3px 15px 2px rgba(255, 105, 135, 0.3)",
+    boxShadow: "0 3px 15px 2px linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(35,22,88,1) 35%)",
     textAlign: "center",
     position: "relative", // Aggiunto per posizionare l'icona all'interno
     "@media screen and (max-width: 768px)": {
@@ -78,16 +83,45 @@ const useStyles = makeStyles((theme) => ({
       marginTop: 20
     },
   },
-
+  paperEnd: {
+    minHeight: 170,
+    backgroundPosition: 'center',
+    background: 'rgba(0,0,0 ,0)',
+    padding: theme.spacing(2),
+    border: "2px solid #8A00F6",
+    borderRadius: 30,
+    boxShadow: "0 3px 15px 2px linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(35,22,88,1) 35%)",
+    textAlign: "center",
+    position: "relative", // Aggiunto per posizionare l'icona all'interno
+    "@media screen and (max-width: 768px)": {
+      minHeight: '170px',
+    },
+    "@media screen and (max-width: 667px)": {
+      minHeight: '170px',
+      width: '100%',
+      marginTop: 20
+    },
+  },
   title: {
     position: "absolute",
     top: "10%",
     left: "50%",
     transform: "translateX(-50%)",
-    fontWeight: "bold",
-    color: "#8A00F6",
+    fontWeight: 900,
+    color: "#A4FE66",
     textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
-    fontFamily: "Lilita One",
+    fontFamily: "Open Sans",
+    fontSize: '24px'
+  },
+  titleBottom: {
+    position: "absolute",
+    bottom: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
+    fontWeight: 900,
+    color: "#A4FE66",
+    textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
+    fontFamily: "Open Sans",
     fontSize: '24px'
   },
   desc: {
@@ -97,8 +131,9 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateX(-50%)",
     color: "#8A00F6",
     textShadow: "3px 3px 2px rgba(0, 0, 0, 0.5)",
-    fontFamily: "Lilita One",
-    fontSize: '18px'
+    fontFamily: "Open Sans",
+    fontWeight: 400,
+    fontSize: '14px'
   },
   subtitle: {
     position: "absolute",
@@ -107,7 +142,22 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateX(-50%)",
     color: 'white',
     fontSize: '32px',
-    fontFamily: "Lilita One",
+    fontFamily: "Open Sans",
+    fontWeight: 700,
+    "@media screen and (max-width: 768px)": {
+      top: '40%',
+      width: '100%',
+    },
+  },
+  subtitleBottom: {
+    position: "absolute",
+    top: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
+    color: 'white',
+    fontSize: '32px',
+    fontFamily: "Open Sans",
+    fontWeight: 700,
     "@media screen and (max-width: 768px)": {
       top: '40%',
       width: '100%',
@@ -120,20 +170,21 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateX(-50%)",
     color: 'white',
     fontSize: '32px',
-    fontFamily: "Lilita One",
+    fontFamily: "Open Sans",
+    fontWeight: 700,
     "@media screen and (max-width: 768px)": {
       width: '100%',
     },
   },
   icon: {
     position: "absolute",
-    top: "20px", // Posizione leggermente fuori dal box
-    left: "15%", // Posiziona l'icona al centro orizzontalmente
-    transform: "translateX(-50%)", // Per centrare orizzontalmente l'icona
-    fontSize: "208px", // Personalizza la dimensione dell'icona
-    color: "rgba(216, 178, 167, 1)", // Colore dell'icona
-    width: 100,
-    height: 100,
+    top: "70%",
+    left: "4%",
+    transform: "translateX(-50%)",
+    fontSize: "20px",
+    color: "#52af77",
+    width: 40,
+    height: 40,
   },
   chip: {
     position: "absolute",
@@ -196,7 +247,34 @@ const useStyles = makeStyles((theme) => ({
       transform: "translate(100vw, 100vh)", /* La direzione in cui si muovono */
     },
   },
+  paperAlert: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    background: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(10px)',
+    border: '2px solid transparent',
+    borderTop: 'none',
+    borderRight: 'none',
+    borderLeft: 'none',
+    borderBottom: 'none',
+    borderImage: 'linear-gradient(45deg, #FE6B8B 30%, #8500FF 90%) 1',
+    borderRadiusTopRight: 100,
+    borderRadiusTopLeft: 100,
+    position: 'fixed',
+    zIndex: 9999,
+    width: '100%',
+    minHeight: 10,
+    height: '100%',
+    maxHeight: 'auto',
+    top: 55,
+  },
 }));
+
+interface ICTBalance {
+  trnd_balance: number;
+  eth_balance: number;
+}
 
 const Welcome = () => {
   const classes = useStyles();
@@ -205,6 +283,12 @@ const Welcome = () => {
   const [wethPrice, setWethPrice] = useState<number | undefined>(undefined);
   const [usdtPrice, setUsdtPrice] = useState<number | undefined>(undefined);
   const [reserveWETH, setWETHReserve] = useState<number>(0);
+  const [ethetrnd, setEthetrnd] = useState({} as ICTBalance);
+  const [checked, setChecked] = useState(false);
+
+  const handleChangeChecker = (event: ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
 
   useEffect(() => {
     if (!context) return context
@@ -219,17 +303,38 @@ const Welcome = () => {
       .then(price => setUsdtPrice(price));
   }, []);
 
-  console.log([wethPrice])
-
-
   useEffect(() => {
     async function getInitDataPool() {
+      await EtherHelper.queryStakingInfo(context)
       const data_ctx = await EtherHelper.initialInfoPool(context);
       saveContext(data_ctx)
-      console.log(data_ctx)
     }
     getInitDataPool()
   }, [])
+
+  useEffect(() => {
+    async function getEthClaimed() {
+      const ethClaimed = await EtherHelper.STAKING_ALL_TOKENS_BALANCE(context)
+      return ethClaimed;
+    }
+
+    getEthClaimed().then((ethClaimed: ICTBalance) => {
+      console.log('ethClaimed', ethClaimed)
+      setEthetrnd({ trnd_balance: ethClaimed.trnd_balance, eth_balance: ethClaimed.eth_balance });
+    })
+
+  }, [context]);
+
+  async function updateCTX() {
+    await EtherHelper.initialInfoPool({ ...context })
+  }
+
+  useEffect(() => {
+    if (!context) return;
+    updateCTX()
+  }, [context])
+
+  const isConnected = context.connected ?? false;
 
   return (
     <div className={classes.root}>
@@ -239,31 +344,26 @@ const Welcome = () => {
           <Grid container spacing={5} className={classes.mobile}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"10.png"} alt="" className={classes.icon} />
-                )}
-                <img src={"10.png"} alt="" className={classes.icon} />
                 <div className={classes.title}>
                   $TRND:
                 </div>
                 <div className={classes.subtitle}>
-                  {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
                         const res_1 = Number(parseFloat(context.reserve1));
                         const price = res_0 / res_1;
                         return (
-                          <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <div style={{fontSize: '14px', color: 'lightgray', fontStyle: 'italic'}}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
-                            {price.toFixed(7)} ♦
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
+                            {price.toFixed(7)}
                           </div>
                         );
                       })()}
                     </>
-                  )}
-                  {!context.reserve0 && context.reserve1 && (
-                    <Skeleton animation="wave" />
+                  ) : (
+                    <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
                   )}
                 </div>
                 <Chip
@@ -288,124 +388,135 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
-                <div className={classes.title}>
-                  LP $TRND:
-                </div>
-                <div className={classes.subtitle}>
-                  {wethPrice && (
-                    <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
-                  )}
-                </div>
-                {context.reserve0 && context.reserve1 && (
-                  <div className={classes.desc}>
-                    {ethers.utils.formatEther(context.reserve0)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF' }}>{checked ? 'MC' : 'LP'}</span></div>
+                {checked ? (
+                  <div>
+                    <div className={classes.title}>
+                      LP $TRND:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {wethPrice && (
+                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
+                      )}
+                    </div>
+                    {context.reserve0 && context.reserve1 ? (
+                      <div className={classes.desc}>
+                        {Number(ethers.utils.formatEther(context.reserve0)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                      </div>
+                    ) : (
+                      <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <div className={classes.title}>
+                      MARKET CAP:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {context.reserve0 && context.reserve1 ? (
+                        <>
+                          {(() => {
+                            const res_0 = Number(parseFloat(context.reserve0));
+                            const res_1 = Number(parseFloat(context.reserve1));
+                            const price = res_0 / res_1;
+                            return (
+                              <>
+                                ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                              </>
+                            );
+                          })()}
+                        </>
+                      ) : (
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                      )}
+                    </div>
                   </div>
                 )}
-                {!context.reserve0 && context.reserve1 && (
-                  <Skeleton animation="wave" />
-                )}
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
+
                 <div className={classes.title}>
-                  MARKET CAP:
+                  STAKED CAPITAL
                 </div>
                 <div className={classes.subtitle}>
-                  {context.reserve0 && context.reserve1 && (
-                    <>
-                      {(() => {
-                        const res_0 = Number(parseFloat(context.reserve0));
-                        const res_1 = Number(parseFloat(context.reserve1));
-                        const price = res_0 / res_1;
-                        return (
-                          <>
-                            ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
-                          </>
-                        );
-                      })()}
-                    </>
-                  )}
-                  {!context.reserve0 && context.reserve1 && (
-                    <Skeleton animation="wave" />
-                  )}
+                  0$
                 </div>
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
                 <div className={classes.title}>
-                  BURNED:
+                  STAKING DATA
                 </div>
-                <div className={classes.subtitle}>
-                  0 $TRND
+                <WelcomeUserData />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  DISTRIBUTED REV
+                </div>
+                <div className={classes.subtitleBottom}>
+                  {ethetrnd.trnd_balance?.toLocaleString('en-US') ?? <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="74.png" alt="" style={{ width: 30, height: 30 }} />
                 </div>
               </Paper>
             </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"11.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"11.png"} alt="" style={{ width: 140, height: 140, marginBottom: 20 }} className={classes.icon} />
-                )}
-                <div className={classes.title}>
-                  STAKED CAPITAL:
+
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  TOTAL $TRND STAKED
                 </div>
-                <div className={classes.subtitle}>
-                  $ 0
+                <div className={classes.subtitleBottom} style={{ display: 'flex', alignItems: 'center' }}>
+                  {context.tot_trnd_staked ? context.tot_trnd_staked?.toLocaleString('en-US') : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="78.png" alt="" style={{ width: 40, height: 40 }} />
+                </div>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  TOTAL $FACT STAKED
+                </div>
+                <div className={classes.subtitleBottom}>
+                  {context.nft_staked ? context.nft_staked : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
                 </div>
               </Paper>
             </Grid>
           </Grid>
         )}
+
+        {/* MOBILE */}
+
         {isMobile && (
-          <Grid spacing={5} className={classes.mobile} style={{height: '100%' }}>
+          <Grid spacing={5} className={classes.mobile} style={{ height: '100%' }}>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"10.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"10.png"} alt="" className={classes.icon} />
-                )}
+
                 <div className={classes.title}>
                   $TRND:
                 </div>
                 <div className={classes.subtitlePrice}>
-                {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
                         const res_1 = Number(parseFloat(context.reserve1));
                         const price = res_0 / res_1;
                         return (
-                          <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <div style={{fontSize: '14px', color: 'lightgray', fontStyle: 'italic'}}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
-                            {price.toFixed(7)} ♦
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
+                            {price.toFixed(7)}
                           </div>
                         );
                       })()}
                     </>
+                  ) : (
+                    <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
                   )}
                 </div>
                 <Chip
@@ -430,43 +541,60 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"8.png"} alt="" className={classes.icon} />
-                )}
-                <div className={classes.title}>
-                  LP $TRND:
-                </div>
-                <div className={classes.subtitle}>
-                {wethPrice && (
-                    <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
-                  )}
-                </div>
-                {context.reserve0 && context.reserve1 && (
-                  <div className={classes.desc}>
-                    {ethers.utils.formatEther(context.reserve0)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF', marginLeft: -5 }}>{checked ? 'MC' : 'LP'}</span></div>
+                {checked ? (
+                  <div>
+                    <div className={classes.title}>
+                      LP $TRND:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {wethPrice && (
+                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
+                      )}
+                    </div>
+                    {context.reserve0 && context.reserve1 ? (
+                      <div className={classes.desc}>
+                        {Number(ethers.utils.formatEther(context.reserve0)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                      </div>
+                    ) : (
+                      <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                    )}
                   </div>
-                )}
-                {!context.reserve0 && context.reserve1 && (
-                  <Skeleton animation="wave" />
+                ) : (
+                  <div>
+                    <div className={classes.title}>
+                      MARKET CAP:
+                    </div>
+                    <div className={classes.subtitle}>
+                      {context.reserve0 && context.reserve1 ? (
+                        <>
+                          {(() => {
+                            const res_0 = Number(parseFloat(context.reserve0));
+                            const res_1 = Number(parseFloat(context.reserve1));
+                            const price = res_0 / res_1;
+                            return (
+                              <>
+                                ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                              </>
+                            );
+                          })()}
+                        </>
+                      ) : (
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
+                      )}
+                    </div>
+                  </div>
                 )}
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"9.png"} alt="" className={classes.icon} />
-                )}
+
                 <div className={classes.title}>
-                  MARKET CAP:
+                  CAPITAL
                 </div>
                 <div className={classes.subtitle}>
-                {context.reserve0 && context.reserve1 && (
+                  {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
                         const res_0 = Number(parseFloat(context.reserve0));
@@ -479,43 +607,55 @@ const Welcome = () => {
                         );
                       })()}
                     </>
+                  ) : (
+                    <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
                   )}
                 </div>
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"7.png"} alt="" className={classes.icon} />
-                )}
                 <div className={classes.title}>
-                  BURNED:
+                  STAKING DATA
                 </div>
-                <div className={classes.subtitle}>
-                  0 $TRND
+                <WelcomeUserData />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  DISTRIBUTED REV
+                </div>
+                <div className={classes.title} style={{color: 'white'}}>
+                  {ethetrnd.trnd_balance?.toLocaleString('en-US') ?? <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="74.png" alt="" style={{ width: 30, height: 30 }} />
                 </div>
               </Paper>
             </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                {isMobile && (
-                  <img src={"11.png"} alt="" className={classes.icon} />
-                )}
-                {!isMobile && (
-                  <img src={"11.png"} alt="" className={classes.icon} />
-                )}
-                <div className={classes.title}>
-                  CAPITAL:
+
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom} >
+                  TOTAL $TRND STAKED
                 </div>
-                <div className={classes.subtitle}>
-                  $ 0
+                <div className={classes.title} style={{ display: 'flex', alignItems: 'center', color: 'white' }}>
+                  {context.tot_trnd_staked ? context.tot_trnd_staked?.toLocaleString('en-US') : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                  <img src="78.png" alt="" style={{ width: 40, height: 40 }} />
                 </div>
               </Paper>
             </Grid>
-            <div style={{height: '50px'}}></div>
+
+            <Grid item xs={12} md={4}>
+              <Paper className={classes.paperEnd}>
+                <div className={classes.titleBottom}>
+                  TOTAL $FACT STAKED
+                </div>
+                <div className={classes.title} style={{color: 'white'}}>
+                  {context.nft_staked ? context.nft_staked : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
+                </div>
+              </Paper>
+            </Grid>
+            <div style={{ height: '50px' }}></div>
           </Grid>
         )}
 

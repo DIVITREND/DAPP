@@ -41,6 +41,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UUPSUpgradeable__factory>;
     getContractFactory(
+      name: "PausableUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PausableUpgradeable__factory>;
+    getContractFactory(
       name: "ReentrancyGuardUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReentrancyGuardUpgradeable__factory>;
@@ -101,6 +105,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20Metadata__factory>;
     getContractFactory(
+      name: "IERC20Permit",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Permit__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -133,9 +141,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Divitrend__factory>;
     getContractFactory(
+      name: "IDivitrend",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDivitrend__factory>;
+    getContractFactory(
+      name: "ITrndFactories",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITrndFactories__factory>;
+    getContractFactory(
       name: "DivitrendFactories",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DivitrendFactories__factory>;
+    getContractFactory(
+      name: "DivitrendRewards",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DivitrendRewards__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -172,6 +192,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.UUPSUpgradeable>;
+    getContractAt(
+      name: "PausableUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PausableUpgradeable>;
     getContractAt(
       name: "ReentrancyGuardUpgradeable",
       address: string,
@@ -248,6 +273,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20Metadata>;
     getContractAt(
+      name: "IERC20Permit",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Permit>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
@@ -288,10 +318,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Divitrend>;
     getContractAt(
+      name: "IDivitrend",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDivitrend>;
+    getContractAt(
+      name: "ITrndFactories",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITrndFactories>;
+    getContractAt(
       name: "DivitrendFactories",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.DivitrendFactories>;
+    getContractAt(
+      name: "DivitrendRewards",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DivitrendRewards>;
 
     // default types
     getContractFactory(

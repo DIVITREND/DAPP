@@ -5,3 +5,7 @@ import type * as diviTrendSol from "./DiviTrend.sol";
 export type { diviTrendSol };
 import type * as trndFactoriesSol from "./TrndFactories.sol";
 export type { trndFactoriesSol };
+import type * as trndRewardsSol from "./TrndRewards.sol";
+export type { trndRewardsSol };
+import type * as interfaces from "./interfaces";
+export type { interfaces };

@@ -72,6 +72,17 @@ export default class AddressFactory {
     }
   }
 
+  static getStaking(chainId: number): string {
+    switch (chainId) {
+      case 1:
+        return '';
+      case 11155111:
+        return '0x7a4Feb59993bf601bE00d3de8C510FfA8bd71300';
+      default:
+        return '0x7a4Feb59993bf601bE00d3de8C510FfA8bd71300';
+    }
+  }
+
   static getFactoriesAddress(chainId: number): string {
     switch (chainId) {
       case 1:

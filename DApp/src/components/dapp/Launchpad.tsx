@@ -1,33 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@mui/material/Container";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@mui/material/Grid";
-import { Box, Button, Divider, Icon, Typography, useMediaQuery, LinearProgress, Tooltip, Collapse, IconButton } from "@material-ui/core";
+import { Box, Button, Typography, useMediaQuery, LinearProgress, Tooltip, Collapse, IconButton } from "@material-ui/core";
 import { EtherContext } from "../../ethers/EtherContext";
 import { EtherContextRepository } from "../../ethers/EtherContextRepository";
-import TimerIcon from '@mui/icons-material/Timer';
 import { Alert, AlertTitle, Slider } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import { CardMedia } from '@mui/material';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import SendIcon from '@mui/icons-material/Send';
 import EtherHelper from "../../ethers/EtherHelper";
-import { ethers } from "ethers";
 import LogoSpinnerAnimation from "../LogoSpinnerAnimation";
 import InfoIcon from '@mui/icons-material/Info';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import FaceIcon from '@mui/icons-material/Face';
-import PriceChangeIcon from '@mui/icons-material/PriceChange';
+import CardDetailsComponent from "./Staking/comp_modal/NftCard";
 
 const drawerWidth = 240;
 
 const PrettoSlider = styled(Slider)({
-    color: '#52af77',
+    color: '#A4FE66',
     height: 8,
     width: '70%',
     '& .MuiSlider-track': {
@@ -68,15 +58,13 @@ const PrettoSlider = styled(Slider)({
     },
 });
 
-
 const useStyles = makeStyles((theme) => ({
     root: {
         position: "relative",
         width: "100%",
-        height: "140vh",
+        height: "100vh",
         overflow: "auto",
-        background: 'linear-gradient(135deg, #000000, #0B0230)',
-
+        background: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(11,2,48,1) 35%)',
         marginLeft: 0,
         marginRight: 0,
         alignItems: "center",
@@ -108,9 +96,9 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 0,
     },
     greenBar: {
-        backgroundColor: 'transparent', // Imposta lo sfondo della barra a trasparente
+        backgroundColor: 'green',
         '& .MuiLinearProgress-bar': {
-            backgroundColor: 'green', // Imposta il colore della barra a verde
+            backgroundColor: '#A4FE66',
         },
     },
     paper: {
@@ -152,22 +140,9 @@ const useStyles = makeStyles((theme) => ({
         borderRight: 'none',
         borderTop: 'none',
     },
-    paperB: {
-        minHeight: 170,
-        backgroundColor: "rgba(255, 255, 255, 0)",
-        padding: theme.spacing(2),
-        border: "2px solid rgba(216,178,167, 1)",
-        borderRadius: 30,
-        borderLeft: 'none',
-        borderRight: 'none',
-        boxShadow: "0 3px 15px 2px rgba(255, 105, 135, 0.3)",
-        textAlign: "center",
-        position: "relative",
-        justifyContent: 'center'
-    },
     paperA: {
-        minHeight: 900,
-        background: "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(18, 17, 17, 0.7))",
+        minHeight: '100%',
+        background: 'rgba(0,0,0 ,0)',
         padding: theme.spacing(2),
         border: '2px solid #8500FF',
         textAlign: "center",
@@ -217,18 +192,6 @@ const useStyles = makeStyles((theme) => ({
         "@media screen and (max-width: 768px)": {
         },
     },
-    boxGridInactive: {
-        padding: theme.spacing(2),
-        backgroundOrigin: 'border-box',
-        backgroundSize: '130% 120%',
-        backgroundPosition: 'center',
-        borderRadius: 30,
-        borderBottom: 'none',
-        boxShadow: "0 -10px 7px rgba(255, 255, 255, 0)",
-        textAlign: "center",
-        "@media screen and (max-width: 768px)": {
-        },
-    },
     title: {
         position: "absolute",
         top: "3%",
@@ -237,7 +200,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "white",
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "24px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
@@ -251,22 +214,8 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "white",
         textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "24px",
-        "@media screen and (max-width: 768px)": {
-            width: '100%',
-        },
-    },
-    rewardsVesting: {
-        position: "relative",
-        top: "50%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        fontWeight: "bold",
-        color: "white",
-        textShadow: "3px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
-        fontSize: "20px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
         },
@@ -278,7 +227,7 @@ const useStyles = makeStyles((theme) => ({
         transform: "translateX(-50%)",
         color: "white",
         textShadow: "0px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
         fontSize: "18px",
         "@media screen and (max-width: 768px)": {
             width: '100%',
@@ -290,7 +239,6 @@ const useStyles = makeStyles((theme) => ({
         left: "50%",
         transform: "translateX(-50%)",
         color: "white",
-        background: "url('54.png') no-repeat center",
         backgroundOrigin: 'border-box',
         backgroundSize: '100% 146%',
         backgroundPosition: 'center',
@@ -299,8 +247,6 @@ const useStyles = makeStyles((theme) => ({
         //borderBottom: 'none',
         //borderTop: 'none',
         textAlign: "center",
-        height: '450px',
-        width: '80%',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -313,12 +259,9 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         background: "url('54.png') no-repeat center",
         backgroundOrigin: 'border-box',
-        backgroundSize: '100% 146%',
         backgroundPosition: 'center',
         padding: theme.spacing(2),
-        //border: "2px solid #8500FF",
-        //borderBottom: 'none',
-        //borderTop: 'none',
+        border: "2px solid #8A00F6",
         textAlign: "center",
         height: '100px',
         width: '70%',
@@ -346,64 +289,36 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        height: '640px',
+        minHeight: '70vh',
+        maxHeight: '70vh',
         overflowY: 'auto',
         scrollbarWidth: 'thin',
         gap: 20,
         scrollbarColor: '#8B3EFF transparent',  // added scroll bar (Chrome, Edge)
         "@media screen and (max-width: 768px)": {
-            minHeight: 100,
-        },
-    },
-    progressiveBar: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        "@media screen and (max-width: 768px)": {
-            minHeight: 100,
-        },
-    },
-    balance: {
-        position: "absolute",
-        top: "60%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        color: "white",
-        textShadow: "0px 3px 2px rgba(255, 105, 135, 0.5)",
-        fontFamily: "Lilita One",
-        fontSize: "22px",
-        display: 'flex',
-        flexDirection: 'row',
-        "@media screen and (max-width: 768px)": {
-            width: '100%',
-            justifyContent: 'center'
+            minHeight: '100%',
         },
     },
     subtitle: {
         color: "white",
         fontSize: "18px",
         textShadow: "0px 3px 2px rgba(139, 62, 255, 0.5)",
-        fontFamily: "Lilita One",
+
     },
     subtitleLil: {
         color: "white",
         fontSize: "16px",
-        fontFamily: "Lilita One",
+
     },
     subtitleLeft: {
         color: "white",
         fontSize: "26px",
-        fontFamily: "Lilita One",
+
     },
     subtitleLil2: {
         color: "white",
         fontSize: "14px",
-        fontFamily: "Lilita One",
-    },
-    subtitleLil3: {
-        color: "white",
-        fontSize: "12px",
-        fontFamily: "Lilita One",
+
     },
     icon: {
         position: "absolute",
@@ -414,14 +329,6 @@ const useStyles = makeStyles((theme) => ({
         "@media screen and (max-width: 768px)": {
             top: "30px",
             left: "10%",
-        },
-    },
-    iconTimer: {
-        position: "absolute",
-        top: "25px",
-        left: "68%",
-        color: " rgba(139, 62, 255, 1)",
-        "@media screen and (max-width: 768px)": {
         },
     },
     user: {
@@ -437,96 +344,26 @@ const useStyles = makeStyles((theme) => ({
             left: "50%",
         },
     },
-    chip: {
-        position: "absolute",
-        top: "70%",
-        left: "18%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-        fontFamily: "Josefin Sans",
-    },
-    chip2: {
-        position: "absolute",
-        top: "70%",
-        left: "48%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-    },
-    chip3: {
-        position: "absolute",
-        top: "70%",
-        left: "78%",
-        transform: "translateX(-50%)",
-        margin: theme.spacing(1),
-    },
-    chipContainer: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-    },
     mobile: {
         marginTop: 0,
         "@media screen and (max-width: 768px)": {
             marginTop: 100,
         },
     },
-    menuButton: {
-        position: "absolute",
-        top: "20px",
-        right: `-${drawerWidth}px`, // Slide out from the right
-        transform: "translateX(50%)", // Center the icon horizontally
-        fontSize: "52px",
-        color: 'white',
-    },
-
-    drawerHeader: {
-        marginTop: 100,
-        background: 'black',
-        color: 'white',
-        display: "flex",
-        alignItems: "center",
-        padding: theme.spacing(0, 1),
-        // Add other styles as needed
-    },
     drawer: {
         width: drawerWidth,
         flexShrink: 0,
-        background: 'black',
-    },
-    drawerPaper: {
-        width: drawerWidth,
-        backgroundColor: 'black',
-    },
-
-    drawerContent: {
         background: 'black',
     },
     row: {
         display: 'flex',
         flexDirection: 'row'
     },
-    gradientBox: {
-        width: '80px',
-        height: '80px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     image: {
         maxWidth: '80%',
         maxHeight: '80%',
         borderRadius: '50%',
         border: '2px solid transparent',
-    },
-    compandcoll: {
-        background: "url('52.png') no-repeat center",
-        backgroundOrigin: 'border-box',
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-        color: 'white',
-        fontSize: 12,
-        width: '85px',
-        height: '80px'
     },
     border: {
         position: 'absolute',
@@ -568,65 +405,11 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: 'rgba(0,0,0, 0)',
         },
     },
-    scrollingText: {
-        width: '100%',
-        height: '50px',
-        overflow: 'hidden',
-        color: "white",
-        fontSize: "16px",
-        fontFamily: "Lilita One",
-        whiteSpace: 'nowrap',
-        animation: '$scroll 20s linear infinite',
-        textAlign: 'center',
-        lineHeight: '50px',
-    },
-    '@keyframes scroll': {
-        '0%': {
-            transform: 'translateX(100%)',
-        },
-        '100%': {
-            transform: 'translateX(-100%)',
-        },
-    },
-
     imageFactory: {
         width: '100%',
         height: 'auto',
         border: '2px solid transparent',
         borderRadius: 20,
-    },
-    progressBar: {
-        width: "50%", // Larghezza della barra di avanzamento
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-        marginLeft: "auto",
-        marginRight: "auto",
-    },
-    themeDark: {
-        background: 'url("bg.jpg")',
-        maxWidth: 245,
-        minWidth: 245,
-        minHeight: 300,
-        maxHeight: 300,
-        border: "2px solit white",
-        borderRadius: 20,
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-    },
-    themeDarkFooter: {
-        background: 'url("bg.jpg")',
-        maxWidth: 245,
-        minWidth: 245,
-        maxHeight: 50,
-        border: "2px solit white",
-        borderRadius: 20,
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-    },
-    image_card: {
-        position: 'relative',
-        height: 0,
-        paddingTop: '80%', // 16:9
     },
     paperAlert: {
         padding: theme.spacing(2),
@@ -652,18 +435,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const images = [
-    'factory.png',
-    'factory.png',
-    'factory.png',
-    'factory.png',
-    '',
-];
-
-const CustomizedHeader = styled(CardHeader)`
-  background: 'bg.jpg';
-`;
-
 const Launchpad = () => {
     const classes = useStyles();
     const isMobile = useMediaQuery("(max-width:960px)");
@@ -673,9 +444,9 @@ const Launchpad = () => {
     const [weiToPay, setWeiToPay] = useState(0)
     const [alreadyMinted, setAlreadyMinted] = useState(0)
     const [alertInfo, setAlertInfo] = useState<{ severity: "success" | "error", message: string } | null>(null);
-    const [tokenCards, setTokenCards] = useState<JSX.Element[]>();
     const r_topay = weiToPay
     const toShow_toPay = comp * 100
+    const [factoryIds, setTokenFactIds] = useState(context.FactoriesTokenIds)
 
     const handleCloseAlert = () => {
         setAlertInfo(null);
@@ -723,69 +494,20 @@ const Launchpad = () => {
         getDataPayable()
     }, [comp])
 
+    function handleNull() {
+        return
+    }
+
     useEffect(() => {
-
-        const fetchTokenCards = async () => {
-            if (!context.FactoriesTokenIds) return;
-            const newTokenCards: JSX.Element[] = [];
-            const tokenIdsArray = context.FactoriesTokenIds ?? []
-            for (const nft of tokenIdsArray) {
-                try {
-                    const token = await EtherHelper.getTokenURI(context, nft);
-                    console.log(token)
-                    newTokenCards.push(
-                        <Card className={classes.themeDark} style={{ marginBottom: 30 }}>
-                            <CustomizedHeader
-                                title={
-                                    <Typography variant="h4" className={classes.subtitle} color="textSecondary" component="p">
-                                        Factory #{token.edition}
-                                    </Typography>
-                                }
-                            />
-                            <CardMedia
-                                className={classes.image_card}
-                                image="NFT2.jpeg"
-                                title="NFT Image"
-                            >
-                                {/* 
-                                    {showAttributes && (
-                                        <div className={classes.overlay}>
-                                            <Grid style={{ marginTop: 3 }} container spacing={1} direction="row">
-                                                {/* 
-                                                {tokenData.attributes.map((attribute: any, index: number) => (
-                                                    <Grid item xs={6} key={index}>
-                                                        <Tooltip title={`${index}`} arrow className={classes.tooltip}>
-                                                            <Typography variant="body1">
-                                                                {attribute.trait_type}
-                                                                <div>{attribute.value}</div>
-                                                            </Typography>
-                                                        </Tooltip>
-                                                    </Grid>
-                                                ))}
-                                            </Grid>
-                                        </div>
-                                    )}
-                                    */}
-                            </CardMedia>
-                            <CardContent>
-                                {/* Card content */}
-                            </CardContent>
-                            <CardActions disableSpacing
-                                className={classes.themeDarkFooter}>
-                            </CardActions>
-                        </Card >
-                    )
-                } catch (e) {
-                    console.log(e)
-                }
-            }
-
-            setTokenCards(newTokenCards);
+        async function getSignerInfo() {
+            await EtherHelper.querySignerInfo(context)
         }
-
-        fetchTokenCards();
-    }, [context.FactoriesTokenIds, context]);
-
+    
+        getSignerInfo().then(() => {
+            const filteredTokenIds = context.FactoriesTokenIds?.filter((tokenId) => tokenId !== 0);
+            setTokenFactIds(filteredTokenIds);
+        });
+    }, [context, context.FactoriesTokenIds, context.toastStatus]);
 
     async function claimNFTs() {
         try {
@@ -838,19 +560,8 @@ const Launchpad = () => {
                     <LogoSpinnerAnimation loading={loading} />
                 </Paper>
             </Collapse>
-            {isConnected === false && (
-                <Paper elevation={3} className={classes.paperAlert}>
-                    <Alert
-                        variant="outlined"
-                        severity={"info"}
-                        onClose={handleCloseAlert}
-                    >
-                        <AlertTitle>{"Connect Your Wallet! — Please connect your wallet to use this DApp "}</AlertTitle>
-                    </Alert>
-                </Paper>
-            )}
-            <Container maxWidth="xl" style={{ marginTop: isMobile ? 100 : -100 }}>
-                <Grid container spacing={2} style={{ marginTop: isMobile ? 200 : 0 }} className={classes.mobile}>
+            <Container maxWidth="xl" style={{ marginTop: isMobile ? 20 : -10, marginBottom: isMobile ? 100 : 0 }}>
+                <Grid container spacing={2} style={{ marginTop: isMobile ? 10 : 0 }} className={classes.mobile}>
                     <Grid item xs={12} md={6}>
 
                         <Paper className={classes.paperA} style={{ marginTop: isMobile ? '400px' : '0px' }} >
@@ -858,43 +569,31 @@ const Launchpad = () => {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                 <div className={classes.title}>LIVE </div>
-                                <TimerIcon fontSize="large" className={classes.iconTimer} />
                             </div>
-                            <Paper className={classes.claimable} style={{height: isMobile ? 300 : '450px', marginTop: isMobile ? 100 : 'auto'}}>
+                            <div className={classes.claimable} style={{ width: isMobile ? 300 : '280px', height: isMobile ? 300 : '280px', marginTop: isMobile ? -20 : 'auto' }}>
                                 <img
                                     src="NFT1.jpeg"
                                     alt=""
                                     className={classes.imageFactory}
                                 />
-                            </Paper>
-                            <Grid container style={{ marginTop: 550, padding: 0, justifyContent: 'center' }} spacing={1}>
+                            </div>
+                            <Grid container style={{ marginTop: 320, padding: 20, justifyContent: 'center' }} spacing={1}>
+                                
+                                <Grid item xs={12} md={12} style={{ marginBottom: 10 }}>
+                                    <div style={{ display: "flex", flexDirection: 'row', marginTop: 0 }}>
+                                        <LinearProgress style={{ marginTop: 10, display: "flex", width: '100%', flexDirection: 'row' }} className={classes.greenBar} color="secondary" variant="determinate" value={(alreadyMinted / 299) * 100} /> <Typography style={{ marginLeft: 10 }} className={classes.subtitleLil}>{((alreadyMinted / 299) * 100).toFixed(2)}%</Typography>
+                                    </div>
+                                </Grid>
+
                                 <div>
-                                    <Box style={{ minWidth: 270, height: '100%', display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
+                                    <Box style={{ minWidth: '100%', height: '100%', display: 'flex', flexDirection: 'row', marginTop: 0, justifyContent: 'center' }}>
                                         <Typography variant="body1" className={classes.subtitleLeft} style={{ marginRight: 5 }}>{alreadyMinted}
                                         </Typography>
                                         <Typography className={classes.subtitleLeft} style={{ color: 'grey' }} variant="body2">/ 299
                                         </Typography>
                                     </Box>
                                 </div>
-                                <Grid item xs={12} md={12} style={{ marginBottom: 20, marginTop: 20 }}>
-                                    <div style={{ display: "flex", flexDirection: 'row' }}>
-                                        <LinearProgress style={{ marginTop: 10, display: "flex", width: '100%', flexDirection: 'row' }} className={classes.greenBar} color="secondary" variant="determinate" value={(alreadyMinted / 299) * 100} /> <Typography style={{ marginLeft: 10 }} className={classes.subtitleLil}>{((alreadyMinted / 299) * 100).toFixed(2)}%</Typography>
-                                    </div>
-                                </Grid>
-                                <Grid item xs={12} md={12} style={{ marginBottom: 20, marginTop: 20, justifyContent: 'center', display: 'flex' }}>
-                                    <Stack direction="row" spacing={1}>
-                                        <Chip icon={<FaceIcon />} label={<div style={{ color: '#8B3EFF', fontFamily: "Lilita One" }}>{context.addressSigner}</div>} />
-                                    </Stack>
-                                </Grid>
-                            </Grid>
-
-                            {/* QUI */}
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Paper className={classes.paperA}>
-                            <Grid container spacing={2} style={{ marginTop: 0, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
-                                <Grid item md={12} xs={12} style={{ marginTop: 20, justifyContent: 'center', display: 'flex' }} >
+                                <Grid item md={12} xs={12} style={{ marginTop: 10, justifyContent: 'center', display: 'flex', marginBottom: 20 }} >
                                     <PrettoSlider
                                         aria-label="pretto slider"
                                         defaultValue={1}
@@ -902,7 +601,7 @@ const Launchpad = () => {
                                         value={comp}
                                         min={1}
                                         step={1}
-                                        max={5}
+                                        max={10}
                                         onChange={(_, value) => setComp(value as number)}
                                     />
                                 </Grid>
@@ -915,7 +614,7 @@ const Launchpad = () => {
                                                 <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {toShow_toPay} WEI
                                                 </Typography>
                                             </Box>
-                                            <Button onClick={() => payNFTs(comp)} size="small" variant='outlined' className={classes.pulsButton} style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
+                                            <Button onClick={() => payNFTs(comp)} size="small" variant='outlined' className={classes.pulsButton} style={{ color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
                                                 MINT
                                             </Button>
                                         </Box>
@@ -934,7 +633,7 @@ const Launchpad = () => {
                                                     </IconButton>
                                                 </Tooltip>
                                             </Box>
-                                            <Button onClick={() => claimNFTs()} size="small" variant='outlined' className={classes.pulsButton} style={{ fontFamily: "Lilita One", color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 0, width: '100%' }}>
+                                            <Button onClick={() => claimNFTs()} size="small" variant='outlined' className={classes.pulsButton} style={{ color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 0, width: '100%' }}>
                                                 CLAIM
                                             </Button>
                                         </Box>
@@ -942,20 +641,40 @@ const Launchpad = () => {
 
                                     </Paper>
                                 </Grid>
+                            </Grid>
 
+                            {/* QUI */}
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Paper className={classes.paperA}>
+                            <Grid container spacing={2} style={{ marginTop: 0, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
                                 <Grid item xs={12} md={12}>
                                     <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 0 }}>MY TDF: ({context.FactoriesTokenIds?.length})</Typography>
                                     <Paper className={classes.myTDF}>
-                                        <Divider style={{ border: '1px solid #f57c00', borderLeft: 'none', borderRight: 'none', borderBottom: 'none' }} light={true}>
-                                        </Divider>
-                                        <Box style={{ marginTop: 30, marginBottom: 30 }}>
-                                            <div style={{ borderRadius: '10%', margin: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, flexDirection: 'column' }}>
-                                                {tokenCards}
-                                            </div>
+                                        <Box style={{ marginTop: 20, marginBottom: 20 }}>
+                                            <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                {
+                                                    factoryIds &&
+                                                    factoryIds.map((tokenId, index) => (
+                                                        <Grid key={tokenId} item xs={12} sm={6} md={4}>
+                                                            <CardDetailsComponent
+                                                                context={context}
+                                                                tokenId={tokenId}
+                                                                index={index}
+                                                                selectedTokenCards={[]}
+                                                                handleCardClick={handleNull}
+                                                                isSelected={false}
+                                                            />
+                                                        </Grid>
+                                                    ))
+                                                }
+                                            </Grid>
                                         </Box>
                                     </Paper>
                                 </Grid>
                             </Grid>
+
                         </Paper>
                     </Grid>
                 </Grid>

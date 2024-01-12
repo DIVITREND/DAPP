@@ -22,6 +22,8 @@ export type { Initializable } from "./@openzeppelin/contracts-upgradeable/proxy/
 export { Initializable__factory } from "./factories/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable__factory";
 export type { UUPSUpgradeable } from "./@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable";
 export { UUPSUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable__factory";
+export type { PausableUpgradeable } from "./@openzeppelin/contracts-upgradeable/security/PausableUpgradeable";
+export { PausableUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/security/PausableUpgradeable__factory";
 export type { ReentrancyGuardUpgradeable } from "./@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable";
 export { ReentrancyGuardUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable__factory";
 export type { ERC721Upgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable";
@@ -52,6 +54,8 @@ export type { ERC20Snapshot } from "./@openzeppelin/contracts/token/ERC20/extens
 export { ERC20Snapshot__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/ERC20Snapshot__factory";
 export type { IERC20Metadata } from "./@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata";
 export { IERC20Metadata__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata__factory";
+export type { IERC20Permit } from "./@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit";
+export { IERC20Permit__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit__factory";
 export type { IERC20 } from "./@openzeppelin/contracts/token/ERC20/IERC20";
 export { IERC20__factory } from "./factories/@openzeppelin/contracts/token/ERC20/IERC20__factory";
 export type { IERC721 } from "./@openzeppelin/contracts/token/ERC721/IERC721";
@@ -68,5 +72,11 @@ export type { IUniswapV2Router02 } from "./@uniswap/v2-periphery/contracts/inter
 export { IUniswapV2Router02__factory } from "./factories/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02__factory";
 export type { Divitrend } from "./contracts/DiviTrend.sol/Divitrend";
 export { Divitrend__factory } from "./factories/contracts/DiviTrend.sol/Divitrend__factory";
+export type { IDivitrend } from "./contracts/interfaces/IDivitrend";
+export { IDivitrend__factory } from "./factories/contracts/interfaces/IDivitrend__factory";
+export type { ITrndFactories } from "./contracts/interfaces/ITrndFactories";
+export { ITrndFactories__factory } from "./factories/contracts/interfaces/ITrndFactories__factory";
 export type { DivitrendFactories } from "./contracts/TrndFactories.sol/DivitrendFactories";
 export { DivitrendFactories__factory } from "./factories/contracts/TrndFactories.sol/DivitrendFactories__factory";
+export type { DivitrendRewards } from "./contracts/TrndRewards.sol/DivitrendRewards";
+export { DivitrendRewards__factory } from "./factories/contracts/TrndRewards.sol/DivitrendRewards__factory";
