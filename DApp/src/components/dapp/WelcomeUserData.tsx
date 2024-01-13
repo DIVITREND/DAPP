@@ -26,6 +26,7 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
     const [isLoading, setIsLoading] = useState(false)
     const claimable = context.trnd_to_claim ? Number(Number(context.trnd_to_claim).toFixed(0)).toLocaleString('en-US') : 0
 
+
     const handleClickVesting = (vesting: number) => {
         setIsLoading(true)
         setVesting(vesting);
@@ -50,6 +51,8 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
             console.log("error on stakingPendingRew: ", e)
         }
     }
+
+    stakingPendingRew(selectedVesting)
 
     /* — */
 
@@ -107,7 +110,6 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
         if (context.connected === true) {
             setUserDeposit('0')
             stakingDataRew()
-            stakingPendingRew(selectedVesting)
         }
     }, [selectedVesting])
 
