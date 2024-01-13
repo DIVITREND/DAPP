@@ -3,7 +3,7 @@ export default class AddressFactory {
   static getDeployerAddress(chainId: Number): string {
     switch (chainId) {
       case 1:
-        return "0xC1ec8665C40B8cAB988C3E126d96d28Bbcdd550a"; // Mainnet
+        return "0xa804dfE4b06607F379e0a788c856f1eDDA9B65C2"; // Mainnet
       case 5:
       case 11155111:
         return "0x91fFA8d015C7EF56820383699781526D8D5b4AD3"; //Testnet SEPOLIA

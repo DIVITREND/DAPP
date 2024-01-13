@@ -19,7 +19,8 @@ import { DivitrendRewards } from "../entities/typechain-type/DivitrendRewards";
 import { IClaimETH } from "../entities/IClaimETH";
 import { IClaimTRND } from "../entities/IClaimTRND";
 import { NftStake, trnd_claim_data } from "../entities/IStaking";
-
+import { Divitrend } from "../entities/typechain-type/Divitrend";
+import DIVI from './abi/DIVI.json';
 
 
 interface IAsset {
@@ -34,6 +35,19 @@ interface IFullData {
     amount: number;
     timestamp: number;
     nDeposit: number
+}
+
+interface adminData {
+    autoSwap: boolean;
+    buyTax: number;
+    sellTax: number;
+    founderPerc: number;
+    collectedTaxes: string;
+    swapThres: string;
+    isPause: boolean;
+    cashWallet: string;
+    maxCost: string;
+    cost: string;
 }
 
 interface INFTBoost {
@@ -152,9 +166,6 @@ export default class EtherHelper {
         }
     }
 
-
-
-
     public static async getNetwork(provider: ethers.providers.Web3Provider, context: IEtherContext): Promise<IEtherContext> {
         const network = await provider.getNetwork();
         const chainId = network.chainId ? BigNumber.from(network.chainId).toNumber() : 25;
@@ -186,7 +197,7 @@ export default class EtherHelper {
                 ...context, toastId: `Claim_${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'ETH Claim', toastDescription: `Successfully Claimed your ETH - TX: ${JSON.stringify(transactionResult.transactionHash)}`,
             }
             console.log('EtherHelper.STAKING_CLAIM_ETH Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_CLAIM_ETH: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN S_C_E ${Date.now}`, toastStatus: 'error', toastTitle: 'ETH Claim', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -209,7 +220,7 @@ export default class EtherHelper {
                 ...context, toastId: `Claim_${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Claim & Compound', toastDescription: `Successfully Claimed & Compounded - TX: ${JSON.stringify(transactionResult.transactionHash)}`,
             }
             console.log('EtherHelper.STAKING_CLAIM Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_CLAIM: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN C&C ${Date.now}`, toastStatus: 'error', toastTitle: 'Claim & Compound', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -232,7 +243,7 @@ export default class EtherHelper {
                 ...context, toastId: `Deposit_ETH_${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'SUCCESSFULLY DEPOSITED', toastDescription: `Successfully Deposited ETH into the contract`,
             }
             console.log('EtherHelper.STAKING_DEPOSIT_ETH Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_DEPOSIT_ETH: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN STAKING_DEPOSIT_ETH&C ${Date.now}`, toastStatus: 'error', toastTitle: 'ERROR ON DEPOSIT', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -254,7 +265,7 @@ export default class EtherHelper {
             context = {
                 ...context, toastId: `APPROVED TRND`, toastStatus: 'success', toastTitle: 'SUCCESSFULLY APPROVED TRND', toastDescription: `Successfully approved - ${trnd} $TRND`,
             }
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in APPROVE_TRND: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN APPROVE_TRND ${Date.now}`, toastStatus: 'error', toastTitle: 'ERROR', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -287,7 +298,7 @@ export default class EtherHelper {
             await this.querySignerInfo({ ...context }).then(this.queryStakingInfo, this.queryProviderInfo);
 
             return context
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_ENTER: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN STAKING_ENTER ${Date.now}`, toastStatus: 'error', toastTitle: 'ERROR ON ENTER', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -309,7 +320,7 @@ export default class EtherHelper {
                 ...context, toastId: `STAKING_EXIT${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'SUCCESSFULLY EXITED', toastDescription: `Successfully exited staking with`,
             }
             console.log('EtherHelper.STAKING_EXIT Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_EXIT: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN STAKING_EXIT ${Date.now}`, toastStatus: 'error', toastTitle: 'ERROR ON EXIT', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -328,7 +339,7 @@ export default class EtherHelper {
                 .getLastNftCount(context.addressSigner ?? '')
                 .then((n) => (Array.isArray(n) ? n[0] : n).toNumber()) as number;
             return nft_staked;
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_USER_NFT_STAKED: ", JSON.stringify(e))
             return 0;
         }
@@ -354,7 +365,7 @@ export default class EtherHelper {
             const queryFilter = await staking.queryFilter(query);
 
             return queryFilter
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_EXIT: ", JSON.stringify(e))
             return []
         }
@@ -370,7 +381,7 @@ export default class EtherHelper {
             const trnd_balance = await staking.connect(signer).getContractBalance().then((n: BigNumber) => ethers.utils.formatEther(n)) as number;
             const eth_balance = await staking.connect(signer).getTotalRewardedETH().then((n: BigNumber) => ethers.utils.formatEther(n)) as number;
             return { trnd_balance, eth_balance };
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_ALL_TOKENS_BALANCE: ", JSON.stringify(e))
         }
     }
@@ -399,7 +410,7 @@ export default class EtherHelper {
                 await this.querySignerInfo({ ...context }).then(this.queryStakingInfo, this.queryProviderInfo);
             }, 2000);
 
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_BOOST: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN STAKING_BOOST ${Date.now}`, toastStatus: 'error', toastTitle: 'ERROR ON STAKING', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -417,7 +428,7 @@ export default class EtherHelper {
             console.log("VESTING: ", stakingOption)
             const malus = await staking.connect(signer).getActualMalus(context.addressSigner ?? '', stakingOption)
             return (malus / 1000)
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_GET_ACTUAL_MALUS: ", JSON.stringify(e))
             return 0;
         }
@@ -447,7 +458,7 @@ export default class EtherHelper {
                 await this.querySignerInfo({ ...context }).then(this.queryStakingInfo, this.queryProviderInfo);
             }, 2000);
 
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in UNSTAKING_BOOST: ", JSON.stringify(e))
             context = {
                 ...context, toastId: `ERROR IN UNSTAKING_BOOST ${Date.now}`, toastStatus: 'error', toastTitle: 'ERROR ON EXIT', toastDescription: `Something were wrong... ${(e as Error)?.message.split(';')[0]}`,
@@ -513,7 +524,7 @@ export default class EtherHelper {
             nft_eth_rew = Number(nft_ethRew)
             eth_rew = Number(ethRew)
             console.log("EtherHelper.STAKING_REV_SHARE", nft_ethRew, ethRew)
-        } catch (e) {
+        } catch (e: any) {
             console.log("ERROR IN STAKING_REV_SHARE", JSON.stringify(e))
         }
 
@@ -530,7 +541,7 @@ export default class EtherHelper {
             const malus = await staking.connect(signer).getActualMalus(context.addressSigner ?? '', stakingOption)
             //% in 3 decimals — n / 1000 = res
             context.malus = [{ vesting: stakingOption, malus_perc: malus }]
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_EXIT: ", JSON.stringify(e))
             context = {
                 ...context
@@ -560,7 +571,7 @@ export default class EtherHelper {
             context = {
                 ...context, eth_claim_history: eth_claim_data
             }
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_GET_USER_FULLDATA: ", JSON.stringify(e))
             context = {
                 ...context
@@ -590,7 +601,7 @@ export default class EtherHelper {
             context = {
                 ...context, trnd_claim_history: trnd_claim_data
             }
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_GET_USER_TRND_CLAIM: ", JSON.stringify(e))
             context = {
                 ...context
@@ -613,7 +624,7 @@ export default class EtherHelper {
             context = {
                 ...context, trnd_to_claim: trnd_claim_data
             }
-        } catch (e) {
+        } catch (e: any) {
             //console.log("Error in STAKING_GET_USER_TRND_CLAIM: ", JSON.stringify(e))
             context = {
                 ...context
@@ -640,7 +651,7 @@ export default class EtherHelper {
                 }) as IOptData;
 
             return trnd_claim_data
-        } catch (e) {
+        } catch (e: any) {
             console.log("error on STAKING_OPT_DATA: ", e)
         }
     }
@@ -661,7 +672,7 @@ export default class EtherHelper {
                 });
 
             return trnd_claim_data;
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_GET_USER_TRND_CLAIM: ", JSON.stringify(e));
             return {
                 user_pending_trnd: 0,
@@ -693,7 +704,7 @@ export default class EtherHelper {
             context = {
                 ...context, nft_staked_data: stake_claim_data
             }
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_CLAIM_DATA: ", JSON.stringify(e))
             context = {
                 ...context
@@ -729,7 +740,7 @@ export default class EtherHelper {
 
             return stake_claim_data
 
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_CLAIM_DATA: ", JSON.stringify(e))
             return defaultReturn
         }
@@ -751,7 +762,7 @@ export default class EtherHelper {
             context = {
                 ...context, trnd_to_claim: trnd_claim_data
             }
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in STAKING_GET_USER_TRND_CLAIM: ", JSON.stringify(e))
             context = {
                 ...context
@@ -802,7 +813,7 @@ export default class EtherHelper {
 
             return context
 
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error_queryStakingInfo: ", JSON.stringify(e))
         }
 
@@ -844,7 +855,7 @@ export default class EtherHelper {
             context = {
                 ...context, toastId: `Claim_${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Factories Claim', toastDescription: `Successfully Claimed your Factories`,
             }
-        } catch (e) {
+        } catch (e: any) {
             context = { ...context, toastId: `ClaimError_${Date.now()}`, toastStatus: 'error', toastTitle: 'Factories Claim', toastDescription: `FAILED to Claim: ${(e as Error)?.message.split(';')[0]}` };
             console.log("EtherHelper.Claim Error: ", JSON.stringify(e))
         }
@@ -868,7 +879,7 @@ export default class EtherHelper {
             const gasEstimate = await Factories.estimateGas.payNfts(amount, { value: price });
 
             return gasEstimate.toNumber();
-        } catch (e) {
+        } catch (e: any) {
             console.error('Errore durante la stima del gas per payNfts:', e);
             return 0;
         }
@@ -895,7 +906,7 @@ export default class EtherHelper {
             context = {
                 ...context, toastId: `PAY${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'FACTORIES_PAYNFT', toastDescription: `Successfully — TX: ${JSON.stringify(transactionResult.transactionHash)} — Please CLAIM your Factories!`,
             }
-        } catch (e) {
+        } catch (e: any) {
             context = { ...context, toastId: `PAYError_${Date.now()}`, toastStatus: 'error', toastTitle: 'FACTORIES_PAYNFT', toastDescription: `FAILED to PAY: ${(e as Error)?.message.split(';')[0]}` };
             console.log("EtherHelper.PAY Error: ", JSON.stringify(e))
         }
@@ -925,7 +936,7 @@ export default class EtherHelper {
                     ...context, toastId: `FACTORIES_APPROVE${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'FACTORIES_APPROVE', toastDescription: `Successfully Approved - ${JSON.stringify(transactionResult.transactionHash)}`,
                 }
             }
-        } catch (e) {
+        } catch (e: any) {
             context = { ...context, toastId: `ApprovedError_${Date.now()}`, toastStatus: 'error', toastTitle: 'FACTORIES_APPROVE', toastDescription: `FAILED to APPROVE: ${(e as Error)?.message.split(';')[0]}` };
             console.log("EtherHelper.FACTORIES_APPROVE Error: ", JSON.stringify(e))
         }
@@ -940,7 +951,7 @@ export default class EtherHelper {
 
             const MintStartAt = (await factories.getTimeStart()).toNumber()
             return MintStartAt
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error on FACTORIES_START_AT: ", JSON.stringify(e))
         }
     }
@@ -951,7 +962,7 @@ export default class EtherHelper {
             const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
             const totSupply = await factories.totalSupply()
             context.FactoriesTotalSupply = totSupply
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error on FACTORIES_TOTSUPPLY: ", JSON.stringify(e))
         }
     }
@@ -963,7 +974,7 @@ export default class EtherHelper {
             const actualSupply = await factories.getActualSupply()
             context.FactoriesMinted = actualSupply
             return actualSupply
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error on FACTORIES_ALREADY_MINTED: ", JSON.stringify(e))
         }
     }
@@ -974,7 +985,7 @@ export default class EtherHelper {
             const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
             const totCost = await factories.calCost(NFTs, { from: context.addressSigner })
             return totCost.toNumber()
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error on FACTORIES_CALC_COST: ", JSON.stringify(e))
         }
     }
@@ -996,7 +1007,7 @@ export default class EtherHelper {
                     return { fact_boost, fact_rev };
                 }) as INFTBoost;
             return totData
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error on FACTORIES_TOTAL_REV: ", JSON.stringify(e))
         }
     }
@@ -1049,7 +1060,7 @@ export default class EtherHelper {
                 return ethers.utils.formatEther(price)
             });
             return Number(amountsETH);
-        } catch (e) {
+        } catch (e: any) {
             console.log("Error in EtherHelper.getQuoteTokenToEth: ", e)
             return 0
         }
@@ -1239,6 +1250,585 @@ export default class EtherHelper {
         return await this.querySignerInfo({ ...context, ...this.initialSwap() }).then(this.queryProviderInfo);
     }
 
+    // admin functions
+
+    public static async Adm_Unpause_Token(context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).unpause({ from: context.addressSigner })
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_Unpause_Token Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_Unpause_Token${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_Unpause_Token', toastDescription: `Successfully Unpause_Token`,
+            }
+        } catch (e: any) {
+
+            context = { ...context, toastId: `Adm_Deposit_ETHError_${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_Unpause_Token', toastDescription: `FAILED to Adm_Unpause_Token: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_Unpause_Token Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_Pause_Token(context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).pause()
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_Pause_Token Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_Pause_Token${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_Pause_Token', toastDescription: `Successfully Adm_Pause_Token`,
+            }
+        } catch (e: any) {
+
+            context = { ...context, toastId: `Adm_Deposit_ETHError_${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_Pause_Token', toastDescription: `FAILED to Adm_Pause_Token: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_Pause_Token Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+        console.log("Adm_Pause_Token")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_Enable_Blacklist(account: string, context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).enableBlacklist(account)
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_Enable_Blacklist Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_Enable_Blacklist${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_Enable_Blacklist', toastDescription: `Successfully Adm_Enable_Blacklist`,
+            }
+        } catch (e: any) {
+
+            context = { ...context, toastId: `Adm_Enable_BlacklistError${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_Enable_Blacklist', toastDescription: `FAILED to Adm_Enable_Blacklist: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_Enable_Blacklist Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+        console.log("Adm_Enable_Blacklist")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_Disable_Blacklist(account: string, context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            console.log(account)
+            const tx = await divitrend.connect(signer).disableBlacklist(account);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.disableBlacklist Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `disableBlacklist${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'disableBlacklist', toastDescription: `Successfully disableBlacklist`,
+            }
+        } catch (e: any) {
+
+            context = { ...context, toastId: `disableBlacklist${Date.now()}`, toastStatus: 'error', toastTitle: 'disableBlacklist', toastDescription: `FAILED to disableBlacklist: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.disableBlacklist Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("disableBlacklist")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_setBuy_TAX(tax: number, context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setBuyTax(tax);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.disableBlacklist Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `disableBlacklist${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'disableBlacklist', toastDescription: `Successfully disableBlacklist`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `disableBlacklist${Date.now()}`, toastStatus: 'error', toastTitle: 'disableBlacklist', toastDescription: `FAILED to disableBlacklist: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.disableBlacklist Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("disableBlacklist")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_setSell_TAX(tax: number, context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setSellTax(tax);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_setSell_Tax Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_setSell_Tax${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_setSell_Tax', toastDescription: `Successfully Adm_setSell_Tax`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_setSell_Tax', toastDescription: `FAILED to Adm_setSell_Tax: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_setSell_Tax Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_setSell_Tax")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_setFounderWallet(founderWallet: '', context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setFounderWallet(founderWallet);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_setFounderWallet Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_setFounderWallet${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_setFounderWallet', toastDescription: `Successfully Adm_setFounderWallet`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_setFounderWallet', toastDescription: `FAILED to Adm_setFounderWallet: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_setFounderWallet Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_setFounderWallet")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_setDivitrendRewardsAddress(diviRewAddy: '', context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setDivitrendRewardsAddress(diviRewAddy);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.setDivitrendRewardsAddress Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_setDivitrendRewardsAddress${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'setDivitrendRewardsAddress', toastDescription: `Successfully setDivitrendRewardsAddress`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'setDivitrendRewardsAddress', toastDescription: `FAILED to setDivitrendRewardsAddress: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.setDivitrendRewardsAddress Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("setDivitrendRewardsAddress")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_setStakedCapital(stakedCapitalAddy: string, context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setStakedCapitalWallet(stakedCapitalAddy);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_setStakedCapital Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_setStakedCapital${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_setStakedCapital', toastDescription: `Successfully Adm_setStakedCapital`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'setDivitrendRewardsAddress', toastDescription: `FAILED to Adm_setStakedCapital: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_setStakedCapital Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_setStakedCapital")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_setStakedCapitalPerc(perc: number, context: IEtherContext): Promise<IEtherContext> {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setStakedCapPerc(perc);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_setStakedCapitalPerc Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_setStakedCapitalPerc${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_setStakedCapitalPerc', toastDescription: `Successfully Adm_setStakedCapitalPerc`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_setStakedCapitalPerc', toastDescription: `FAILED to Adm_setStakedCapitalPerc: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_setStakedCapitalPerc Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_setStakedCapitalPerc")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_setSwapTreshold(amount: number, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setSwapThreshold(amount);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_setSwapTreshold Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_setSwapTreshold${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_setSwapTreshold', toastDescription: `Successfully Adm_setSwapTreshold`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_setSwapTreshold', toastDescription: `FAILED to Adm_setSwapTreshold: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_setSwapTreshold Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_setSwapTreshold")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_manualSwapAndLiquify(context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).manualSwapAndLiquify();
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_manualSwapAndLiquify Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_manualSwapAndLiquify${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_manualSwapAndLiquify', toastDescription: `Successfully Adm_manualSwapAndLiquify`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_manualSwapAndLiquify', toastDescription: `FAILED to Adm_manualSwapAndLiquify: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_manualSwapAndLiquify Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_manualSwapAndLiquify")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_autoSwap(isTrue: boolean, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).setAutoSwap(isTrue);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_autoSwap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_autoSwap${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_autoSwap', toastDescription: `Successfully Adm_autoSwap`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_autoSwap', toastDescription: `FAILED to Adm_autoSwap: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_autoSwap Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_autoSwap")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_esclude(exclude: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).exclude(exclude);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_autoSwap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_autoSwap${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_esclude', toastDescription: `Successfully Adm_esclude`,
+            }
+
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_esclude', toastDescription: `FAILED to Adm_esclude: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_esclude Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_esclude")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_rmv_esclude(rmv_exclude: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+
+            const tx = await divitrend.connect(signer).exclude(rmv_exclude);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_rmv_esclude Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_rmv_esclude${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_rmv_esclude', toastDescription: `Successfully Adm_rmv_esclude`,
+            }
+
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_rmv_esclude', toastDescription: `FAILED to Adm_rmv_esclude: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_rmv_esclude Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+
+        }
+        console.log("Adm_rmv_esclude")
+        return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
+    }
+
+    public static async Adm_depositETH(amount: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+            const value = ethers.utils.parseEther(amount);
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+
+            const tx = await staking.connect(signer).depositETH({ value: value });
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_depositETH Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_depositETH${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_depositETH', toastDescription: `Successfully Adm_depositETH`,
+            }
+
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_depositETH', toastDescription: `FAILED to Adm_depositETH: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_depositETH Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+    }
+
+    public static async Adm_setStakingOptionData(opt: string, vestingUNIX: string, apy: number, maxNftSlot: number, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+            const option = Number(opt);
+            const vesting = Number(vestingUNIX);
+            const apyValue = Number(apy);
+            const maxNft = Number(maxNftSlot);
+
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+
+            const tx = await staking.connect(signer).setStakingOptionData(option, vesting, apyValue, maxNft);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.Adm_setStakingOptionData Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `Adm_setStakingOptionData${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'Adm_setStakingOptionData', toastDescription: `Successfully Adm_setStakingOptionData` + { option } + { vesting } + { apyValue } + { maxNft },
+            }
+
+        } catch (e: any) {
+            context = { ...context, toastId: `setSell${Date.now()}`, toastStatus: 'error', toastTitle: 'Adm_depositETH', toastDescription: `FAILED to Adm_setStakingOptionData: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.Adm_setStakingOptionData Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+    }
+
+    public static async Adm_setStakingPause(opt: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner);
+
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+
+            let result: any = {};
+
+            if (opt === 'true') {
+                const tx = await staking.connect(signer).pause();
+                result = await tx.wait();
+            } else {
+                const tx = await staking.connect(signer).unpause();
+                result = await tx.wait();
+            }
+
+            let transactionResult = result as any;
+            console.log('EtherHelper.Adm_setStakingPause Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+
+            // Nota: la riga seguente è stata modificata per formattare correttamente la stringa di descrizione del toast
+            context = {
+                ...context,
+                toastId: `Adm_setStakingPause${transactionResult.transactionHash}`,
+                toastStatus: 'success',
+                toastTitle: 'Adm_setStakingPause',
+                toastDescription: `Successfully Adm_setStakingPause`,
+            };
+
+            return context;
+        } catch (e: any) {
+            context = {
+                ...context,
+                toastId: `Adm_setStakingPause${Date.now()}`,
+                toastStatus: 'error',
+                toastTitle: 'Adm_setStakingPause',
+                toastDescription: `FAILED to Adm_setStakingPause: ${(e as Error)?.message.split(';')[0]}`,
+            };
+            console.log("EtherHelper.Adm_setStakingPause Error: ", JSON.stringify(e));
+            return e;
+        }
+    }
+
+    public static async Adm_fact_adminMint(amount: string, receiver: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner()
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+
+            const tx = await factories.connect(signer).adminMint(Number(amount), receiver);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.adm_fact_adminMint Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `adm_fact_adminMint ${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'adm_fact_adminMint', toastDescription: `Successfully adm_fact_adminMint`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `adm_fact_adminMint${Date.now()}`, toastStatus: 'error', toastTitle: 'adm_fact_adminMint', toastDescription: `FAILED to adm_fact_adminMint: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.adm_fact_adminMint Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+    }
+
+    public static async Adm_fact_setCost(amount: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner();
+            const value = ethers.utils.parseEther(amount);
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+
+            const tx = await factories.connect(signer).setCost(value);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.adm_fact_adminMint Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `adm_fact_adminMint ${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'adm_fact_adminMint', toastDescription: `Successfully adm_fact_adminMint`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `adm_fact_adminMint${Date.now()}`, toastStatus: 'error', toastTitle: 'adm_fact_adminMint', toastDescription: `FAILED to adm_fact_adminMint: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.adm_fact_adminMint Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+    }
+
+    public static async Adm_fact_setMaxCost(amount: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner();
+            const value = ethers.utils.parseEther(amount);
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+
+            const tx = await factories.connect(signer).setMaxCost(value);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.adm_fact_setMaxCost Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `adm_fact_setMaxCost ${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'adm_fact_setMaxCost', toastDescription: `Successfully adm_fact_setMaxCost`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `adm_fact_setMaxCost${Date.now()}`, toastStatus: 'error', toastTitle: 'adm_fact_setMaxCost', toastDescription: `FAILED to adm_fact_setMaxCost: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.adm_fact_setMaxCost Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+    }
+
+    public static async Adm_fact_setCashWallet(wallet: string, context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner();
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+
+            const tx = await factories.connect(signer).setCashWallet(wallet);
+            let transactionResult = await tx.wait();
+            console.log('EtherHelper.adm_fact_setCashWallet Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
+            context = {
+                ...context, toastId: `adm_fact_setCashWallet ${transactionResult.transactionHash}`, toastStatus: 'success', toastTitle: 'adm_fact_setCashWallet', toastDescription: `Successfully adm_fact_setCashWallet`,
+            }
+        } catch (e: any) {
+            context = { ...context, toastId: `adm_fact_setCashWallet${Date.now()}`, toastStatus: 'error', toastTitle: 'adm_fact_setCashWallet', toastDescription: `FAILED to adm_fact_setCashWallet: ${(e as Error)?.message.split(';')[0]}` };
+            console.log("EtherHelper.adm_fact_setCashWallet Error: ", JSON.stringify(e))
+            return (e.message || 'An error occurred');
+        }
+    }
+
+    public static async Adm_get_data(context: IEtherContext) {
+        try {
+            if (!context.connected) return context;
+            const provider = EtherHelper.initProvider();
+            const signer = provider.getSigner(context.addressSigner)
+
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+
+            const autoSwapPromise = divitrend.connect(signer).getAutoSwap();
+            const buyTaxPromise = divitrend.connect(signer).getBuyTax().then(value => value.toNumber());
+            const sellTaxPromise = divitrend.connect(signer).getSellTax().then(value => value.toNumber());
+            const founderPercPromise = divitrend.connect(signer).getFounderPerc().then(value => value.toNumber());
+            const collectedTaxesPromise = divitrend.connect(signer).getCollectedTaxes().then(value => ethers.utils.formatEther(value));
+            const swapThresPromise = divitrend.connect(signer).getSwapThreshold().then(value => ethers.utils.formatEther(value));
+            const isPausedPromise = divitrend.connect(signer).paused().then(value => value)
+            const cashWalletPromise = factories.connect(signer).getCashWallet().then(value => value)
+            const maxCostPromise = factories.connect(signer).getMaxCost().then(value => ethers.utils.formatEther(value));
+            const factCostPromise = factories.connect(signer).getCost().then(value => ethers.utils.formatEther(value));
+            const allDataPromise = await Promise.all([autoSwapPromise, buyTaxPromise, sellTaxPromise, founderPercPromise, collectedTaxesPromise, swapThresPromise, isPausedPromise, cashWalletPromise, factCostPromise, maxCostPromise]);
+            const allData = {
+                autoSwap: allDataPromise[0],
+                buyTax: allDataPromise[1],
+                sellTax: allDataPromise[2],
+                founderPerc: allDataPromise[3],
+                collectedTaxes: allDataPromise[4],
+                swapThres: allDataPromise[5],
+                isPause: allDataPromise[6],
+                cashWallet: allDataPromise[7],
+                maxCost: allDataPromise[8],
+                cost: allDataPromise[9],
+            }
+
+            return allData as adminData
+
+        } catch (e: any) {
+            console.log("EtherHelper.Adm_get_data Error: ", JSON.stringify(e))
+        }
+    }
+
     public static initialSwap(): ISwap {
         return {
             swapAmount: undefined
@@ -1366,7 +1956,7 @@ export default class EtherHelper {
                 const tokenIds = await Factories.tokensOfOwner(context.addressSigner ?? '');
 
                 return tokenIds;
-            } catch (e) {
+            } catch (e: any) {
                 console.log("Can't fetch balanceOf owner:", e)
             }
         }

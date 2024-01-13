@@ -61,7 +61,7 @@ const TokenSelector: React.FC<{ assets: IAsset[]; disabled: boolean; onChange: D
         open={isOpen}
         onClick={handleClose}
       >
-        <Box style={{background: '#8500FF', minWidth: 420, minHeight: 300, overflowY: 'auto', scrollbarWidth: 'thin' ,gap: 20, scrollbarColor: '#8B3EFF transparent', border: '5px solid black', borderRadius: 25 }}>
+        <Box style={{background: '#8500FF', minWidth: 420, minHeight: 300, overflowY: 'auto', scrollbarWidth: 'thin' ,gap: 20, scrollbarColor: '#8B3EFF transparent', border: '2px solid #A4FE66', borderRadius: 25 }}>
           <Divider />
           <Box>
             <Grid container direction="column" spacing={1}>

@@ -1,15 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState, lazy, Suspense } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@mui/material/Container";
 import { Paper } from "@material-ui/core";
-import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
-import WhatshotIcon from '@mui/icons-material/Whatshot';
 import Chip from "@mui/material/Chip";
 import { useMediaQuery } from "@material-ui/core";
 import { EtherContext } from "../ethers/EtherContext";
@@ -20,8 +15,8 @@ import { ethers } from "ethers";
 import { Pair } from "../entities/stats/Pair";
 import { StatsHelper } from "./stats_helper/StatsHelper";
 import AddressFactory from "../common/AddressFactory";
-import { WelcomeUserData } from "./dapp/WelcomeUserData";
 import { GreenSwitch } from "./dapp/Staking/useStyleStaking";
+import { WelcomeUserData } from "./dapp/WelcomeUserData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -276,6 +271,8 @@ interface ICTBalance {
   eth_balance: number;
 }
 
+const WelcomeUserDatas = React.lazy(() => import("./dapp/WelcomeUserData").then(module => ({ default: module.WelcomeUserData })));
+
 const Welcome = () => {
   const classes = useStyles();
   const isMobile = useMediaQuery('(max-width:960px)');
@@ -295,22 +292,27 @@ const Welcome = () => {
     const res_weth = Number(context.reserve0)
     setWETHReserve(res_weth)
   }, [context])
+
   useEffect(() => {
     StatsHelper.getPriceOfToken('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') // Indirizzo di WETH
       .then(price => setWethPrice(price));
 
     StatsHelper.getPriceOfToken('0xdAC17F958D2ee523a2206206994597C13D831ec7') // Indirizzo di USDT
       .then(price => setUsdtPrice(price));
-  }, []);
+  }, [context]);
 
   useEffect(() => {
     async function getInitDataPool() {
-      await EtherHelper.queryStakingInfo(context)
-      const data_ctx = await EtherHelper.initialInfoPool(context);
-      saveContext(data_ctx)
+      if (context.connected === true) {
+        const ctx = await EtherHelper.queryStakingInfo(context)
+        saveContext(ctx)
+      }
     }
-    getInitDataPool()
-  }, [])
+
+    if (context.connected === true) {
+      getInitDataPool()
+    }
+  }, [context])
 
   useEffect(() => {
     async function getEthClaimed() {
@@ -325,16 +327,12 @@ const Welcome = () => {
 
   }, [context]);
 
-  async function updateCTX() {
-    await EtherHelper.initialInfoPool({ ...context })
-  }
-
   useEffect(() => {
-    if (!context) return;
-    updateCTX()
-  }, [context])
-
-  const isConnected = context.connected ?? false;
+    async function updateCTX() {
+      await EtherHelper.initialInfoPool(context);
+    }
+    updateCTX();
+  }, [context]);
 
   return (
     <div className={classes.root}>
@@ -388,7 +386,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF' }}>{checked ? 'MC' : 'LP'}</span></div>
+                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF' }}>{!checked ? 'MC' : 'LP'}</span></div>
                 {checked ? (
                   <div>
                     <div className={classes.title}>
@@ -445,14 +443,16 @@ const Welcome = () => {
                 </div>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Paper className={classes.paper}>
-                <div className={classes.title}>
-                  STAKING DATA
-                </div>
-                <WelcomeUserData />
-              </Paper>
-            </Grid>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Grid item xs={12} md={6}>
+                <Paper className={classes.paper}>
+                  <div className={classes.title}>
+                    STAKING
+                  </div>
+                  <WelcomeUserDatas />
+                </Paper>
+              </Grid>
+            </Suspense>
             <Grid item xs={12} md={4}>
               <Paper className={classes.paperEnd}>
                 <div className={classes.titleBottom}>
@@ -541,7 +541,7 @@ const Welcome = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
-                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF', marginLeft: -5 }}>{checked ? 'MC' : 'LP'}</span></div>
+                <div style={{ position: 'absolute', top: '10%', left: '5%' }}><GreenSwitch checked={checked} onChange={handleChangeChecker} /> <span style={{ color: checked ? '#A4FE66' : '#8500FF', marginLeft: -5 }}>{!checked ? 'MC' : 'LP'}</span></div>
                 {checked ? (
                   <div>
                     <div className={classes.title}>
@@ -613,20 +613,22 @@ const Welcome = () => {
                 </div>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Paper className={classes.paper}>
-                <div className={classes.title}>
-                  STAKING DATA
-                </div>
-                <WelcomeUserData />
-              </Paper>
-            </Grid>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Grid item xs={12} md={6}>
+                <Paper className={classes.paper}>
+                  <div className={classes.title}>
+                    STAKING
+                  </div>
+                  <WelcomeUserDatas />
+                </Paper>
+              </Grid>
+            </Suspense>
             <Grid item xs={12} md={4}>
               <Paper className={classes.paperEnd}>
                 <div className={classes.titleBottom}>
                   DISTRIBUTED REV
                 </div>
-                <div className={classes.title} style={{color: 'white'}}>
+                <div className={classes.title} style={{ color: 'white' }}>
                   {ethetrnd.trnd_balance?.toLocaleString('en-US') ?? <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
                   <img src="74.png" alt="" style={{ width: 30, height: 30 }} />
                 </div>
@@ -650,7 +652,7 @@ const Welcome = () => {
                 <div className={classes.titleBottom}>
                   TOTAL $FACT STAKED
                 </div>
-                <div className={classes.title} style={{color: 'white'}}>
+                <div className={classes.title} style={{ color: 'white' }}>
                   {context.nft_staked ? context.nft_staked : <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />}
                 </div>
               </Paper>

@@ -146,8 +146,8 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
         handleCardClick(index, tokenId);
     }, [handleCardClick]);
 
-    const tokensRow1 = renderedTokens.slice(0, 5);
-    const tokensRow2 = renderedTokens.slice(5, 11);
+    //const tokensRow1 = renderedTokens.slice(0, 5);
+    //const tokensRow2 = renderedTokens.slice(5, 11);
 
     const vestingToMonths = [
         { vesting: 0, months: 3 },
@@ -169,7 +169,7 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
         const allTokenIds = [...alreadyStakedToFetch];
         const renderTokensAndAddTokens = () => {
             const numTokens = allTokenIds.length;
-            const remainingSlots = maxTokenIdStaked - numTokens;
+            //const remainingSlots = maxTokenIdStaked - numTokens;
             const tokensPerRow = 5;
             let tokensCount = 0;
 

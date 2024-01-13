@@ -172,6 +172,19 @@ export const useStyleStaking: any = makeStyles((theme) => ({
             minHeight: 100,
         },
     },
+    paperAdmin: {
+        minHeight: 300,
+        background: "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(18, 17, 17, 0.7))",
+        padding: theme.spacing(2),
+        border: '2px solid #8500FF',
+        textAlign: "center",
+        position: "relative",
+        backgroundClip: 'padding-box',
+        borderRadius: 25,
+        "@media screen and (max-width: 768px)": {
+            minHeight: 100,
+        },
+    },
     vestingOverlay: {
         content: '""',
         position: 'absolute',
@@ -214,6 +227,14 @@ export const useStyleStaking: any = makeStyles((theme) => ({
         height: 'auto',
         maxHeight: 'auto',
         top: 55,
+    },
+    customTextField: {
+        minWidth: 200,
+        borderRadius: 8,
+        color: '#8B3EFF',
+        '& input': {
+            color: 'white', // Testo bianco
+        },
     },
     boxGrid: {
         padding: theme.spacing(2),

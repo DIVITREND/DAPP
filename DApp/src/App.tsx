@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ReactNode, useEffect, useState } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -37,6 +38,8 @@ import SwapSection from './components/dapp/SwapSection';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import { Alert, AlertTitle } from '@mui/material';
 import EtherHelper from './ethers/EtherHelper';
+import AddressFactory from './common/AddressFactory';
+import AdminPanel from './components/dapp/AdminPanel';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -308,7 +311,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Swap', paths: ['/swap'], element: <SwapSection /> },
   { name: 'Launchpad', paths: ['/launchpad'], element: <Launchpad /> },
   { name: 'Staking', paths: ['/staking'], element: <Staking /> },
-
+  { name: 'Admin', paths: ['/admin'], element: <AdminPanel /> },
 ];
 
 const App: React.FC = () => {
@@ -425,14 +428,19 @@ const App: React.FC = () => {
               >
                 <div style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 20, marginTop: 20, flexDirection: 'column' }}>
                   {LinkItems.map((link, key) => (
-                    <div key={key}>
-                      <NavItem
-                        to={link.paths[0]}
-                        onClick={handleDrawerToggle}
-                      >
-                        {link.name}
-                      </NavItem>
-                    </div>
+                    <React.Fragment key={key}>
+                      {link.name === "Admin" && context.addressSigner?.toLowerCase() === AddressFactory.getDeployerAddress(context.chainId ?? 11155111).toLocaleLowerCase() ? (
+                        <NavItem to={link.paths[0]} onClick={onClose}>
+                          {link.name}
+                        </NavItem>
+                      ) : (
+                        link.name !== "Admin" && (
+                          <NavItem to={link.paths[0]} onClick={onClose}>
+                            {link.name}
+                          </NavItem>
+                        )
+                      )}
+                    </React.Fragment>
                   ))}
                 </div>
               </Drawer>
@@ -487,12 +495,19 @@ const App: React.FC = () => {
             <div style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 10, flexDirection: 'column' }}>
               {LinkItems.map((link, key) => (
                 <React.Fragment key={key}>
-                  <NavItem to={link.paths[0]} onClick={onClose}>
-                    {link.name}
-                  </NavItem>
+                  {link.name === "Admin" && context.addressSigner === AddressFactory.getDeployerAddress(context.chainId ?? 11155111) ? (
+                    <NavItem to={link.paths[0]} onClick={onClose}>
+                      {link.name}
+                    </NavItem>
+                  ) : (
+                    <NavItem to={link.paths[0]} onClick={onClose}>
+                      {link.name}
+                    </NavItem>
+                  )}
                 </React.Fragment>
               ))}
             </div>
+
           </Drawer>
         )}
         {isMobile ? (

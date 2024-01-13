@@ -20,7 +20,7 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
     const { totalApyBoost } = useTokenAttributeCalculator(alreadyStakedToFetch, context);
     const [userDeposit, setUserDeposit] = useState('0');
     const isMobile = window.innerWidth <= 768;
-    const [tokenFactIds, setTokenFactIds] = useState(context.FactoriesTokenIds);
+    const [tokenFactIds, setTokenFactIds] = useState<number[]>();
     const [maxTokenIdStaked, setMaxTokenIdStaked] = useState<number>(0);
     const classes = useStyleStaking();
     const [isLoading, setIsLoading] = useState(false)
@@ -54,16 +54,6 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
     /* — */
 
     useEffect(() => {
-        stakingPendingRew(selectedVesting)
-
-        const interval = setInterval(() => {
-            stakingPendingRew(selectedVesting);
-        }, 10000);
-
-        return () => clearInterval(interval);
-    }, [selectedVesting]);
-
-    useEffect(() => {
         if (!context) return
 
         async function getAlreadyStaked() {
@@ -83,7 +73,7 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
             return promise_uri
         })
 
-    }, [selectedVesting, context])
+    }, [selectedVesting])
 
     useEffect(() => {
         function getMaxTokenIdStaked() {
@@ -113,23 +103,26 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
     ]
 
     useEffect(() => {
-        if (!context) return
-        setUserDeposit('0')
-        stakingDataRew()
-        stakingPendingRew(selectedVesting)
+        if (!context) return;
+        if (context.connected === true) {
+            setUserDeposit('0')
+            stakingDataRew()
+            stakingPendingRew(selectedVesting)
+        }
     }, [selectedVesting])
 
     useEffect(() => {
-
+        if (!context) return;
         async function getSignerInfo() {
-            await EtherHelper.querySignerInfo(context)
+            if (context.connected === true) {
+                const ctx = await EtherHelper.querySignerInfo(context)
+                setTokenFactIds(ctx.FactoriesTokenIds ?? [])
+            } else {
+                setTokenFactIds([])
+            }
         }
-
-        getSignerInfo().then(() => {
-            setTokenFactIds(context.FactoriesTokenIds)
-        })
-
-    }, [context, context.FactoriesTokenIds, context.toastStatus]);
+        getSignerInfo()
+    }, [selectedVesting])
 
     return (
         <Grid spacing={1}>
