@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState, lazy, Suspense } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme) =>
       background: 'linear-gradient(135deg, #000000, #0B0230)',
       color: '#fff',
       minHeight: '100vh',
+      height: '100%',
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
@@ -306,12 +307,41 @@ interface LinkItemProps {
   divider?: boolean;
 }
 
+const NavigationIcons = ({ isMobile }: { isMobile: boolean }) => {
+  return (
+    <>
+      <IconButton component="a" href="https://divitrend.finance/" style={{ color: '#8500FF', marginLeft:  isMobile ? 10 : 0 }} target="_blank" rel="noopener noreferrer">
+        <img src="web.png" style={{ width: isMobile ? 15 : 25, height: isMobile ? 15 : 25 }} alt="web" />
+      </IconButton>
+
+      <IconButton component="a" href="https://twitter.com/DiviTrend" style={{ color: '#8500FF' }} target="_blank" rel="noopener noreferrer">
+        <img src="x.png" alt="x" style={{ width: isMobile ? 15 : 25, height: isMobile ? 15 : 25 }} />
+      </IconButton>
+
+      <IconButton component="a" href="https://t.me/divitrend" style={{ color: '#8500FF' }} target="_blank" rel="noopener noreferrer">
+        <img src="tg.png" alt="web" style={{ width: isMobile ? 15 : 25, height: isMobile ? 15 : 25 }} />
+      </IconButton>
+
+      <IconButton  component="a" href="https://discord.gg/HekNsD9uF2" style={{ color: '#8500FF', marginRight: isMobile ? 10: 0 }} target="_blank" rel="noopener noreferrer">
+        <img src="discord.png" alt="web" style={{ width: isMobile ? 15 : 25, height: isMobile ? 15 : 25 }} />
+      </IconButton>
+    </>
+  );
+};
+
+const LazyHome = lazy(() => import('./components/dapp/Home'));
+const LazySwapSection = lazy(() => import('./components/dapp/SwapSection'));
+const LazyLaunchpad = lazy(() => import('./components/dapp/Launchpad'));
+const LazyStaking = lazy(() => import('./components/dapp/Staking'));
+const LazyAdminPanel = lazy(() => import('./components/dapp/AdminPanel'));
+const LazyWelcome = lazy(() => import('./components/Welcome'));
+
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', paths: ['/home'], element: <Welcome /> },
-  { name: 'Swap', paths: ['/swap'], element: <SwapSection /> },
-  { name: 'Launchpad', paths: ['/launchpad'], element: <Launchpad /> },
-  { name: 'Staking', paths: ['/staking'], element: <Staking /> },
-  { name: 'Admin', paths: ['/admin'], element: <AdminPanel /> },
+  { name: 'Home', paths: ['/home'], element: <LazyWelcome /> },
+  { name: 'Swap', paths: ['/swap'], element: <LazySwapSection /> },
+  { name: 'Launchpad', paths: ['/launchpad'], element: <LazyLaunchpad /> },
+  { name: 'Staking', paths: ['/staking'], element: <LazyStaking /> },
+  { name: 'Admin', paths: ['/admin'], element: <LazyAdminPanel /> },
 ];
 
 const App: React.FC = () => {
@@ -677,12 +707,14 @@ const App: React.FC = () => {
               <div className={classes.overlayLoader} />
             </div>
           )}
-          <Routes>
-            {LinkItems.map((link, key) => {
-              return link.paths.map((path, pathKey) => <Route key={`${key}_${pathKey}`} path={path} element={link.element} />)
-            })}
-            <Route path="/" element={<Welcome />} />
-          </Routes>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              {LinkItems.map((link, key) => {
+                return link.paths.map((path, pathKey) => <Route key={`${key}_${pathKey}`} path={path} element={link.element} />)
+              })}
+              <Route path="/" element={<LazyWelcome />} />
+            </Routes>
+          </Suspense>
         </div>
         <div
           style={{
@@ -697,14 +729,16 @@ const App: React.FC = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '40px',
+            height: isMobile ? '55px' : '55px',
             color: 'white',
             fontWeight: 'bold',
-            fontSize: 16,
+            fontSize: isMobile ? 14 : 16,
+            textAlign: 'center',
             zIndex: 3
           }}
         >
-          © DIVITREND - 2023 | <a> Powered by Ethercode</a>
+          {isMobile ? '© DIVITREND 2023 | Ethercode' : '© DIVITREND - 2023 | Powered by Ethercode'}
+            <NavigationIcons isMobile={isMobile} />
         </div>
       </div>
     </Router>

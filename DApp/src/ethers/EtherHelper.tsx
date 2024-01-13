@@ -782,40 +782,32 @@ export default class EtherHelper {
     }
 
     public static async queryStakingInfo(context: IEtherContext): Promise<IEtherContext> {
-        if (context.loaded && !context.reload) return context;
+        if (!context.addressSigner) return context;
 
-        try {
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
+        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
 
-            const contractBalance = staking
-                .getContractBalance()
-                .then((n: BigNumber) => context.eth_balance = Number(ethers.utils.formatEther(n)))
+        const contractBalance = staking
+            .getContractBalance()
+            .then((n: BigNumber) => context.eth_balance = Number(ethers.utils.formatEther(n)))
 
-            const trndBalance = staking
-                .getTotStakingAmount()
-                .then((n: BigNumber) => context.tot_trnd_staked = Number(ethers.utils.formatEther(n)))
+        const trndBalance = staking
+            .getTotStakingAmount()
+            .then((n: BigNumber) => context.tot_trnd_staked = Number(ethers.utils.formatEther(n)))
 
-            const nftBalance = staking
-                .getContractNftBalance()
-                .then((n: BigNumber) => context.nft_staked = n.toNumber())
+        const nftBalance = staking
+            .getContractNftBalance()
+            .then((n: BigNumber) => context.nft_staked = n.toNumber())
 
-            const ethDeposit = staking
-                .getLastEthDeposit()
-                .then((n) => {
-                    context.last_eth_dep = Number(ethers.utils.formatEther(n[0]));
-                    context.last_eth_dep_time = Number(ethers.utils.formatEther(n[1]));
-                })
+        const ethDeposit = staking
+            .getLastEthDeposit()
+            .then((n) => {
+                context.last_eth_dep = Number(ethers.utils.formatEther(n[0]));
+                context.last_eth_dep_time = Number(ethers.utils.formatEther(n[1]));
+            })
 
-            console.log("queryStakingInfo: ", context.nft_staked_data?.nft_depositNumb, " ", context.nft_staked_data?.nft_staked, " ", context.nft_staked_data?.nft_staked_ids,)
 
-            await Promise.all([contractBalance, trndBalance, nftBalance, ethDeposit])
-
-            return context
-
-        } catch (e: any) {
-            console.log("Error_queryStakingInfo: ", JSON.stringify(e))
-        }
+        await Promise.all([contractBalance, trndBalance, nftBalance, ethDeposit])
 
         return context
     }

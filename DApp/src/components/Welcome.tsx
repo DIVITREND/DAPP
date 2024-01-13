@@ -17,6 +17,7 @@ import { StatsHelper } from "./stats_helper/StatsHelper";
 import AddressFactory from "../common/AddressFactory";
 import { GreenSwitch } from "./dapp/Staking/useStyleStaking";
 import { WelcomeUserData } from "./dapp/WelcomeUserData";
+import { IEtherContext } from "../ethers/IEtherContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -282,57 +283,64 @@ const Welcome = () => {
   const [reserveWETH, setWETHReserve] = useState<number>(0);
   const [ethetrnd, setEthetrnd] = useState({} as ICTBalance);
   const [checked, setChecked] = useState(false);
+  const [dataFetched, setDataFetched] = useState(false)
 
   const handleChangeChecker = (event: ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
 
   useEffect(() => {
-    if (!context) return context
-    const res_weth = Number(context.reserve0)
-    setWETHReserve(res_weth)
+    if (!context) return context;
+    const res_weth = Number(context.reserve0);
+    setWETHReserve(res_weth);
+  }, [context]);
+
+  const fetchDataAndUpdate = async (updateFunction: any) => {
+    if (!dataFetched && context.connected) {
+      await updateFunction(context);
+      setDataFetched(true);
+    }
+  };
+
+  useEffect(() => {
+    fetchDataAndUpdate(async (context: IEtherContext) => {
+      const ctx = await EtherHelper.queryStakingInfo(context);
+      saveContext(ctx);
+      console.log("queryStakingInfo: ", ctx)
+    });
   }, [context])
 
   useEffect(() => {
-    StatsHelper.getPriceOfToken('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') // Indirizzo di WETH
-      .then(price => setWethPrice(price));
+    fetchDataAndUpdate(async (context: IEtherContext) => {
+      const res_weth = Number(context.reserve0);
+      setWETHReserve(res_weth);
 
-    StatsHelper.getPriceOfToken('0xdAC17F958D2ee523a2206206994597C13D831ec7') // Indirizzo di USDT
-      .then(price => setUsdtPrice(price));
+      await StatsHelper.getPriceOfToken('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2')
+        .then(price => setWethPrice(price));
+
+      await StatsHelper.getPriceOfToken('0xdAC17F958D2ee523a2206206994597C13D831ec7')
+        .then(price => setUsdtPrice(price));
+    });
   }, [context]);
 
   useEffect(() => {
-    async function getInitDataPool() {
-      if (context.connected === true) {
-        const ctx = await EtherHelper.queryStakingInfo(context)
-        saveContext(ctx)
-      }
-    }
-
-    if (context.connected === true) {
-      getInitDataPool()
-    }
-  }, [context])
-
-  useEffect(() => {
-    async function getEthClaimed() {
-      const ethClaimed = await EtherHelper.STAKING_ALL_TOKENS_BALANCE(context)
-      return ethClaimed;
-    }
-
-    getEthClaimed().then((ethClaimed: ICTBalance) => {
-      console.log('ethClaimed', ethClaimed)
+    fetchDataAndUpdate(async (context: IEtherContext) => {
+      const ethClaimed = await EtherHelper.STAKING_ALL_TOKENS_BALANCE(context);
       setEthetrnd({ trnd_balance: ethClaimed.trnd_balance, eth_balance: ethClaimed.eth_balance });
-    })
-
+    });
   }, [context]);
 
   useEffect(() => {
-    async function updateCTX() {
+    fetchDataAndUpdate(async (context: IEtherContext) => {
       await EtherHelper.initialInfoPool(context);
-    }
-    updateCTX();
+    });
   }, [context]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setChecked(false)
+    }, 1000)
+  }, [])
 
   return (
     <div className={classes.root}>

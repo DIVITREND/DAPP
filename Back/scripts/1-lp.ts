@@ -34,14 +34,14 @@ async function main() {
     const dep_add = deployer.address
 
     /* TRND */
-    //const approveTRND = await trnd.approve(routerV2Add, ethers.utils.parseEther('10000000'))
-    //console.log("Approved TRND: ", approveTRND) // APPROVED
+    const approveTRND = await trnd.approve(routerV2Add, ethers.utils.parseEther('10000000'))
+    console.log("Approved TRND: ", approveTRND) // APPROVED
 
-    //const sendTRNDtoDep = await trnd.transfer(deployer.address, ethers.utils.parseEther('1000'))
-    //console.log("TX TRND TO DEPLOYER: ", sendTRNDtoDep.hash) // 1000 TRND — 0x636f9f284fb67ca34eee636f8db6d9bb7487a955430625f8599473d3028e269a
+    const sendTRNDtoDep = await trnd.transfer(deployer.address, ethers.utils.parseEther('1000'))
+    console.log("TX TRND TO DEPLOYER: ", sendTRNDtoDep.hash) // 1000 TRND — 0x636f9f284fb67ca34eee636f8db6d9bb7487a955430625f8599473d3028e269a
 
-    //const balanceDeployer = await trnd.balanceOf(deployer.address).then((n) => ethers.utils.formatEther(n))
-    //console.log("Balance: ", balanceDeployer) // 1M  —  $TRND
+    const balanceDeployer = await trnd.balanceOf(deployer.address).then((n) => ethers.utils.formatEther(n))
+    console.log("Balance: ", balanceDeployer) // 1M  —  $TRND
 
     /* ————FACTORY————— */
 
@@ -52,9 +52,9 @@ async function main() {
 
     /* ———— ROUTER ———— */
 
-    //const approveWETH = await weth.approve(routerV2Add, ethers.utils.parseEther('1000000'))
-    //console.log("approved WETH: ", approveWETH) // APPROVED
-    /*
+    const approveWETH = await weth.approve(routerV2Add, ethers.utils.parseEther('1000000'))
+    console.log("approved WETH: ", approveWETH) // APPROVED
+    
     const createLiquidityPool = await routerV2.addLiquidity(
         tokenA,
         tokenB,
@@ -66,7 +66,7 @@ async function main() {
         timestamp,  //1h
     );
     console.log("Liquidity: ", createLiquidityPool, createLiquidityPool.hash);
-    */
+    
 
     // WETH/DIVITREND LP 0x6ed0b705e9ac97b86bc23df75f4ffea94129fe041f386f755d0bc3966df691d0
 
