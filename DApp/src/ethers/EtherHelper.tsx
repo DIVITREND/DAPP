@@ -67,7 +67,7 @@ const { ethereum } = window;
 
 class LinkFactory {
     static getTransctionLink(txHash: string, chainId?: number, name?: string) {
-        return this.getLink(name ?? 'Transaction HASH', `${chainId === 11155111 ? 'testnet: ' : ''}tx => ${txHash}`);
+        return this.getLink(name ?? 'Transaction HASH', `${chainId === 42161 ? 'testnet: ' : ''}tx => ${txHash}`);
     }
 
     static getLink(name: string, url: string) {
@@ -116,7 +116,7 @@ export default class EtherHelper {
             console.log("EtherHelper.connect");
 
             let accounts;
-            const desiredChainId = 11155111; // ChainId desiderata
+            const desiredChainId = 42161; // ChainId desiderata
 
             if (typeof window !== 'undefined' && (window as any).ethereum !== 'undefined') {
                 const ethereum = (window as any).ethereum;
@@ -133,10 +133,10 @@ export default class EtherHelper {
                                 method: 'wallet_addEthereumChain',
                                 params: [
                                     {
-                                        chainName: 'Sepolia',
+                                        chainName: 'Arbitrum One',
                                         chainId: ethers.utils.hexlify(desiredChainId),
-                                        nativeCurrency: { name: 'SepoliaETH', decimals: 18, symbol: 'SepoliaETH' },
-                                        rpcUrls: ['https://eth-sepolia.g.alchemy.com/v2/d9hHRJdy6salX7wZ8wyrmrT5aTiYwhwO']
+                                        nativeCurrency: { name: 'Ethereum', decimals: 18, symbol: 'ETH' },
+                                        rpcUrls: [`${AddressFactory.getRpcUrl(42161)}`]
                                     }
                                 /*
                                 chainName: 'Ethereum Mainnet',
@@ -189,7 +189,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
             const tx = await staking.connect(signer).claimEth()
             let transactionResult = await tx.wait();
@@ -212,7 +212,7 @@ export default class EtherHelper {
             console.log("stakingOption", stakingOption, compoundPerc)
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
             const tx = await staking.connect(signer).claimStaking(stakingOption, compoundPerc)
             let transactionResult = await tx.wait();
@@ -234,7 +234,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             //amount to WEI — getting Ethers
             const amountToWei = ethers.utils.parseEther(amount.toString())
             const tx = await staking.connect(signer).depositETH({ value: amountToWei })
@@ -257,10 +257,10 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), IERC20ABI, provider)
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), IERC20ABI, provider)
             const tx_approve = await divitrend
                 .connect(signer)
-                .approve(AddressFactory.getStaking(context.chainId ?? 11155111), ethers.utils.parseEther(trnd.toString()));
+                .approve(AddressFactory.getStaking(context.chainId ?? 42161), ethers.utils.parseEther(trnd.toString()));
             console.log(tx_approve)
             context = {
                 ...context, toastId: `APPROVED TRND`, toastStatus: 'success', toastTitle: 'SUCCESSFULLY APPROVED TRND', toastDescription: `Successfully approved - ${trnd} $TRND`,
@@ -279,7 +279,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
             const amountToWei = ethers.utils.parseEther(tokenAmount.toString())
 
@@ -313,7 +313,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const tx = await staking.connect(signer).exitStaking(stakingOption)
             let transactionResult = await tx.wait();
             context = {
@@ -334,7 +334,7 @@ export default class EtherHelper {
             if (!context.connected) return 0;
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner);
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const nft_staked = await staking.connect(signer)
                 .getLastNftCount(context.addressSigner ?? '')
                 .then((n) => (Array.isArray(n) ? n[0] : n).toNumber()) as number;
@@ -350,7 +350,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
             const tx = staking.getDepositNumber()
                 .then((n) => {
@@ -376,7 +376,7 @@ export default class EtherHelper {
             if (!context.connected) return 0;
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner);
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
             const trnd_balance = await staking.connect(signer).getContractBalance().then((n: BigNumber) => ethers.utils.formatEther(n)) as number;
             const eth_balance = await staking.connect(signer).getTotalRewardedETH().then((n: BigNumber) => ethers.utils.formatEther(n)) as number;
@@ -391,7 +391,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
 
             console.log(tokenIds + " " + stakingOption);
@@ -424,7 +424,7 @@ export default class EtherHelper {
             if (!context.connected) return 0;
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner);
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             console.log("VESTING: ", stakingOption)
             const malus = await staking.connect(signer).getActualMalus(context.addressSigner ?? '', stakingOption)
             return (malus / 1000)
@@ -439,7 +439,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             console.log("tokenIds", tokenIds, ' ', stakingOption)
 
             console.log(tokenIds + " " + stakingOption);
@@ -472,7 +472,7 @@ export default class EtherHelper {
     public static async STAKING_GET_FULL_DATA(context: IEtherContext): Promise<any> {
         const provider = EtherHelper.initProvider()
         const signer = provider.getSigner(context.addressSigner)
-        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
         const user_full_data = await staking
             .connect(context.addressSigner ?? '')
@@ -500,7 +500,7 @@ export default class EtherHelper {
     public static async STAKING_MAX_STAKABLE(context: IEtherContext): Promise<number> {
         const provider = EtherHelper.initProvider()
         const signer = provider.getSigner(context.addressSigner)
-        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
         const max_stakable = await staking
             .connect(context.addressSigner ?? '')
@@ -513,7 +513,7 @@ export default class EtherHelper {
     public static async STAKING_REV_SHARE(context: IEtherContext): Promise<IClaimETH[]> {
         const provider = EtherHelper.initProvider()
         const signer = provider.getSigner(context.addressSigner)
-        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
         let nft_eth_rew: number = 0
         let eth_rew: number = 0
@@ -536,7 +536,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
             const malus = await staking.connect(signer).getActualMalus(context.addressSigner ?? '', stakingOption)
             //% in 3 decimals — n / 1000 = res
@@ -555,7 +555,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
 
             const eth_claim_data = await staking.connect(signer)
                 .getUserEthClaimData(context.addressSigner ?? '')
@@ -585,7 +585,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const trnd_claim_data = await staking.connect(signer)
                 .getUserStakingClaimData(context.addressSigner ?? '', stakingOption)
                 .then((data) => {
@@ -615,7 +615,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const trnd_claim_data = await staking.connect(signer)
                 .pendingStakingRew(context.addressSigner ?? '', stakingOption)
                 .then(
@@ -638,7 +638,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const trnd_claim_data = await staking.connect(signer)
                 .getStakingOptionData(stakingOption)
                 .then((opt: any) => {
@@ -660,7 +660,7 @@ export default class EtherHelper {
         try {
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const trnd_claim_data = await staking.connect(signer)
                 .getUserStakingData(context.addressSigner ?? '', stakingOption)
                 .then((trnd: any) => {
@@ -687,7 +687,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const stake_claim_data = await staking.connect(signer)
                 .getUserNftStakingData(context.addressSigner ?? '', stakingOption)
                 .then(
@@ -725,7 +725,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider()
             const signer = provider.getSigner(context.addressSigner)
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, signer) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             const stake_claim_data = await staking.connect(signer)
                 .getUserNftStakingData(context.addressSigner ?? '', stakingOption)
                 .then(
@@ -749,8 +749,8 @@ export default class EtherHelper {
     public static async STAKING_BALANCE(context: IEtherContext): Promise<IEtherContext> {
         try {
             if (!context.connected) return context;
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111))
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 42161))
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, provider) as DivitrendRewards;
             const trnd_claim_data = await staking
                 .connect(provider)
                 .getContractBalance()
@@ -772,7 +772,7 @@ export default class EtherHelper {
     }
 
     public static async verifyChain(context: IEtherContext): Promise<IEtherContext> {
-        if (context.chainId !== 1 && context.chainId !== 11155111) {
+        if (context.chainId !== 1 && context.chainId !== 42161) {
             context = {
                 ...context, toastId: `WRONG NETWORK`, toastStatus: 'error', toastTitle: 'WRONG NETWORK', toastDescription: `Please switch to ETH network`,
             }
@@ -784,8 +784,8 @@ export default class EtherHelper {
     public static async queryStakingInfo(context: IEtherContext): Promise<IEtherContext> {
         if (!context.addressSigner) return context;
 
-        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 42161));
+        const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, provider) as DivitrendRewards;
 
         const contractBalance = staking
             .getContractBalance()
@@ -839,7 +839,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const tx = await Factories.connect(signer).claimNfts({ from: context.addressSigner })
             let transactionResult = await tx.wait();
@@ -863,7 +863,7 @@ export default class EtherHelper {
             const signer = provider.getSigner(context.addressSigner);
 
             const Factories = new Contract(
-                AddressFactory.getFactoriesAddress(context.chainId ?? 11155111),
+                AddressFactory.getFactoriesAddress(context.chainId ?? 42161),
                 DivitrendFactoriesABI,
                 signer
             ) as DivitrendFactories;
@@ -890,7 +890,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const tx: ContractTransaction = await Factories.connect(signer).payNfts(amount, { value: price, gasLimit: gasEstimate + 30000 });
             let transactionResult = await tx.wait();
@@ -912,16 +912,16 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
-            const fetchIsApproved = await Factories.connect(signer).isApprovedForAll(context.addressSigner ?? '', AddressFactory.getStaking(context.chainId ?? 11155111));
+            const fetchIsApproved = await Factories.connect(signer).isApprovedForAll(context.addressSigner ?? '', AddressFactory.getStaking(context.chainId ?? 42161));
 
             if (fetchIsApproved === true) {
                 context = {
                     ...context, toastId: `FACTORIES_ALREADY_APPROVED`, toastStatus: 'success', toastTitle: 'FACTORIES_ALREADY_APPROVED', toastDescription: `Already Approved`,
                 }
             } else {
-                const tx = await Factories.connect(signer).setApprovalForAll(AddressFactory.getStaking(context.chainId ?? 11155111), true)
+                const tx = await Factories.connect(signer).setApprovalForAll(AddressFactory.getStaking(context.chainId ?? 42161), true)
                 let transactionResult = await tx.wait();
                 console.log('EtherHelper.FACTORIES_APPROVE TX Hash: ', JSON.stringify(transactionResult.transactionHash));
                 context = {
@@ -938,8 +938,8 @@ export default class EtherHelper {
 
     public static async FACTORIES_START_AT(context: IEtherContext): Promise<any> {
         try {
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
+            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 42161));
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, provider) as DivitrendFactories;
 
             const MintStartAt = (await factories.getTimeStart()).toNumber()
             return MintStartAt
@@ -950,8 +950,8 @@ export default class EtherHelper {
 
     public static async FACTORIES_TOTSUPPLY(context: IEtherContext): Promise<any> {
         try {
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
+            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 42161));
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, provider) as DivitrendFactories;
             const totSupply = await factories.totalSupply()
             context.FactoriesTotalSupply = totSupply
         } catch (e: any) {
@@ -961,8 +961,8 @@ export default class EtherHelper {
 
     public static async FACTORIES_ALREADY_MINTED(context: IEtherContext) {
         try {
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
+            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 42161));
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, provider) as DivitrendFactories;
             const actualSupply = await factories.getActualSupply()
             context.FactoriesMinted = actualSupply
             return actualSupply
@@ -973,8 +973,8 @@ export default class EtherHelper {
 
     public static async FACTORIES_CALC_COST(context: IEtherContext, NFTs: number) {
         try {
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(11155111));
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
+            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(42161));
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, provider) as DivitrendFactories;
             const totCost = await factories.calCost(NFTs, { from: context.addressSigner })
             return totCost.toNumber()
         } catch (e: any) {
@@ -987,9 +987,9 @@ export default class EtherHelper {
             if (!context.connected || !context) return;
 
             const NFTs = context.nft_staked_data?.nft_staked_ids ?? [];
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(11155111));
+            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(42161));
             const signer = provider.getSigner(context.addressSigner)
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
             const totData = await factories.getTotalBoosts(NFTs, { from: signer.getAddress() })
                 .then((data) => {
                     const numbersArray = data.map((n) => n.toNumber());
@@ -1020,8 +1020,8 @@ export default class EtherHelper {
 
     public static async getQuoteEthToToken(amountIn: number, tokenIn: string, tokenOut: string, context: IEtherContext): Promise<number> {
         console.log("getQuoteEthToToken", tokenOut, tokenIn, amountIn)
-        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-        const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), EtherHelper.ABI_SWAP(), provider)
+        const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 42161));
+        const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 42161), EtherHelper.ABI_SWAP(), provider)
 
         const amountParsed = ethers.utils.parseEther(amountIn.toString())
         const amounts = await UniswapRouter.getAmountsOut(amountParsed, [tokenOut, tokenIn]);
@@ -1033,8 +1033,8 @@ export default class EtherHelper {
 
         console.log("getQuoteTokenToEth", tokenOut, tokenIn, amountOut)
         async function getWETHPrice(): Promise<ethers.BigNumber> {
-            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 11155111));
-            const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), EtherHelper.ABI_SWAP(), provider)
+            const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(context.chainId ?? 42161));
+            const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 42161), EtherHelper.ABI_SWAP(), provider)
             try {
                 const amountParsed = ethers.utils.parseEther(amountOut.toString())
                 const amountsOut = await UniswapRouter.getAmountsOut(amountParsed, [tokenOut, tokenIn]);
@@ -1062,7 +1062,7 @@ export default class EtherHelper {
         const provider = EtherHelper.initProvider();
         const signer = provider.getSigner(context.addressSigner);
 
-        const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), EtherHelper.ABI_SWAP(), provider)
+        const UniswapRouter = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 42161), EtherHelper.ABI_SWAP(), provider)
         const tokenContract = new Contract(tokenAddress, ['function approve(address spender, uint amount) public returns (bool)']);
         const approved = await tokenContract.approve(UniswapRouter.routerAddress, amount, { gasLimit: 100000, gasPrice: ethers.utils.parseUnits('30', 'gwei') });
         await approved.wait();
@@ -1110,8 +1110,8 @@ export default class EtherHelper {
     ): Promise<IEtherContext> {
         const provider = EtherHelper.initProvider();
         const signer = provider.getSigner(context.addressSigner);
-        const router = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), ABIswap, signer)
-        const path = isEthToToken ? [AddressFactory.getWETH(context.chainId ?? 11155111), asset] : [AddressFactory.getTokenAddress(context.chainId ?? 11155111), AddressFactory.getWETH(context.chainId ?? 11155111)];
+        const router = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 42161), ABIswap, signer)
+        const path = isEthToToken ? [AddressFactory.getWETH(context.chainId ?? 42161), asset] : [AddressFactory.getTokenAddress(context.chainId ?? 42161), AddressFactory.getWETH(context.chainId ?? 42161)];
         console.log(isEthToToken, path)
         const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
         const amountInWei = ethers.utils.parseUnits(amountIn.toString(), 0);
@@ -1216,12 +1216,12 @@ export default class EtherHelper {
 
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner);
-            const router = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 11155111), ABIswap, signer)
+            const router = new ethers.Contract(AddressFactory.getRouterV2(context.chainId ?? 42161), ABIswap, signer)
 
             const slippageTolerance = "0.5"
             const swapAmountBN = ethers.utils.parseEther(context.swapAmount.toString())
 
-            let isEthToToken = (context.swapToken?.address ?? '') !== AddressFactory.getWETH(context.chainId ?? 11155111);
+            let isEthToToken = (context.swapToken?.address ?? '') !== AddressFactory.getWETH(context.chainId ?? 42161);
 
             if (context.swapToken && context.swapToken?.address) {
                 let transactionResult = await EtherHelper.executeSwap(ABIswap, context.swapToken.address, swapAmountBN, isEthToToken, context)
@@ -1250,7 +1250,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).unpause({ from: context.addressSigner })
             let transactionResult = await tx.wait();
@@ -1274,7 +1274,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).pause()
             let transactionResult = await tx.wait();
@@ -1298,7 +1298,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).enableBlacklist(account)
             let transactionResult = await tx.wait();
@@ -1322,7 +1322,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
             console.log(account)
             const tx = await divitrend.connect(signer).disableBlacklist(account);
             let transactionResult = await tx.wait();
@@ -1347,7 +1347,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setBuyTax(tax);
             let transactionResult = await tx.wait();
@@ -1371,7 +1371,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setSellTax(tax);
             let transactionResult = await tx.wait();
@@ -1395,7 +1395,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setFounderWallet(founderWallet);
             let transactionResult = await tx.wait();
@@ -1419,7 +1419,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setDivitrendRewardsAddress(diviRewAddy);
             let transactionResult = await tx.wait();
@@ -1443,7 +1443,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setStakedCapitalWallet(stakedCapitalAddy);
             let transactionResult = await tx.wait();
@@ -1467,7 +1467,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setStakedCapPerc(perc);
             let transactionResult = await tx.wait();
@@ -1491,7 +1491,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setSwapThreshold(amount);
             let transactionResult = await tx.wait();
@@ -1515,7 +1515,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).manualSwapAndLiquify();
             let transactionResult = await tx.wait();
@@ -1539,7 +1539,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).setAutoSwap(isTrue);
             let transactionResult = await tx.wait();
@@ -1563,7 +1563,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).exclude(exclude);
             let transactionResult = await tx.wait();
@@ -1588,7 +1588,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
 
             const tx = await divitrend.connect(signer).exclude(rmv_exclude);
             let transactionResult = await tx.wait();
@@ -1613,7 +1613,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
             const value = ethers.utils.parseEther(amount);
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, provider) as DivitrendRewards;
 
             const tx = await staking.connect(signer).depositETH({ value: value });
             let transactionResult = await tx.wait();
@@ -1639,7 +1639,7 @@ export default class EtherHelper {
             const apyValue = Number(apy);
             const maxNft = Number(maxNftSlot);
 
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, provider) as DivitrendRewards;
 
             const tx = await staking.connect(signer).setStakingOptionData(option, vesting, apyValue, maxNft);
             let transactionResult = await tx.wait();
@@ -1661,7 +1661,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner);
 
-            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 11155111), DivitrendRewardsABI, provider) as DivitrendRewards;
+            const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, provider) as DivitrendRewards;
 
             let result: any = {};
 
@@ -1704,7 +1704,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner()
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const tx = await factories.connect(signer).adminMint(Number(amount), receiver);
             let transactionResult = await tx.wait();
@@ -1725,7 +1725,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner();
             const value = ethers.utils.parseEther(amount);
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const tx = await factories.connect(signer).setCost(value);
             let transactionResult = await tx.wait();
@@ -1746,7 +1746,7 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner();
             const value = ethers.utils.parseEther(amount);
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const tx = await factories.connect(signer).setMaxCost(value);
             let transactionResult = await tx.wait();
@@ -1766,7 +1766,7 @@ export default class EtherHelper {
             if (!context.connected) return context;
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner();
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const tx = await factories.connect(signer).setCashWallet(wallet);
             let transactionResult = await tx.wait();
@@ -1787,8 +1787,8 @@ export default class EtherHelper {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner)
 
-            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), DIVI, signer) as Divitrend;
-            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), DIVI, signer) as Divitrend;
+            const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const autoSwapPromise = divitrend.connect(signer).getAutoSwap();
             const buyTaxPromise = divitrend.connect(signer).getBuyTax().then(value => value.toNumber());
@@ -1830,8 +1830,8 @@ export default class EtherHelper {
     public static async initialInfoPool(context: IEtherContext): Promise<IEtherContext> {
         const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(this.getChainId()));
 
-        const router = new ethers.Contract(AddressFactory.getRouterV2(11155111), RouterV2, provider)
-        const pair = new ethers.Contract(AddressFactory.getPair(11155111), PairV2, provider)
+        const router = new ethers.Contract(AddressFactory.getRouterV2(42161), RouterV2, provider)
+        const pair = new ethers.Contract(AddressFactory.getPair(42161), PairV2, provider)
 
         const reserves = pair.getReserves()
             .then(([reserve0, reserve1, blockTimestampLast]: any) => {
@@ -1885,8 +1885,8 @@ export default class EtherHelper {
         if (!context.addressSigner) return context;
         const provider = EtherHelper.initProvider();
         const chainId = EtherHelper.getChainId()
-        const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, provider) as DivitrendFactories;
-        const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 11155111), IERC20ABI, provider)
+        const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, provider) as DivitrendFactories;
+        const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), IERC20ABI, provider)
         // const provider = new ethers.providers.Web3Provider(ethereum);
 
         if (!context.chainId) context = await this.getNetwork(provider, context);
@@ -1941,7 +1941,7 @@ export default class EtherHelper {
     public static async factoriesTokensOf(context: IEtherContext) {
         const provider = EtherHelper.initProvider();
         const signer = provider.getSigner(context.addressSigner);
-        const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+        const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
         if (context.connected) {
             try {
@@ -1958,7 +1958,7 @@ export default class EtherHelper {
         if (context.connected) {
             const provider = EtherHelper.initProvider();
             const signer = provider.getSigner(context.addressSigner);
-            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 11155111), DivitrendFactoriesABI, signer) as DivitrendFactories;
+            const Factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
 
             const URIpath = await Factories.tokenURI(tokenId);
             const response = await fetch(URIpath + '.json');

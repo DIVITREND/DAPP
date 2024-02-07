@@ -406,7 +406,7 @@ const App: React.FC = () => {
   const isConnected = context.connected ?? false;
 
   const verifyChain = () => {
-    if (context.chainId !== 1 && context.chainId !== 11155111) {
+    if (context.chainId !== 42161 && context.chainId !== 11155111) {
       return false
     } else {
       return true
