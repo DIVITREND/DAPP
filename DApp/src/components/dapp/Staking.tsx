@@ -565,7 +565,7 @@ const Staking = () => {
                             <IconButton onClick={() => setSelectedButton(0)}><TrendingUpIcon style={{ color: 'green' }} /></IconButton>
                             <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>{context.trndBalance?.toLocaleString('en-US')}</Typography>
                             <img src="Android.png" style={{ height: 16, width: 16, marginTop: 0, marginRight: 5 }} alt="" />
-                            <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 1400 $
+                            <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 0 $
                             </Typography>
                         </Box>
                             <Typography variant="body1" className={isMobile ? classes.descMobile : classes.desc}>
