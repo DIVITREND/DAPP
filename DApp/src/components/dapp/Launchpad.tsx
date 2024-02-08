@@ -13,6 +13,7 @@ import EtherHelper from "../../ethers/EtherHelper";
 import LogoSpinnerAnimation from "../LogoSpinnerAnimation";
 import InfoIcon from '@mui/icons-material/Info';
 import CardDetailsComponent from "./Staking/comp_modal/NftCard";
+import { ethers } from "ethers";
 
 const drawerWidth = 240;
 
@@ -445,7 +446,7 @@ const Launchpad = () => {
     const [alreadyMinted, setAlreadyMinted] = useState(0)
     const [alertInfo, setAlertInfo] = useState<{ severity: "success" | "error", message: string } | null>(null);
     const r_topay = weiToPay
-    const toShow_toPay = comp * 100
+    const toShow_toPay = comp * weiToPay
     const [factoryIds, setTokenFactIds] = useState(context.FactoriesTokenIds)
 
     const handleCloseAlert = () => {
@@ -468,7 +469,7 @@ const Launchpad = () => {
         console.log("topay", topay)
         if (topay) {
             try {
-                const ctx = await EtherHelper.FACTORIES_PAYNFT(context, r_topay, amount)
+                const ctx = await EtherHelper.FACTORIES_PAYNFT(context, ethers.utils.parseEther(topay.toString()), amount)
                 saveContext(ctx)
                 if (ctx.toastStatus === 'success') {
                     setAlertInfo({ severity: 'success', message: ctx.toastDescription ?? '' });
@@ -487,7 +488,7 @@ const Launchpad = () => {
         async function getDataPayable() {
             const TCost = await getTotalCost();
             if (TCost) {
-                setWeiToPay(TCost)
+                setWeiToPay(Number(TCost))
             }
         }
 
@@ -611,7 +612,7 @@ const Launchpad = () => {
                                             <Box style={{ maxWidth: 270, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                                                 <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>{comp}
                                                 </Typography>
-                                                <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {toShow_toPay} WEI
+                                                <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {toShow_toPay} ETH
                                                 </Typography>
                                             </Box>
                                             <Button onClick={() => payNFTs(comp)} size="small" variant='outlined' className={classes.pulsButton} style={{ color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>

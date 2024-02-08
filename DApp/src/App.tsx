@@ -551,7 +551,7 @@ const App: React.FC = () => {
             <Box sx={{ ...style2, alignItems: 'center', justifyContent: 'center', padding: 1 }}>
               <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'center' }}>
                 <Grid item xs={6} sm={6} md={4} lg={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <IconButton color="primary" aria-label="Wallet" >
+                  <IconButton color="primary" aria-label="Apps" >
                     <DashboardIcon fontSize="large" />
                   </IconButton>
                   <Typography variant="subtitle1" align="center">
@@ -737,7 +737,7 @@ const App: React.FC = () => {
             zIndex: 3
           }}
         >
-          {isMobile ? '© DIVITREND 2023 | Ethercode' : '© DIVITREND - 2023 | Powered by Ethercode'}
+          {isMobile ? <a href="https://ethercode.dev/" >'© DIVITREND 2023 | Ethercode'</a> :  <a href="https://ethercode.dev/" >'© DIVITREND - 2023 | Powered by Ethercode'</a>}
             <NavigationIcons isMobile={isMobile} />
         </div>
       </div>

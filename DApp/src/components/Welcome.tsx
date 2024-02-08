@@ -372,6 +372,7 @@ const Welcome = () => {
                     <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
                   )}
                 </div>
+                {/*
                 <Chip
                   label="+5.2% 1d"
                   className={classes.chip}
@@ -390,6 +391,7 @@ const Welcome = () => {
                   color="success"
                   size="small"
                 />
+                */}
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>

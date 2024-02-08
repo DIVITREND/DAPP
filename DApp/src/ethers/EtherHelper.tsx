@@ -855,7 +855,7 @@ export default class EtherHelper {
         return await this.querySignerInfo({ ...context }).then(this.queryProviderInfo);
     }
 
-    private static async estimateGasForPayNfts(context: IEtherContext, price: number, amount: number): Promise<number> {
+    private static async estimateGasForPayNfts(context: IEtherContext, price: BigNumber, amount: number): Promise<number> {
         try {
             if (!context.connected) return 0;
 
@@ -877,7 +877,7 @@ export default class EtherHelper {
         }
     }
 
-    public static async FACTORIES_PAYNFT(context: IEtherContext, price: number, amount: number): Promise<IEtherContext> {
+    public static async FACTORIES_PAYNFT(context: IEtherContext, price: BigNumber, amount: number): Promise<IEtherContext> {
         try {
             if (!context.connected) return context;
 
@@ -976,7 +976,7 @@ export default class EtherHelper {
             const provider = new ethers.providers.JsonRpcProvider(AddressFactory.getRpcUrl(42161));
             const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, provider) as DivitrendFactories;
             const totCost = await factories.calCost(NFTs, { from: context.addressSigner })
-            return totCost.toNumber()
+            return ethers.utils.formatEther(totCost)
         } catch (e: any) {
             console.log("Error on FACTORIES_CALC_COST: ", JSON.stringify(e))
         }
