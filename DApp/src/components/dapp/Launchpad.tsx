@@ -503,7 +503,7 @@ const Launchpad = () => {
         async function getSignerInfo() {
             await EtherHelper.querySignerInfo(context)
         }
-    
+
         getSignerInfo().then(() => {
             const filteredTokenIds = context.FactoriesTokenIds?.filter((tokenId) => tokenId !== 0);
             setTokenFactIds(filteredTokenIds);
@@ -579,7 +579,7 @@ const Launchpad = () => {
                                 />
                             </div>
                             <Grid container style={{ marginTop: 320, padding: 20, justifyContent: 'center' }} spacing={1}>
-                                
+
                                 <Grid item xs={12} md={12} style={{ marginBottom: 10 }}>
                                     <div style={{ display: "flex", flexDirection: 'row', marginTop: 0 }}>
                                         <LinearProgress style={{ marginTop: 10, display: "flex", width: '100%', flexDirection: 'row' }} className={classes.greenBar} color="secondary" variant="determinate" value={(alreadyMinted / 299) * 100} /> <Typography style={{ marginLeft: 10 }} className={classes.subtitleLil}>{((alreadyMinted / 299) * 100).toFixed(2)}%</Typography>
