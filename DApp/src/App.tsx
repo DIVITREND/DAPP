@@ -737,7 +737,7 @@ const App: React.FC = () => {
             zIndex: 3
           }}
         >
-          {isMobile ? <a href="https://ethercode.dev/" >'© DIVITREND 2023 | Ethercode'</a> :  <a href="https://ethercode.dev/" >'© DIVITREND - 2023 | Powered by Ethercode'</a>}
+          {isMobile ? <a style={{color: 'white'}} href="https://ethercode.dev/" >© DIVITREND 2023 | Ethercode</a> :  <a style={{color: 'white'}} href="https://ethercode.dev/" >© DIVITREND - 2023 | Powered by Ethercode</a>}
             <NavigationIcons isMobile={isMobile} />
         </div>
       </div>

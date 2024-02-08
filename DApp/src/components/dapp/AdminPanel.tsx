@@ -166,7 +166,7 @@ const AdminPanel: React.FC = () => {
     return (
         <div style={{ alignItems: 'center', marginBottom: 50, height: '100%' }}>
             <div>
-                {context.addressSigner !== AddressFactory.getDeployerAddress(1).toLocaleLowerCase() && context.addressSigner !== AddressFactory.getDeployerAddress(11155111).toLocaleLowerCase() && (
+                {context.addressSigner !== AddressFactory.getDeployerAddress(42161).toLocaleLowerCase() && context.addressSigner !== AddressFactory.getDeployerAddress(11155111).toLocaleLowerCase() && (
                     <Paper style={{ width: '100%' }} className={classes.paperAlert}>
                         <Alert
                             variant="outlined"
