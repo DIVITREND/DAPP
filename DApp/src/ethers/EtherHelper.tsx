@@ -879,6 +879,7 @@ export default class EtherHelper {
 
     public static async FACTORIES_PAYNFT(context: IEtherContext, price: BigNumber, amount: number): Promise<IEtherContext> {
         try {
+            console.log(price)
             if (!context.connected) return context;
 
             const gasEstimate = await this.estimateGasForPayNfts(context, price, amount);

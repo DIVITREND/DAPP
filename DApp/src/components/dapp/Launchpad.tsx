@@ -446,7 +446,6 @@ const Launchpad = () => {
     const [alreadyMinted, setAlreadyMinted] = useState(0)
     const [alertInfo, setAlertInfo] = useState<{ severity: "success" | "error", message: string } | null>(null);
     const r_topay = weiToPay
-    const toShow_toPay = comp * weiToPay
     const [factoryIds, setTokenFactIds] = useState(context.FactoriesTokenIds)
 
     const handleCloseAlert = () => {
@@ -456,6 +455,7 @@ const Launchpad = () => {
     async function getTotalCost() {
         try {
             const toPay = await EtherHelper.FACTORIES_CALC_COST(context, comp)
+            console.log("toPay", toPay)
             return toPay
         } catch (e) {
             console.log("Error on Launchpad:getTotalCost: ", e)
@@ -612,7 +612,7 @@ const Launchpad = () => {
                                             <Box style={{ maxWidth: 270, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                                                 <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>{comp}
                                                 </Typography>
-                                                <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {toShow_toPay} ETH
+                                                <Typography className={classes.subtitleLil2} style={{ color: 'grey' }} variant="body2">| {weiToPay} ETH
                                                 </Typography>
                                             </Box>
                                             <Button onClick={() => payNFTs(comp)} size="small" variant='outlined' className={classes.pulsButton} style={{ color: '#8B3EFF', border: '1px solid #8B3EFF', marginTop: 10 }}>
