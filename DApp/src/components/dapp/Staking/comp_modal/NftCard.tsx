@@ -18,7 +18,8 @@ const CardDetailsComponent = ({ context, tokenId, index, selectedTokenCards, han
             try {
                 const fetchedMetadata = await EtherHelper.getTokenURI(context, tokenId);
                 setMetadata(fetchedMetadata);
-                setImages(fetchedMetadata.image.split(' '));
+                const i_mg = 'https://ipfs.filebase.io/ipfs/' + fetchedMetadata.image.splice(7)
+                setImages(i_mg);
             } catch (error) {
                 console.error('Error fetching card details:', error);
             }
