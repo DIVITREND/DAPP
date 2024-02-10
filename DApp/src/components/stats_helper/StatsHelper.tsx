@@ -55,6 +55,17 @@ export class StatsHelper {
     return result;
   }
 
+  public static async getStatStaked(address: string): Promise<Pair | undefined> {
+    try {
+      const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/arbitrum/${address}`);
+      const result = await response.json() as { pairs: Pair[] };
+      return result.pairs?.[0];
+    } catch (error) {
+      console.error(`Error fetching stat for address ${address}:`, error);
+      return undefined;
+    }
+  }
+
   public static async getStat(address: string): Promise<Pair | undefined> {
     try {
       const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/ethereum/${address}`);

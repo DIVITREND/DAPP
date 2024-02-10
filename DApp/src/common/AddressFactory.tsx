@@ -83,6 +83,28 @@ export default class AddressFactory {
     }
   }
 
+  static getWooStakingLocal(chainId: number): string {
+    switch (chainId) {
+      case 42161:
+        return "0x2CFa72E7f58dc82B990529450Ffa83791db7d8e2";
+      case 11155111:
+        return "";
+      default:
+        return "";
+    }
+  }
+
+  static getWooSuperChargerVault(chainId: number): string {
+    switch (chainId) {
+      case 42161:
+        return "0xba452bCc4BC52AF2fe1190e7e1dBE267ad1C2d08";
+      case 11155111:
+        return "";
+      default:
+        return "";
+    }
+  }
+
   static getFactoriesAddress(chainId: number): string {
     switch (chainId) {
       case 42161:

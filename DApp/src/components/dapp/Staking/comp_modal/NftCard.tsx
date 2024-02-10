@@ -18,7 +18,7 @@ const CardDetailsComponent = ({ context, tokenId, index, selectedTokenCards, han
             try {
                 const fetchedMetadata = await EtherHelper.getTokenURI(context, tokenId);
                 setMetadata(fetchedMetadata);
-                const i_mg = 'https://ipfs.filebase.io/ipfs/' + fetchedMetadata.image.splice(7)
+                const i_mg = fetchedMetadata.image
                 setImages(i_mg);
             } catch (error) {
                 console.error('Error fetching card details:', error);
@@ -53,20 +53,31 @@ const CardDetailsComponent = ({ context, tokenId, index, selectedTokenCards, han
                 >
                     <CardMedia
                         style={{ height: isMobile ? 50 : 100, objectFit: 'cover' }}
-                        image={images && images.length > 0 ? 'https://ipfs.filebase.io/ipfs/' + (images[0] && images[0].slice(7)) : ''}
+                        image={images && images.length > 0 ? 'https://ipfs.filebase.io/ipfs/' + images.slice(7) : ''}
                         title={metadata ? metadata.edition : ''}
                     />
                 </Card>
             </ButtonBase>
-            <Typography variant={isMobile ? "body2" : "body1"} style={{ color: '#A4FE66' }}>
-                FACTORY #{metadata.edition}
-            </Typography>
-            <Typography variant="body2" style={{ color: '#A4FE66' }}>
-                REV: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'Rev Share')?.value || ''}
-            </Typography>
-            <Typography variant="body2" style={{ color: '#A4FE66' }}>
-                APY: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'APY boost')?.value || ''}
-            </Typography>
+            <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 110}}>
+                <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+
+                    <Typography variant={isMobile ? "body2" : "body2"} style={{ color: '#A4FE66' }}>
+                        FACTORY #{metadata.edition}
+                    </Typography>
+                </div>
+
+                <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                    <Typography variant="body2" style={{ color: '#A4FE66' }}>
+                        REV: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'Rev Share')?.value || ''}
+                    </Typography>
+                </div>
+
+                <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                    <Typography variant="body2" style={{ color: '#A4FE66' }}>
+                        APY: {metadata.attributes.find((attribute: any) => attribute.trait_type === 'APY boost')?.value || ''}
+                    </Typography>
+                </div>
+            </div>
         </div>
     );
 };

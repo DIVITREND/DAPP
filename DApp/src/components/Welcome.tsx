@@ -283,7 +283,13 @@ const Welcome = () => {
   const [reserveWETH, setWETHReserve] = useState<number>(0);
   const [ethetrnd, setEthetrnd] = useState({} as ICTBalance);
   const [checked, setChecked] = useState(false);
-  const [dataFetched, setDataFetched] = useState(false)
+  const [dataFetched, setDataFetched] = useState(false);
+  const [stakedCapital, setStakedCapital] = useState<string | undefined>('0');
+  const [woo, setWoo] = useState<string | undefined>('0')
+  const [wooPrice, setWooPrice] = useState<string | undefined>('0')
+  const [priceNative, setNativePrice] = useState<string | undefined>('0')
+
+  const [weWETH, setweWETH] = useState<string | undefined>('0')
 
   const handleChangeChecker = (event: ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -315,10 +321,10 @@ const Welcome = () => {
       const res_weth = Number(context.reserve0);
       setWETHReserve(res_weth);
 
-      await StatsHelper.getPriceOfToken('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2')
+      await StatsHelper.getPriceOfToken('0x82aF49447D8a07e3bd95BD0d56f35241523fBab1')
         .then(price => setWethPrice(price));
 
-      await StatsHelper.getPriceOfToken('0xdAC17F958D2ee523a2206206994597C13D831ec7')
+      await StatsHelper.getPriceOfToken('0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9')
         .then(price => setUsdtPrice(price));
     });
   }, [context]);
@@ -341,6 +347,22 @@ const Welcome = () => {
       setChecked(false)
     }, 1000)
   }, [])
+
+  useEffect(() => {
+    async function getStakedCapital() {
+      const woo = await EtherHelper.getWooStakingValue(context, context.addressSigner ?? '')
+      const weETH = await EtherHelper.getWooVaultValue(context, context.addressSigner ?? '')
+      const wooPriceNative = await StatsHelper.getStatStaked('0x7ef806dfbb764fd39519f8bb00c35e84d55fb11f').then((pair: Pair | undefined) => [pair?.priceUsd ?? '', pair?.priceNative])
+      const wooPrice = wooPriceNative[0]
+      const priceNative = wooPriceNative[1]
+      setWoo(woo ?? '0')
+      setweWETH(weETH ?? '0')
+      setWooPrice(wooPrice)
+      setNativePrice(priceNative)
+    }
+
+    getStakedCapital()
+  }, [context])
 
   return (
     <div className={classes.root}>
@@ -449,7 +471,10 @@ const Welcome = () => {
                   STAKED CAPITAL
                 </div>
                 <div className={classes.subtitle}>
-                  0$
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(Number(woo ?? '').toFixed(2)).toLocaleString()} $WOO - {Number(weWETH).toFixed(2)} $weWETH</div>
+                    {((Number(woo ?? '0') * Number(wooPrice ?? '0')) + (Number(weWETH ?? '0') * Number(wethPrice ?? '0'))).toFixed(2)} $
+                  </div>
                 </div>
               </Paper>
             </Grid>
@@ -606,22 +631,7 @@ const Welcome = () => {
                   CAPITAL
                 </div>
                 <div className={classes.subtitle}>
-                  {context.reserve0 && context.reserve1 ? (
-                    <>
-                      {(() => {
-                        const res_0 = Number(parseFloat(context.reserve0));
-                        const res_1 = Number(parseFloat(context.reserve1));
-                        const price = res_0 / res_1;
-                        return (
-                          <>
-                            ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
-                          </>
-                        );
-                      })()}
-                    </>
-                  ) : (
-                    <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
-                  )}
+                  {(Number(woo ?? '0') * Number(wooPrice ?? '0')) + (Number(weWETH ?? '0') * Number(wethPrice ?? '0')).toFixed(2)} $
                 </div>
               </Paper>
             </Grid>
