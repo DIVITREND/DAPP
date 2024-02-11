@@ -631,7 +631,7 @@ const Welcome = () => {
                   CAPITAL
                 </div>
                 <div className={classes.subtitle}>
-                  {(Number(woo ?? '0') * Number(wooPrice ?? '0')) + (Number(weWETH ?? '0') * Number(wethPrice ?? '0')).toFixed(2)} $
+                  {((Number(woo ?? '0') * Number(wooPrice ?? '0')) + (Number(weWETH ?? '0') * Number(wethPrice ?? '0'))).toFixed(2)}$
                 </div>
               </Paper>
             </Grid>
