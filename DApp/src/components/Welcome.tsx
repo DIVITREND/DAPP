@@ -379,13 +379,14 @@ const Welcome = () => {
                   {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
-                        const res_0 = Number(parseFloat(context.reserve0));
-                        const res_1 = Number(parseFloat(context.reserve1));
-                        const price = res_0 / res_1;
+                        const res_0 = Number(context.reserve0);
+                        const res_1 = Number(context.reserve1);
+                        const price = res_1 / res_0;
+                        console.log(price)
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
-                            {price.toFixed(7)}
+                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve1))) * (wethPrice ?? 0))).toFixed(4)} $</div>
+                            {price.toFixed(7)} WETH
                           </div>
                         );
                       })()}
@@ -426,12 +427,12 @@ const Welcome = () => {
                     </div>
                     <div className={classes.subtitle}>
                       {wethPrice && (
-                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
+                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve1 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
                       )}
                     </div>
                     {context.reserve0 && context.reserve1 ? (
                       <div className={classes.desc}>
-                        {Number(ethers.utils.formatEther(context.reserve0)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                        {Number(ethers.utils.formatEther(context.reserve1)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve0)).toFixed(2)} TRND
                       </div>
                     ) : (
                       <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
@@ -448,7 +449,7 @@ const Welcome = () => {
                           {(() => {
                             const res_0 = Number(parseFloat(context.reserve0));
                             const res_1 = Number(parseFloat(context.reserve1));
-                            const price = res_0 / res_1;
+                            const price = res_1 / res_0;
                             return (
                               <>
                                 ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
