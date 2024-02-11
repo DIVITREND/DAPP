@@ -15,7 +15,7 @@ export default class AddressFactory {
   static getTokenAddress(chainId: Number): string {
     switch (chainId) {
       case 42161:
-        return "0xb0CC685B054e21c9ACcD3D551b2f6Cbf5FA17E1e";
+        return "0x22C01fAC53145DC1596989876affD874e9DaAc9D";
       case 5:
       case 11155111: //
         return "0x8Ffe184421FB9855C20c6be9CaF63508FaedF631";
@@ -39,10 +39,10 @@ export default class AddressFactory {
   static getPair(chainId: Number): string {
     switch (chainId) {
       case 42161:
-        return "0xecac8025f0a1cc0f2b762aa1ee578274f6cc03a6";
+        return "0xC3Fcb7A38ec33e743c0F2c75E648BA28f8AD8Bfe";
       case 5:
       case 11155111:
-        return "0x77c05C6D0cd4A6aB595a0a9Bc221181f855821f9";
+        return "0xC3Fcb7A38ec33e743c0F2c75E648BA28f8AD8Bfe";
       default:
         return "";
     }
