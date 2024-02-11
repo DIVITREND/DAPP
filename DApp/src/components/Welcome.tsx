@@ -288,6 +288,7 @@ const Welcome = () => {
   const [woo, setWoo] = useState<string | undefined>('0')
   const [wooPrice, setWooPrice] = useState<string | undefined>('0')
   const [priceNative, setNativePrice] = useState<string | undefined>('0')
+  const [trndPricez, setTrndPrice] = useState<string | undefined>('0')
 
   const [weWETH, setweWETH] = useState<string | undefined>('0')
 
@@ -352,6 +353,9 @@ const Welcome = () => {
     async function getStakedCapital() {
       const woo = await EtherHelper.getWooStakingValue(context, context.addressSigner ?? '')
       const weETH = await EtherHelper.getWooVaultValue(context, context.addressSigner ?? '')
+      const trndPriceNative = await StatsHelper.getStatStaked(AddressFactory.getPair(context.chainId ?? 41356)).then((pair: Pair | undefined) => [pair?.priceUsd ?? '', pair?.priceNative])
+      const trndPrice = trndPriceNative[0]
+      setTrndPrice(trndPrice)
       const wooPriceNative = await StatsHelper.getStatStaked('0x7ef806dfbb764fd39519f8bb00c35e84d55fb11f').then((pair: Pair | undefined) => [pair?.priceUsd ?? '', pair?.priceNative])
       const wooPrice = wooPriceNative[0]
       const priceNative = wooPriceNative[1]
@@ -385,8 +389,8 @@ const Welcome = () => {
                         console.log(price)
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve1))) * (wethPrice ?? 0))).toFixed(4)} $</div>
-                            {price.toFixed(7)} WETH
+                        {/* <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve1))) * (wethPrice ?? 0))).toFixed(4)} $</div> */}
+                        {trndPricez}
                           </div>
                         );
                       })()}
@@ -533,20 +537,21 @@ const Welcome = () => {
             <Grid item xs={12} md={6}>
               <Paper className={classes.paper}>
 
-                <div className={classes.title}>
+              <div className={classes.title}>
                   $TRND:
                 </div>
-                <div className={classes.subtitlePrice}>
+                <div className={classes.subtitle}>
                   {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
-                        const res_0 = Number(parseFloat(context.reserve0));
-                        const res_1 = Number(parseFloat(context.reserve1));
-                        const price = res_0 / res_1;
+                        const res_0 = Number(context.reserve0);
+                        const res_1 = Number(context.reserve1);
+                        const price = res_1 / res_0;
+                        console.log(price)
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve0))) * (wethPrice ?? 0))).toFixed(7)} $</div>
-                            {price.toFixed(7)}
+                        {/* <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve1))) * (wethPrice ?? 0))).toFixed(4)} $</div> */}
+                        {trndPricez}
                           </div>
                         );
                       })()}
@@ -592,7 +597,7 @@ const Welcome = () => {
                     </div>
                     {context.reserve0 && context.reserve1 ? (
                       <div className={classes.desc}>
-                        {Number(ethers.utils.formatEther(context.reserve0)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve1)).toFixed(2)} TRND
+                        {Number(ethers.utils.formatEther(context.reserve1)).toFixed(6)} WETH / {Number(ethers.utils.formatEther(context.reserve0)).toFixed(2)} TRND
                       </div>
                     ) : (
                       <Skeleton sx={{ bgcolor: 'grey.900' }} animation="wave" width={100} />
@@ -609,7 +614,7 @@ const Welcome = () => {
                           {(() => {
                             const res_0 = Number(parseFloat(context.reserve0));
                             const res_1 = Number(parseFloat(context.reserve1));
-                            const price = res_0 / res_1;
+                            const price = res_1 / res_0;
                             return (
                               <>
                                 ${((price * 1e6) * (wethPrice ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 2 })}
