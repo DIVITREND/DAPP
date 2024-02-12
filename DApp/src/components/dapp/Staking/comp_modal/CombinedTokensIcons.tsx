@@ -490,8 +490,8 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: isMobile ? '100px' : '250px',
-                        maxHeight: isMobile ? '250px' : '250px',
+                        minHeight: isMobile ? '100px' : '220px',
+                        maxHeight: isMobile ? '250px' : '220px',
                         overflowY: isMobile ? 'auto' : 'auto',
                         border: '2px solid #8B3EFF',
                         width: '100%',
@@ -501,12 +501,12 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                             flexDirection: 'column',
                             alignItems: 'center',
                             marginBottom: 10,
-                            marginTop: isMobile ? -10 : -10
+                            marginTop: isMobile ? -10 : 20
                         }}>
                             <GreenSwitch checked={checked} onChange={handleChangeChecker} />
                         </div>
                         {checked === false ? (
-                            <div style={{ minHeight: isMobile ? 100 : 200, maxHeight: isMobile ? 200 : 200, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <div style={{ minHeight: isMobile ? 100 : 180, maxHeight: isMobile ? 200 : 180, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                                 <Grid container spacing={isMobile ? 2 : 10}>
                                     <Grid item xs={6} sm={4} md={4}>
                                         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
@@ -543,7 +543,7 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                             </div>
 
                         ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto', marginTop: 20, maxHeight: '50vh', width: '100%' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto', marginTop: 20, maxHeight: '40vh', width: '100%' }}>
                                 {factoryIds && factoryIds.length > 0 && (
                                     Array.from({ length: Math.ceil(factoryIds.length / (isMobile ? 2 : 4)) }, (_, rowIndex) => (
                                         <div

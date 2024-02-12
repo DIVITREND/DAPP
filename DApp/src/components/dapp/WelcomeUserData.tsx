@@ -27,7 +27,10 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
 
   const handleClickVesting = (vesting: number) => {
     setIsLoading(true);
-    setVesting(vesting);
+    console.log(vesting, selectedVesting)
+    if (vesting !== selectedVesting) {
+      setVesting(vesting);
+    }
   };
 
   const stakingDataRew = async () => {
@@ -107,7 +110,7 @@ export const WelcomeUserData: React.FC<{ user?: IUser }> = ({ user }) => {
       setUserDeposit('0');
       stakingDataRew();
     }
-  }, [selectedVesting]);
+  }, []);
 
   useEffect(() => {
     if (!context) return;

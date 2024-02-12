@@ -16,8 +16,8 @@ import { Pair } from "../entities/stats/Pair";
 import { StatsHelper } from "./stats_helper/StatsHelper";
 import AddressFactory from "../common/AddressFactory";
 import { GreenSwitch } from "./dapp/Staking/useStyleStaking";
-import { WelcomeUserData } from "./dapp/WelcomeUserData";
 import { IEtherContext } from "../ethers/IEtherContext";
+import { WelcomeUserData } from "./dapp/WelcomeUserData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -272,8 +272,6 @@ interface ICTBalance {
   eth_balance: number;
 }
 
-const WelcomeUserDatas = React.lazy(() => import("./dapp/WelcomeUserData").then(module => ({ default: module.WelcomeUserData })));
-
 const Welcome = () => {
   const classes = useStyles();
   const isMobile = useMediaQuery('(max-width:960px)');
@@ -383,10 +381,6 @@ const Welcome = () => {
                   {context.reserve0 && context.reserve1 ? (
                     <>
                       {(() => {
-                        const res_0 = Number(context.reserve0);
-                        const res_1 = Number(context.reserve1);
-                        const price = res_1 / res_0;
-                        console.log(price)
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {/* <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(price * ((Number(ethers.utils.formatEther(context.reserve1))) * (wethPrice ?? 0))).toFixed(4)} $</div> */}
@@ -431,7 +425,7 @@ const Welcome = () => {
                     </div>
                     <div className={classes.subtitle}>
                       {wethPrice && (
-                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve1 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
+                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve1 ?? 0)) * 2).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
                       )}
                     </div>
                     {context.reserve0 && context.reserve1 ? (
@@ -489,7 +483,7 @@ const Welcome = () => {
                   <div className={classes.title}>
                     STAKING
                   </div>
-                  <WelcomeUserDatas />
+                  <WelcomeUserData />
                 </Paper>
               </Grid>
             </Suspense>
@@ -592,7 +586,7 @@ const Welcome = () => {
                     </div>
                     <div className={classes.subtitle}>
                       {wethPrice && (
-                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve0 ?? 0))).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
+                        <>$ {(wethPrice * Number(ethers.utils.formatEther(context.reserve1 ?? 0)) * 2).toLocaleString('en-US', { maximumFractionDigits: 2 })}</>
                       )}
                     </div>
                     {context.reserve0 && context.reserve1 ? (
@@ -647,7 +641,7 @@ const Welcome = () => {
                   <div className={classes.title}>
                     STAKING
                   </div>
-                  <WelcomeUserDatas />
+                  <WelcomeUserData />
                 </Paper>
               </Grid>
             </Suspense>
