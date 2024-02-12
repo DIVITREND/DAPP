@@ -12,6 +12,7 @@ import { Alert, AlertTitle, Collapse } from "@mui/material";
 import LogoSpinnerAnimation from '../../../LogoSpinnerAnimation';
 import { NftStake } from '../../../../entities/IStaking';
 import { useTokenAttributeCalculator } from './TokenAttributeCalculator';
+import DisplayMobileTokens from './DisplayMobileTokens';
 
 
 interface CombinedTokensIconsProps {
@@ -375,7 +376,7 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
     }, [context, context.FactoriesTokenIds, context.toastStatus]);
 
     const mobileTokens = renderedTokens.reduce((rows: JSX.Element[][], token, index) => {
-        const rowIndex = Math.floor(index / 3);
+        const rowIndex = Math.floor(index / 5);
         if (!rows[rowIndex]) {
             rows[rowIndex] = [];
         }
@@ -465,6 +466,7 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                         ) : (
                             <div style={{
                                 width: '100%',
+                                minHeight: 200,
                                 maxHeight: 200,
                                 overflowY: 'scroll',
                                 alignItems: 'center',
@@ -476,32 +478,8 @@ export const CombinedTokensIcons: React.FC<CombinedTokensIconsProps> = ({ tokenI
                                 color: '#A4FE66',
                                 justifyContent: 'center',
                             }}>
-                                {mobileTokens.map((row, index) => {
-                                    const remainingItems = 3 - row.length;
-                                    const adjustedRow = [...row];
-
-                                    for (let i = 0; i < remainingItems; i++) {
-                                        adjustedRow.push(<div key={`empty_${i}`}></div>);
-                                    }
-
-                                    return (
-                                        <div key={`mobileRow_${index}`} style={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'center',
-                                            gap: 20,
-                                            marginLeft: 30,
-                                            marginTop: 5,
-                                            width: '100%',
-                                            alignItems: 'center',
-                                        }}>
-                                            {adjustedRow}
-                                        </div>
-                                    );
-                                })}
+                                <DisplayMobileTokens mobileTokens={mobileTokens} />
                             </div>
-
-
                         )}
                 </Grid>
                 <Grid item xs={12} sm={6} md={12}>

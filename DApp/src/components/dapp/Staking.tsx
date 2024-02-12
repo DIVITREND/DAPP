@@ -13,6 +13,9 @@ import { Alert, AlertTitle, Collapse } from "@mui/material";
 import LogoSpinnerAnimation from "../LogoSpinnerAnimation";
 import StakingModal from "./Staking/StakingModal";
 import EtherHelper from "../../ethers/EtherHelper";
+import { StatsHelper } from "../stats_helper/StatsHelper";
+import AddressFactory from "../../common/AddressFactory";
+import { Pair } from "../../entities/stats/Pair";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -436,6 +439,7 @@ const Staking = () => {
     const [isStakingModalOpen, setIsStakingModalOpen] = useState(false);
     const [vesting, setVesting] = useState<number>(0)
     const [rate_limit, setRateLimit] = useState(0)
+    const [trndPricez, setTrndPrice] = useState<string | undefined>('0')
 
     const handleClick = (buttonNumber: any) => {
         setSelectedButton(buttonNumber);
@@ -517,6 +521,17 @@ const Staking = () => {
         getRateLimitStakable()
     }, [context])
 
+    useEffect(() => {
+        if (!context) return
+        async function getTokenPrice() {
+            const trndPriceNative = await StatsHelper.getStatStaked(AddressFactory.getPair(context.chainId ?? 41356)).then((pair: Pair | undefined) => [pair?.priceUsd ?? '', pair?.priceNative])
+            const trndPrice = trndPriceNative[0]
+            setTrndPrice(trndPrice)
+        }
+
+        getTokenPrice()
+    }, [context])
+
     return (
         <div className={classes.root} style={{ height: isMobile ? '100%' : '100%' }}>
             <div className={classes.overlay}></div>
@@ -565,12 +580,12 @@ const Staking = () => {
                             <IconButton onClick={() => setSelectedButton(0)}><TrendingUpIcon style={{ color: 'green' }} /></IconButton>
                             <Typography variant="body1" className={classes.subtitleLil} style={{ marginRight: 5 }}>{context.trndBalance?.toLocaleString('en-US')}</Typography>
                             <img src="Android.png" style={{ height: 16, width: 16, marginTop: 0, marginRight: 5 }} alt="" />
-                            <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| 0 $
+                            <Typography className={classes.subtitleLil} style={{ color: 'grey' }} variant="body2">| ${(Number(trndPricez ?? 0) * (context.trndBalance ?? 0)).toFixed(1)}
                             </Typography>
                         </Box>
-                            <Typography variant="body1" className={isMobile ? classes.descMobile : classes.desc}>
-                                Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
-                            </Typography>
+                        <Typography variant="body1" className={isMobile ? classes.descMobile : classes.desc}>
+                            Deposit your TRND to earn more TRND. Deposit 1000 TRND to earn ETH
+                        </Typography>
                         <Grid container style={{ marginTop: 80, padding: isMobile ? 20 : 20 }} spacing={isMobile ? 2 : 4}>
                             <Grid item xs={12} md={6}>
                                 <Box className={classes.boxGridInactive} style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', marginTop: 0, justifyContent: 'center', padding: 40 }}>

@@ -126,7 +126,7 @@ const StakingModal: React.FC<StakingModalProps> = ({ open, onClose, balance, ves
                     value={selectedAmount}
                     min={1}
                     step={1}
-                    max={maxRate}
+                    max={balance < maxRate ? balance : maxRate}
                     onChange={(_: ChangeEvent<{}>, value: number | number[]) => setSelectedAmount(value as number)}
                 />
                 <Button

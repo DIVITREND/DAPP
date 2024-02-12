@@ -27,6 +27,8 @@ import { NftStake } from "../../../entities/IStaking";
 import { useTokenAttributeCalculator } from "./comp_modal/TokenAttributeCalculator";
 import { Link } from "react-router-dom";
 import ModalExit from "./ModalExit";
+import AddressFactory from "../../../common/AddressFactory";
+import { Pair } from "../../../entities/stats/Pair";
 
 interface StakingLeftProps {
     vesting: number;
@@ -93,7 +95,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     const countdownTitle = `${days} DAY${days !== 1 ? 'S' : ''} ${hours} HOUR${hours !== 1 ? 'S' : ''} ${minutes} MINUTE${minutes !== 1 ? 'S' : ''}`;
     const res_0 = Number(parseFloat(context.reserve0 ?? '0'));
     const res_1 = Number(parseFloat(context.reserve1 ?? '0'));
-    const priceTRND = res_0 / res_1;
+    const priceTRND = res_1 / res_0;
     const [ethRev, setEthRev] = useState(0);
     const [nftEthRev, setNftEthRev] = useState(0);
     const [uriStaked, setUriStaked] = useState([] as { uri: string, id: number, attributes: [{ trait_type: string, value: string }] }[] | undefined)
@@ -108,6 +110,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     const [externalButton, setExternalButton] = useState(0);
     const [alreadyStakedToFetch, setAlreadyStaked] = useState([] as number[])
     const [malusPerc, setMalusPerc] = useState(0)
+    const [trndPricez, setTrndPrice] = useState<string | undefined>('0')
 
     const handleButtonClick = (n: number) => {
         setOpenModal(true);
@@ -139,7 +142,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     };
 
     function egPrice(trnd: string | undefined): string {
-        const res = Number(trnd) * priceTRND
+        const res = Number(trnd) * Number(trndPricez)
         return res.toFixed(4)
     }
 
@@ -427,6 +430,17 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
         })
 
     }, [vesting, context])
+
+    useEffect(() => {
+        if (!context) return
+        async function getTokenPrice() {
+            const trndPriceNative = await StatsHelper.getStatStaked(AddressFactory.getPair(context.chainId ?? 41356)).then((pair: Pair | undefined) => [pair?.priceUsd ?? '', pair?.priceNative])
+            const trndPrice = trndPriceNative[0]
+            setTrndPrice(trndPrice)
+        }
+
+        getTokenPrice()
+    }, [context])
 
     const { totalRevShare, totalApyBoost } = useTokenAttributeCalculator(alreadyStakedToFetch, context);
 

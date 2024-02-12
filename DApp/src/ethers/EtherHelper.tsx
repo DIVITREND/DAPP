@@ -1886,13 +1886,13 @@ export default class EtherHelper {
         if (!context.addressSigner) return context;
         const provider = EtherHelper.initProvider();
         const chainId = EtherHelper.getChainId()
-        const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, provider) as DivitrendFactories;
-        const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), IERC20ABI, provider)
+        const signer = provider.getSigner(context.addressSigner)
+        const factories = new Contract(AddressFactory.getFactoriesAddress(context.chainId ?? 42161), DivitrendFactoriesABI, signer) as DivitrendFactories;
+        const divitrend = new Contract(AddressFactory.getTokenAddress(context.chainId ?? 42161), IERC20ABI, signer) as Divitrend
         // const provider = new ethers.providers.Web3Provider(ethereum);
 
         if (!context.chainId) context = await this.getNetwork(provider, context);
 
-        const signer = provider.getSigner(context.addressSigner);
 
         function toNumberSafe(bn: BigNumber): number {
             try {
@@ -1904,7 +1904,7 @@ export default class EtherHelper {
         }
 
         const trndBalance = divitrend
-            .balanceOf(context.addressSigner)
+            .balanceOf(context.addressSigner ?? '')
             .then((result: BigNumber) => context.trndBalance = Number(ethers.utils.formatEther(result)))
             .catch((error: any) => console.log("EtherHelper.queryProviderInfo.trndBalance: ", JSON.stringify(error)));
 
