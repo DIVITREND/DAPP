@@ -71,6 +71,7 @@ const AdminPanel: React.FC = () => {
     const [staking_data_option, setStaking_data_option] = useState<null | string>('Set number vault: from 0 to max 3');
     const [vesting_data_unix, setVesting_data_unix] = useState<null | string>('Set number vesting time in unix');
     const [staking_apy_value, setStaking_apy_value] = useState<null | string>('Set number staking apy value');
+    const [deposit_ETH, setDepositETH] = useState<null | string>('Set number staking apy value');
     const [maxNft, setMaxNft] = useState<null | string>('Set number max nft');
     const [allData, setAllData] = useState<adminData>();
     const classes = useStyleStaking()
@@ -144,10 +145,11 @@ const AdminPanel: React.FC = () => {
     console.log("allData: ", allData);
 
     const adminActions: AdminAction[] = [
-        { title: 'Unpause TRND', type: 'boolean', data: allData?.isPaused === false ? false : true, setter: setUnpause, toshowSetter: unpause, submitFunction: () => EtherHelper.Adm_Unpause_Token(context) },
-        { title: 'Pause TRND', type: 'boolean', data: allData?.isPaused === true ? true : false, setter: setPause, toshowSetter: pause, submitFunction: () => EtherHelper.Adm_Pause_Token(context) },
-        { title: 'Enable Blacklist', type: 'boolean', data: 'No GET data for this func', setter: setEnableBL, toshowSetter: enableBL, submitFunction: () => EtherHelper.Adm_Enable_Blacklist(enableBL?.toLocaleLowerCase() ?? '', context) },
-        { title: 'Disable Blacklist', type: 'boolean', data: 'No GET data for this func', setter: setDisableBL, toshowSetter: disableBL, submitFunction: () => EtherHelper.Adm_Disable_Blacklist(disableBL?.toLocaleLowerCase() ?? '', context) },
+        { title: 'Deposit ETH', type: 'number', data: 'No GET data for this func', setter: setDepositETH, toshowSetter: deposit_ETH, submitFunction: () => EtherHelper.STAKING_DEPOSIT_ETH(Number(deposit_ETH), context)},
+        { title: 'Unpause TRND', type: 'boolean', data: allData?.isPaused === false ? false : true, setter: setUnpause, toshowSetter: unpause, submitFunction: () => EtherHelper.Adm_Unpause_Token(context)},
+        { title: 'Pause TRND', type: 'boolean', data: allData?.isPaused === true ? true : false, setter: setPause, toshowSetter: pause, submitFunction: () => EtherHelper.Adm_Pause_Token(context)},
+        { title: 'Enable Blacklist', type: 'boolean', data: 'No GET data for this func', setter: setEnableBL, toshowSetter: enableBL, submitFunction: () => EtherHelper.Adm_Enable_Blacklist(enableBL?.toLocaleLowerCase() ?? '', context)},
+        { title: 'Disable Blacklist', type: 'boolean', data: 'No GET data for this func', setter: setDisableBL, toshowSetter: disableBL, submitFunction: () => EtherHelper.Adm_Disable_Blacklist(disableBL?.toLocaleLowerCase() ?? '', context)},
         { title: 'Buy Tax', type: 'number', data: allData?.buyTax, setter: setBuyTax, toshowSetter: tax, submitFunction: () => EtherHelper.Adm_setBuy_TAX(Number(tax), context) },
         { title: 'Sell Tax', type: 'number', data: allData?.sellTax, setter: setSellTax, toshowSetter: sell_tax, submitFunction: () => EtherHelper.Adm_setSell_TAX(Number(sell_tax), context) },
         { title: 'Swap Treshold', type: 'number', data: allData?.swapThres, setter: setSwapTresh, toshowSetter: swapTresh, submitFunction: () => EtherHelper.Adm_setSwapTreshold(Number(swapTresh), context) },

@@ -1133,6 +1133,7 @@ export default class EtherHelper {
                 console.log('EtherHelper.swap Transaction Hash: ', JSON.stringify(transactionResult.transactionHash));
             } else {
                 const amountOutMin = await router.getAmountsOut(amountInWei, path)
+                console.log(amountInWei.toString(), amountOutMin[1], path, signer.getAddress(), deadline)
                 const tx = await router.swapExactTokensForETH(amountInWei.toString(), amountOutMin[1], path, signer.getAddress(), deadline)
                 const transactionResult = await tx.wait()
                 context = {
