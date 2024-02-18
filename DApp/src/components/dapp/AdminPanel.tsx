@@ -71,7 +71,7 @@ const AdminPanel: React.FC = () => {
     const [staking_data_option, setStaking_data_option] = useState<null | string>('Set number vault: from 0 to max 3');
     const [vesting_data_unix, setVesting_data_unix] = useState<null | string>('Set number vesting time in unix');
     const [staking_apy_value, setStaking_apy_value] = useState<null | string>('Set number staking apy value');
-    const [deposit_ETH, setDepositETH] = useState<null | string>('Set number staking apy value');
+    const [deposit_ETH, setDepositETH] = useState<null | string>('Set number deposit ETH');
     const [maxNft, setMaxNft] = useState<null | string>('Set number max nft');
     const [allData, setAllData] = useState<adminData>();
     const classes = useStyleStaking()
