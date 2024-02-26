@@ -471,8 +471,7 @@ const Welcome = () => {
                 </div>
                 <div className={classes.subtitle}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontSize: '14px', color: 'lightgray', fontStyle: 'italic' }}>{(Number(woo ?? '').toFixed(2)).toLocaleString()} $WOO - {Number(weWETH).toFixed(2)} $weWETH</div>
-                    {((Number(woo ?? '0') * Number(wooPrice ?? '0')) + (Number(weWETH ?? '0') * Number(wethPrice ?? '0'))).toFixed(2)} $
+                    6100$
                   </div>
                 </div>
               </Paper>

@@ -237,6 +237,7 @@ export default class EtherHelper {
             const staking = new Contract(AddressFactory.getStaking(context.chainId ?? 42161), DivitrendRewardsABI, signer) as DivitrendRewards;
             //amount to WEI — getting Ethers
             const amountToWei = ethers.utils.parseEther(amount.toString())
+            console.log(amount, ethers.utils.formatEther( amountToWei ))
             const tx = await staking.connect(signer).depositETH({ value: amountToWei })
             let transactionResult = await tx.wait();
             context = {

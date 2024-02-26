@@ -375,9 +375,9 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     }, [comp, rewards]);
 
     useEffect(() => {
-        StatsHelper.getPriceOfToken('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') // Indirizzo di WETH
+        StatsHelper.getPriceOfToken('0x82aF49447D8a07e3bd95BD0d56f35241523fBab1')
             .then(price => setWethPrice(price));
-    }, []);
+    }, [context]);
 
     useEffect(() => {
         if (!context) return
@@ -443,6 +443,8 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
     }, [context])
 
     const { totalRevShare, totalApyBoost } = useTokenAttributeCalculator(alreadyStakedToFetch, context);
+
+    let worthRev = (ethRev + nftEthRev) * (wethPrice ?? 1);
 
     if (vesting === 0) return <></>;
     return (
@@ -677,7 +679,7 @@ export const StakingLeft: React.FC<StakingLeftProps> = ({ vesting }) => {
                         </Typography>
                         <Typography variant="body1" className={classes.subtitleLil} style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <span>Worth</span>
-                            <span style={{ color: '#A4FE66' }}>{(Number((ethRev + nftEthRev).toFixed(1)) * Number((wethPrice ?? 0).toFixed(1))).toLocaleString('en-US')}$</span>
+                            <span style={{ color: '#A4FE66' }}>{worthRev.toLocaleString('en-US', { maximumFractionDigits: 2 })}$</span>
                         </Typography>
                         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', padding: 5, gap: 10, marginTop: 10, justifyContent: 'center', alignItems: 'center' }}>
                             <Button onClick={() => claimETH()} size="small" variant='contained' style={{ fontFamily: "Open Sans", color: 'black', border: '1px solid black', minWidth: 100, background: '#A4FE66', textShadow: '1px 1px 2px white' }}>
